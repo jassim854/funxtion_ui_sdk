@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 import 'package:ui_tool_kit/src/utils/utils.dart';
@@ -10,7 +9,8 @@ class BaseHelper {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           msg,
-          style: AppTypography.title14XS.copyWith(color: AppColor.appBarColor),
+          style: AppTypography.title14XS
+              .copyWith(color: AppColor.textEmphasisColor),
         ),
         backgroundColor: Colors.white,
         margin: const EdgeInsets.all(5),
@@ -25,9 +25,15 @@ class BaseHelper {
             : null));
   }
 
-  static Future<bool> isInternetAvailable() async {
-    ConnectivityResult connectivityResult =
-        await (Connectivity().checkConnectivity());
-    return connectivityResult != ConnectivityResult.none;
+  static CircularProgressIndicator loadingWidget(
+      {double? value, double? strokeWidth, Color? valueColor}) {
+    return CircularProgressIndicator.adaptive(
+      value: value,
+      strokeWidth:
+          strokeWidth ?? const CircularProgressIndicator.adaptive().strokeWidth,
+      backgroundColor: AppColor.textInvertSubtitle,
+      valueColor:
+          AlwaysStoppedAnimation(valueColor ?? AppColor.linkTeritaryCOlor),
+    );
   }
 }

@@ -7,12 +7,8 @@ CachedNetworkImage cacheNetworkWidget({required String imageUrl, BoxFit? fit}) {
     imageUrl: imageUrl,
     fit: fit,
     progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-      child: CircularProgressIndicator.adaptive(
-        value: downloadProgress.progress,
-        backgroundColor: AppColor.lightGreyTextFieldColor,
-        valueColor: const AlwaysStoppedAnimation(AppColor.appBarColor),
-      ),
-    ),
+        child: BaseHelper.loadingWidget(value: downloadProgress.progress)),
+    useOldImageOnUrlChange: true,
     errorWidget: (context, url, error) => const Icon(Icons.error),
   );
 }

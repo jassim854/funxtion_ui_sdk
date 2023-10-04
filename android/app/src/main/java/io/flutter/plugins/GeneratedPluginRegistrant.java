@@ -2,9 +2,7 @@ package io.flutter.plugins;
 
 import io.flutter.plugin.common.PluginRegistry;
 import com.lazyarts.vikram.cached_video_player.CachedVideoPlayerPlugin;
-import io.flutter.plugins.connectivity.ConnectivityPlugin;
 import io.flutter.plugins.pathprovider.PathProviderPlugin;
-import io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin;
 import com.tekartik.sqflite.SqflitePlugin;
 
 /**
@@ -16,9 +14,7 @@ public final class GeneratedPluginRegistrant {
       return;
     }
     CachedVideoPlayerPlugin.registerWith(registry.registrarFor("com.lazyarts.vikram.cached_video_player.CachedVideoPlayerPlugin"));
-    ConnectivityPlugin.registerWith(registry.registrarFor("io.flutter.plugins.connectivity.ConnectivityPlugin"));
     PathProviderPlugin.registerWith(registry.registrarFor("io.flutter.plugins.pathprovider.PathProviderPlugin"));
-    SharedPreferencesPlugin.registerWith(registry.registrarFor("io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin"));
     SqflitePlugin.registerWith(registry.registrarFor("com.tekartik.sqflite.SqflitePlugin"));
   }
 

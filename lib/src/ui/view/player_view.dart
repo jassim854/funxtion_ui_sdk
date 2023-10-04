@@ -3,36 +3,37 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:ui_tool_kit/ui_tool_kit.dart';
+import 'package:video_cached_player/video_cached_player.dart';
 
+class CategoryPlayerView extends StatefulWidget {
+  final String videoURL, thumbNail;
+  const CategoryPlayerView({
+    super.key,
+    required this.videoURL,
+    required this.thumbNail,
+  });
 
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:video_player/video_player.dart';
-
-class VideoViewPotrait extends ConsumerStatefulWidget {
-  static const routeName = '/videoPlayerView';
-  final String videoUrl, thumbNail;
-  const VideoViewPotrait(
-      {required this.videoUrl, required this.thumbNail, super.key});
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _VideoViewPotrait();
+  State<CategoryPlayerView> createState() => _CategoryPlayerViewState();
 }
 
-class _VideoViewPotrait extends ConsumerState<VideoViewPotrait> {
-  late VideoPlayerController _videoPlayerController;
+class _CategoryPlayerViewState extends State<CategoryPlayerView> {
+  late CachedVideoPlayerController _videoPlayerController;
+
   @override
   void initState() {
+    VideoController.showControls = false;
     _videoPlayerController =
-        VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
+        CachedVideoPlayerController.network(widget.videoURL)
           ..initialize().then((_) {
             _videoPlayerController.play();
+
+            setState(() {});
           })
-          ..setLooping(true)
           ..addListener(() {
-            ref.read(videoPlayerProvider).videoPlayerController =
-                _videoPlayerController;
-            ref.watch(videoPlayerProvider).init();
-          });
+            setState(() {});
+          })
+          ..setLooping(true);
 
     super.initState();
   }
@@ -51,12 +52,12 @@ class _VideoViewPotrait extends ConsumerState<VideoViewPotrait> {
   @override
   Widget build(BuildContext context) {
     return _videoPlayerController.value.isInitialized
-        ? VideoPlayerBothWidget(_videoPlayerController)
+        ? VideoPlayerWidget(videoPlayerController: _videoPlayerController)
         : SafeArea(
             child: Container(
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                    color: AppColor.blackColor,
+                    color: AppColor.surfaceBrandDarkColor,
                     image: DecorationImage(
                         image: cachedNetworkImageProvider(
                             imageUrl: widget.thumbNail))),

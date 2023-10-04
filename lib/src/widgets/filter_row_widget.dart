@@ -1,18 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../ui_tool_kit.dart';
 
+
+
+class FilterContainer extends StatelessWidget {
+ final String e;
+ final VoidCallback onTap;
+ const FilterContainer({super.key, required this.onTap, required this.e});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColor.linkTeritaryCOlor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              e.toString(),
+              style: AppTypography.label14SM
+                  .copyWith(color: AppColor.textInvertEmphasis),
+            ),
+            InkWell(
+              onTap: onTap,
+              child:  Icon(
+                Icons.close,
+                color: AppColor.textInvertEmphasis,
+              ),
+            )
+          ]),
+    );
+  }
+}
+
+
 class FilterRowWidget extends StatelessWidget {
-  final WidgetRef ref;
-  const FilterRowWidget({super.key, required this.ref});
+     ValueNotifier<List<TypeFilterModel>> confirmedFilter; Function( TypeFilterModel value) deleteAFilterOnTap;   VoidCallback  hideOnTap;  VoidCallback showOnTap; VoidCallback clearOnTap;
+   FilterRowWidget({
+    super.key,required this.confirmedFilter, required this. deleteAFilterOnTap,  required this.  hideOnTap, required this. showOnTap,required this. clearOnTap
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: ref.watch(videoProvider).confirmedFilter == null ||
-              ref.watch(videoProvider).confirmedFilter?.length == 0
+      children: confirmedFilter.value.isEmpty
           ? []
           : [
               Expanded(
@@ -21,104 +58,94 @@ class FilterRowWidget extends StatelessWidget {
                   child: Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: ref
-                                  .watch(videoProvider)
-                                  .confirmedFilter!
-                                  .length >=
-                              3
+                      children: confirmedFilter.value.length >= 2
                           ? [
                               Wrap(
                                   spacing: 8,
                                   runSpacing: 8,
-                                  children: ref
-                                              .watch(videoProvider)
+                                  children: CategoryListController
                                               .isShowFilter ==
                                           false
-                                      ? ref
-                                          .watch(videoProvider)
-                                          .confirmedFilter!
-                                          .sublist(0, 3)
-                                          .map((e) => filterCntainer(context,
-                                              e: e.filter.toString(), ref: ref))
+                                      ? confirmedFilter.value
+                                          .sublist(0, 2)
+                                          .map((e) => FilterContainer(
+                                                e: e.filter.toString(),
+                                                onTap: (){
+                                                  deleteAFilterOnTap(e);
+                                                }
+                                              ))
                                           .toList()
-                                      : ref
-                                          .watch(videoProvider)
-                                          .confirmedFilter!
-                                          .map((e) => filterCntainer(context,
-                                              e: e.filter.toString(), ref: ref))
-                                          .toList()),
-                              ref.watch(videoProvider).confirmedFilter!.length >
-                                          3 &&
-                                      ref.watch(videoProvider).isShowFilter ==
+                                      : [
+                                          for (int i = 0;
+                                              i < confirmedFilter.value.length;
+                                              i++)
+                                            FilterContainer(
+                                                e: confirmedFilter
+                                                    .value[i].filter,
+                                                onTap: () {
+                                        deleteAFilterOnTap(confirmedFilter.value[i]);
+                                                }),
+                                          Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 9),
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    AppColor.linkTeritaryCOlor,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: InkWell(
+                                                  onTap: hideOnTap,
+                                                  child:  Icon(
+                                                    Icons.close,
+                                                    size: 18,
+                                                    color: AppColor
+                                                        .textInvertEmphasis,
+                                                  )))
+                                        ]),
+                              confirmedFilter.value.length > 2 &&
+                                      CategoryListController.isShowFilter ==
                                           false
                                   ? Container(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 12, vertical: 9),
                                       decoration: BoxDecoration(
-                                        color: AppColor.appBarColor,
+                                        color: AppColor.linkTeritaryCOlor,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: InkWell(
-                                        onTap: () {
-                                          ref
-                                              .read(videoProvider)
-                                              .showAllFiltter();
-                                        },
+                                        onTap: showOnTap,
                                         child: Text(
-                                            "+${ref.watch(videoProvider).confirmedFilter!.length - 3}",
+                                            "+${confirmedFilter.value.length - 2}",
                                             style: AppTypography.label14SM
                                                 .copyWith(
-                                                    color:
-                                                        AppColor.whiteColor)),
+                                                    color: AppColor
+                                                        .textInvertEmphasis)),
                                       ),
                                     )
-                                  : ref
-                                              .watch(videoProvider)
-                                              .confirmedFilter!
-                                              .length >
-                                          3
-                                      ? Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12, vertical: 9),
-                                          decoration: BoxDecoration(
-                                            color: AppColor.appBarColor,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          child: InkWell(
-                                              onTap: () {
-                                                ref
-                                                    .read(
-                                                        videoProvider.notifier)
-                                                    .hideAllFilter();
-                                              },
-                                              child: const Icon(
-                                                Icons.close,
-                                                size: 18,
-                                                color: AppColor.whiteColor,
-                                              )))
-                                      : const SizedBox.shrink()
+                                  : const SizedBox.shrink()
                             ]
-                          : ref
-                              .watch(videoProvider)
-                              .confirmedFilter!
-                              .map((e) => filterCntainer(context,
-                                  e: e.filter.toString(), ref: ref))
+                          : confirmedFilter.value
+                              .map((e) => FilterContainer(
+                                  e: e.filter.toString(),
+                                  onTap: () {
+                                      deleteAFilterOnTap(e);
+                                  }))
                               .toList()),
                 ),
               ),
-              if (ref.watch(videoProvider).confirmedFilter != null)
+              if (confirmedFilter.value != null)
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 6, top: 16, bottom: 16, right: 16),
                   child: InkWell(
-                    onTap: () {
-                      ref.read(videoProvider).resetFilter();
-                    },
+                    onTap: clearOnTap,
                     child: Text(
                       'Clear',
                       style: AppTypography.label14SM.copyWith(
-                          color: AppColor.appBarColor,
+                          color: AppColor.linkTeritaryCOlor,
                           decorationStyle: TextDecorationStyle.solid,
                           decoration: TextDecoration.underline),
                     ),
@@ -129,30 +156,4 @@ class FilterRowWidget extends StatelessWidget {
   }
 }
 
-Widget filterCntainer(context, {required String e, required WidgetRef ref}) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-    decoration: BoxDecoration(
-      color: AppColor.appBarColor,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            e.toString(),
-            style: AppTypography.label14SM.copyWith(color: AppColor.whiteColor),
-          ),
-          InkWell(
-            onTap: () {
-              ref.read(videoProvider).deleteAFilter(context, e);
-            },
-            child: const Icon(
-              Icons.close,
-              color: AppColor.whiteColor,
-            ),
-          )
-        ]),
-  );
-}
+

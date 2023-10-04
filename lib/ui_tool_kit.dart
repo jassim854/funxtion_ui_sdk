@@ -5,4 +5,5 @@ export 'package:ui_tool_kit/src/utils/utils.dart';
 export 'package:ui_tool_kit/src/widgets/widget.dart';
 
 export 'package:ui_tool_kit/src/helper/basehelper.dart';
-export 'package:ui_tool_kit/src/providers/providers.dart';
+export 'package:ui_tool_kit/src/controller/controller.dart';
+export 'package:ui_tool_kit/src/Model/model.dart';
