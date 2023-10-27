@@ -28,4 +28,6 @@ class AppTypography {
       fontFamily: _fontFamily, fontWeight: FontWeight.w500, fontSize: 14);
   static TextStyle label12XSM = const TextStyle(
       fontFamily: _fontFamily, fontWeight: FontWeight.w500, fontSize: 12);
+  static TextStyle label10XXSM = const TextStyle(
+      fontFamily: _fontFamily, fontWeight: FontWeight.w500, fontSize: 10);
 }

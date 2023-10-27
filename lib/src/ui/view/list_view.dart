@@ -44,7 +44,6 @@ class _CategoryListViewState extends State<CategoryListView> {
         getData(categoryName: widget.categoryName);
         _scrollController.addListener(
           () {
-            context.hideKeypad();
             if (isLoadMore == false &&
                 nextPage == true &&
                 _scrollController.position.extentAfter < 300) {
@@ -118,133 +117,155 @@ class _CategoryListViewState extends State<CategoryListView> {
             )),
         body: Stack(
           children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              ValueListenableBuilder(
-                valueListenable: confirmedFilter,
-                builder: (context, value, child) {
-                  return FilterRowWidget(
-                    confirmedFilter: confirmedFilter,
-                    deleteAFilterOnTap: (e) {
-                      CategoryListController.deleteAFilter(
-                          context, e.filter.toString(), confirmedFilter);
-                      getData(
-                          categoryName: widget.categoryName, isFilter: true);
+            Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ValueListenableBuilder(
+                    valueListenable: confirmedFilter,
+                    builder: (context, value, child) {
+                      return FilterRowWidget(
+                        confirmedFilter: confirmedFilter,
+                        deleteAFilterOnTap: (e) {
+                          CategoryListController.deleteAFilter(
+                              context, e.filter.toString(), confirmedFilter);
+                          getData(
+                              categoryName: widget.categoryName,
+                              isFilter: true);
+                        },
+                        hideOnTap: () {
+                          CategoryListController.hideAllFilter();
+                          setState(() {});
+                        },
+                        showOnTap: () {
+                          CategoryListController.showAllFiltter();
+                          setState(() {});
+                        },
+                        clearOnTap: () {
+                          CategoryListController.clearAppliedFilter(
+                              confirmedFilter);
+                          getData(
+                              categoryName: widget.categoryName,
+                              isFilter: true);
+                        },
+                      );
                     },
-                    hideOnTap: () {
-                      CategoryListController.hideAllFilter();
-                      setState(() {});
-                    },
-                    showOnTap: () {
-                      CategoryListController.showAllFiltter();
-                      setState(() {});
-                    },
-                    clearOnTap: () {
-                      CategoryListController.clearAppliedFilter(
-                          confirmedFilter);
-                      getData(
-                          categoryName: widget.categoryName, isFilter: true);
-                    },
-                  );
-                },
-              ),
-              isNodData == true && isLoadingNotifier == false
-                  ? const CustomErrorWidget()
-                  : Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColor.textInvertEmphasis,
-                        ),
-                        child: ListView.separated(
-                            controller: _scrollController,
-                            keyboardDismissBehavior:
-                                ScrollViewKeyboardDismissBehavior.onDrag,
-                            padding: const EdgeInsets.only(
-                                top: 20, left: 20, right: 20, bottom: 20),
-                            itemBuilder: (context, index) {
-                              return CustomListtileWidget(
-                                  onTap: () {
-                                    context.hideKeypad();
-                                    widget.categoryName ==
-                                            CategoryName.videoClasses
-                                        ? context.navigateTo(VideoDetailView(
-                                            id: listOndemandData[index].id))
-                                        : widget.categoryName ==
+                  ),
+                  if (nextPage == true && isLoadingNotifier == false)
+                    isNodData == true
+                        ? const CustomErrorWidget()
+                        : Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColor.textInvertEmphasis,
+                              ),
+                              child: ListView.separated(
+                                  controller: _scrollController,
+                                  keyboardDismissBehavior:
+                                      ScrollViewKeyboardDismissBehavior.onDrag,
+                                  padding: const EdgeInsets.only(
+                                      top: 20, left: 20, right: 20, bottom: 20),
+                                  itemBuilder: (context, index) {
+                                    return CustomListtileWidget(
+                                        onTap: () {
+                                          context.hideKeypad();
+                                          widget.categoryName ==
+                                                  CategoryName.videoClasses
+                                              ? context.navigateTo(
+                                                  VideoDetailView(
+                                                      id: listOndemandData[index]
+                                                          .id))
+                                              : widget.categoryName ==
+                                                      CategoryName.workouts
+                                                  ? context.navigateTo(
+                                                      WorkoutDetailView(
+                                                          id: listWorkoutData[index]
+                                                              .id))
+                                                  : widget.categoryName ==
+                                                          CategoryName
+                                                              .audioClasses
+                                                      ? context.navigateTo(
+                                                          VideoDetailView(
+                                                              id: listOndemandData[index]
+                                                                  .id))
+                                                      : context.navigateTo(
+                                                          TrainingPlanDetailView(
+                                                              id: listTrainingPLanData[
+                                                                      index]
+                                                                  .id));
+                                          // context.navigateToNamed(routeName, arguments: argument);
+                                        },
+                                        imageHeaderIcon: widget.categoryName ==
                                                 CategoryName.workouts
-                                            ? context.navigateTo(
-                                                WorkoutDetailView(
-                                                    id: listWorkoutData[index]
-                                                        .id))
-                                            : widget.categoryName ==
-                                                    CategoryName.audioClasses
-                                                ? context.navigateTo(
-                                                    VideoDetailView(
-                                                        id: listOndemandData[
-                                                                index]
-                                                            .id))
-                                                : context.navigateTo(
-                                                    TrainingPlanDetailView(
-                                                        id: listTrainingPLanData[
-                                                                index]
-                                                            .id));
-                                    // context.navigateToNamed(routeName, arguments: argument);
+                                            ? AppAssets.workoutHeaderIcon
+                                            : AppAssets.videoPlayIcon,
+                                        imageUrl:
+                                            CategoryListController.imageUrl(
+                                                index: index,
+                                                categoryName: widget
+                                                    .categoryName,
+                                                listOndemandData:
+                                                    listOndemandData,
+                                                listWorkoutData:
+                                                    listWorkoutData,
+                                                listTrainingPLanData:
+                                                    listTrainingPLanData),
+                                        subtitle:
+                                            CategoryListController.subtitle(
+                                                index: index,
+                                                categoryName:
+                                                    widget.categoryName,
+                                                listOndemandData:
+                                                    listOndemandData,
+                                                listWorkoutData:
+                                                    listWorkoutData,
+                                                listTrainingPLanData:
+                                                    listTrainingPLanData),
+                                        title: CategoryListController.title(
+                                            index: index,
+                                            categoryName: widget.categoryName,
+                                            listOndemandData: listOndemandData,
+                                            listWorkoutData: listWorkoutData,
+                                            listTrainingPLanData:
+                                                listTrainingPLanData));
                                   },
-                                  imageUrl: CategoryListController.imageUrl(
-                                      index: index,
+                                  separatorBuilder: (context, index) {
+                                    return CustomDivider(
+                                      endIndent: context.dynamicWidth * 0.02,
+                                      indent: context.dynamicWidth * 0.22,
+                                    );
+                                  },
+                                  itemCount: CategoryListController.itemCount(
                                       categoryName: widget.categoryName,
                                       listOndemandData: listOndemandData,
                                       listWorkoutData: listWorkoutData,
                                       listTrainingPLanData:
-                                          listTrainingPLanData),
-                                  subtitle: CategoryListController.subtitle(
-                                      index: index,
-                                      categoryName: widget.categoryName,
-                                      listOndemandData: listOndemandData,
-                                      listWorkoutData: listWorkoutData,
-                                      listTrainingPLanData:
-                                          listTrainingPLanData),
-                                  title: CategoryListController.title(
-                                      index: index,
-                                      categoryName: widget.categoryName,
-                                      listOndemandData: listOndemandData,
-                                      listWorkoutData: listWorkoutData,
-                                      listTrainingPLanData:
-                                          listTrainingPLanData));
-                            },
-                            separatorBuilder: (context, index) {
-                              return CustomDivider(
-                                endIndent: context.dynamicWidth * 0.02,
-                                indent: context.dynamicWidth * 0.22,
-                              );
-                            },
-                            itemCount: CategoryListController.itemCount(
-                                categoryName: widget.categoryName,
-                                listOndemandData: listOndemandData,
-                                listWorkoutData: listWorkoutData,
-                                listTrainingPLanData: listTrainingPLanData)),
+                                          listTrainingPLanData)),
+                            ),
+                          ),
+                  if (isLoadMore == true)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: BaseHelper.loadingWidget(),
                       ),
                     ),
-              if (isLoadMore == true)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: BaseHelper.loadingWidget(),
-                  ),
-                )
-            ]),
+                  if (nextPage == false && isLoadingNotifier == false)
+                    noResultFoundWidget(),
+                ]),
             if (isLoadingNotifier)
               ModalBarrier(
                   dismissible: false, color: AppColor.surfaceBackgroundColor),
             if (isLoadingNotifier) Center(child: BaseHelper.loadingWidget()),
-            if (nextPage == false && isLoadingNotifier == false)
-              noResultFoundWidget(),
           ],
         ));
   }
 
-  Padding noResultFoundWidget() {
+  noResultFoundWidget() {
     return Padding(
       padding: const EdgeInsets.only(top: 20, left: 20),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -304,10 +325,14 @@ class _CategoryListViewState extends State<CategoryListView> {
         margin: const EdgeInsets.only(top: 20, bottom: 20, right: 20),
         padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 8),
         decoration: BoxDecoration(
-            color: AppColor.surfaceBrandDarkColor,
+            color: confirmedFilter.value.isEmpty
+                ? null
+                : AppColor.textEmphasisColor,
             borderRadius: BorderRadius.circular(12)),
         child: SvgPicture.asset(AppAssets.iconFilter,
-            color: AppColor.textInvertEmphasis),
+            color: confirmedFilter.value.isEmpty
+                ? AppColor.textEmphasisColor
+                : AppColor.textInvertEmphasis),
       ),
     );
   }
@@ -326,7 +351,7 @@ class _CategoryListViewState extends State<CategoryListView> {
             showCloseIcon = value.isEmpty ? false : true;
 
             CategoryListController.delayedFunction(fn: () {
-              log("value is   $value");
+              log("value is $value");
               getData(
                   categoryName: widget.categoryName,
                   isFilter: true,
@@ -388,7 +413,7 @@ class _CategoryListViewState extends State<CategoryListView> {
             limitContentPerPage: limitContentPerPage.toString(),
             pageNumber: pageNumber.toString(),
           ).then((value) {
-            if (value != null && value.length > 0) {
+            if (value != null && value.isNotEmpty) {
               setState(() {
                 nextPage = true;
                 isLoadMore = false;
@@ -396,7 +421,7 @@ class _CategoryListViewState extends State<CategoryListView> {
                 listOndemandData.addAll(value);
                 isLoadingNotifier = isScroll == true ? false : false;
               });
-            } else if (value?.length == 0) {
+            } else if (value?.isEmpty ?? false) {
               setState(() {
                 nextPage = false;
 
@@ -419,14 +444,14 @@ class _CategoryListViewState extends State<CategoryListView> {
                 limitContentPerPage: limitContentPerPage.toString(),
                 pageNumber: pageNumber.toString(),
               ).then((value) {
-                if (value != null && value.length > 0) {
+                if (value != null && value.isNotEmpty) {
                   setState(() {
                     nextPage = true;
                     isLoadMore = false;
                     listWorkoutData.addAll(value);
                     isLoadingNotifier = isScroll == true ? false : false;
                   });
-                } else if (value?.length == 0) {
+                } else if (value?.isEmpty ?? false) {
                   setState(() {
                     nextPage = false;
 
@@ -449,7 +474,7 @@ class _CategoryListViewState extends State<CategoryListView> {
                     limitContentPerPage: limitContentPerPage.toString(),
                     pageNumber: pageNumber.toString(),
                   ).then((value) {
-                    if (value != null && value.length > 0) {
+                    if (value != null && value.isNotEmpty) {
                       setState(() {
                         nextPage = true;
                         isLoadMore = false;
@@ -457,7 +482,7 @@ class _CategoryListViewState extends State<CategoryListView> {
                         listTrainingPLanData.addAll(value);
                         isLoadingNotifier = isScroll == true ? false : false;
                       });
-                    } else if (value?.length == 0) {
+                    } else if (value?.isEmpty ?? false) {
                       setState(() {
                         nextPage = false;
 
@@ -480,7 +505,7 @@ class _CategoryListViewState extends State<CategoryListView> {
                     limitContentPerPage: limitContentPerPage.toString(),
                     pageNumber: pageNumber.toString(),
                   ).then((value) {
-                    if (value != null && value.length > 0) {
+                    if (value != null && value.isNotEmpty) {
                       setState(() {
                         nextPage = true;
                         isLoadMore = false;
@@ -489,7 +514,7 @@ class _CategoryListViewState extends State<CategoryListView> {
                         isLoadingNotifier = isScroll == true ? false : false;
                       });
                     }
-                    if (value?.length == 0) {
+                    if (value?.isEmpty ?? false) {
                       setState(() {
                         nextPage = false;
 

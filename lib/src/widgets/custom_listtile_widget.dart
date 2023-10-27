@@ -7,6 +7,7 @@ class CustomListtileWidget extends StatelessWidget {
   final String imageUrl;
   final String title;
   final String subtitle;
+  final String imageHeaderIcon;
   final VoidCallback onTap;
 
   const CustomListtileWidget({
@@ -14,7 +15,7 @@ class CustomListtileWidget extends StatelessWidget {
     required this.imageUrl,
     required this.title,
     required this.subtitle,
-    required this.onTap,
+    required this.onTap, required this.imageHeaderIcon,
   });
 
   @override
@@ -46,7 +47,7 @@ class CustomListtileWidget extends StatelessWidget {
               Container(
                 margin: const EdgeInsets.all(4),
                 child: SvgPicture.asset(
-                  AppAssets.videoPlayIcon,
+              imageHeaderIcon,
                   color: AppColor.textInvertEmphasis,
                 ),
               ),

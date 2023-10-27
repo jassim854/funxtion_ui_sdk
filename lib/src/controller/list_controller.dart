@@ -257,7 +257,7 @@ class CategoryListController {
             .replaceAll('gym', 'club');
       }
 
-      // print(filters);
+      print(filters);
     }
     return null;
   }
@@ -482,5 +482,4 @@ class CategoryListController {
                 ? listTrainingPLanData[index].image.toString()
                 : listOndemandData[index].image.toString();
   }
-
 }

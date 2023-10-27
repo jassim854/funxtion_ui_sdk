@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:funxtion/funxtion_sdk.dart';
-import 'package:ui_tool_kit/src/ui/view/start_workout_view.dart';
 
 import '../../ui_tool_kit.dart';
 
@@ -43,11 +41,11 @@ class PlayButtonWidget extends StatelessWidget {
 class StartButtonWidget extends StatelessWidget {
   const StartButtonWidget({
     super.key,
-    required this.onPressed,
+    required this.onPressed, required this.btnChild,
   });
 
-  final VoidCallback onPressed;
-
+  final VoidCallback? onPressed;
+final Widget btnChild;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -58,11 +56,7 @@ class StartButtonWidget extends StatelessWidget {
           onPressed: onPressed,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            child: Text(
-              'Start Workout',
-              style: AppTypography.label18LG
-                  .copyWith(color: const Color(0xff5A7DCE)),
-            ),
+            child: btnChild
           )),
     );
   }

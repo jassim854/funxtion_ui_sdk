@@ -26,7 +26,7 @@ static  shedulePlanFn(context, {required   ValueNotifier<bool> shedulePlanLoader
         i++) {
       await getWeekSheduleWorkout(
         context,
-              trainingPlanData!
+              trainingPlanData
                   .weeks![weekIndex.value].days[i].activities.first.id)
           .then((value) {
         listSheduleWorkoutData.add(value);

@@ -6,7 +6,7 @@ class AppColor {
   static  Color textInvertEmphasis = Colors.white;
   static  Color textInvertSubtitle = Color(0xffC7C9CC);
   static  Color textSubTitleColor = Color(0xff80898F);
-  static  Color textPrimaryColor = Color(0xff4D5A62);
+  static  Color   textPrimaryColor = Color(0xff4D5A62);
   static  Color textInvertPrimaryColor = Color(0xffF3F6FE);
 
   /// surface

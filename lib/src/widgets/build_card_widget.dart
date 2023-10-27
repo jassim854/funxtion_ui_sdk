@@ -10,32 +10,38 @@ class BuildCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+        height: context.dynamicHeight * 0.12,
+        width: context.dynamicHeight * 0.13,
+        alignment: Alignment.center,
         padding:
-            const EdgeInsets.only(left: 16, top: 16, bottom: 16, right: 80),
+            const EdgeInsets.only(left: 16, top: 20, bottom: 20, right: 16),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             color: AppColor.surfaceBackgroundColor),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            title,
-            style: AppTypography.paragraph14MD
-                .copyWith(color: AppColor.textSubTitleColor),
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                subtitle,
-                style: AppTypography.label16MD,
+                title,
+                style: AppTypography.paragraph14MD
+                    .copyWith(color: AppColor.textSubTitleColor),
               ),
-              if (subtitle.contains(RegExp(r'[0-9]')))
-                Text(
-                  ' min',
-                  style: AppTypography.paragraph14MD
-                      .copyWith(color: AppColor.textSubTitleColor),
-                )
-            ],
-          )
-        ]));
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    subtitle,
+                    style: AppTypography.label16MD,
+                  ),
+                  if (subtitle.contains(RegExp(r'[0-9]')))
+                    Text(
+                      ' min',
+                      style: AppTypography.paragraph14MD
+                          .copyWith(color: AppColor.textSubTitleColor),
+                    )
+                ],
+              )
+            ]));
   }
 }

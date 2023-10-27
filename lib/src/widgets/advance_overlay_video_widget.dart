@@ -1,13 +1,8 @@
-
 import 'package:flutter/material.dart';
-
 
 import 'package:flutter_svg/svg.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 import 'package:video_cached_player/video_cached_player.dart';
-
-
-
 
 class AdvancedOverlayWidget extends StatefulWidget {
   final CachedVideoPlayerController controller;

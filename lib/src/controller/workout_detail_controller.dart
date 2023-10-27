@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
 import 'package:funxtion/funxtion_sdk.dart';
 
@@ -44,7 +46,7 @@ class WorkoutDetailController {
     return null;
   }
 
-  static  getWarmUpData(context,
+  static getWarmUpData(context,
       {required ValueNotifier<bool> warmUpLoader,
       required WorkoutModel? workoutData,
       required List<ExerciseModel> exerciseData}) async {
@@ -85,7 +87,7 @@ class WorkoutDetailController {
                 id: workoutData.phases?[1].items.first.ctRounds?.first
                         .exercises[i].exerciseId ??
                     "")
-            .then((value) {
+            .then((value) async {
           if (value != null) {
             exerciseWorkoutData.add(value);
           }
@@ -95,6 +97,7 @@ class WorkoutDetailController {
       }
     }
     trainingLoader.value = false;
+    return exerciseWorkoutData;
   }
 
   static getTrainingData2(context,

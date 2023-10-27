@@ -17,3 +17,4 @@ export 'package:ui_tool_kit/src/widgets/build_card_widget.dart';
 export 'package:ui_tool_kit/src/widgets/schedule_plan_sheet_widget.dart';
 export 'package:ui_tool_kit/src/widgets/start_workout_sheet_widget.dart';
 export 'package:ui_tool_kit/src/widgets/custom_slider_widget.dart';
+export 'package:ui_tool_kit/src/widgets/expand_collapse_animation_widget.dart';

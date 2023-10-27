@@ -8,7 +8,7 @@ CachedNetworkImage cacheNetworkWidget({required String imageUrl, BoxFit? fit}) {
     fit: fit,
     progressIndicatorBuilder: (context, url, downloadProgress) => Center(
         child: BaseHelper.loadingWidget(value: downloadProgress.progress)),
-    useOldImageOnUrlChange: true,
+    useOldImageOnUrlChange: false,
     errorWidget: (context, url, error) => const Icon(Icons.error),
   );
 }
