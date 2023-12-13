@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ui_tool_kit/src/ui/view/training_plan_list_view.dart';
 import 'package:ui_tool_kit/src/utils/enums.dart';
 
 import '../../ui_tool_kit.dart';
@@ -18,10 +19,16 @@ class UiToolKitSDK extends StatefulWidget {
 class _UiToolKitSDKState extends State<UiToolKitSDK> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {});
-    AuthController.login(context);
+    if (widget.categoryName == CategoryName.trainingPLans) {
+      getPath();
+    }
+    // AuthController.login(context);
     // TODO: implement initState
     super.initState();
+  }
+
+  getPath() async {
+    await PkgAppController.getPath();
   }
 
   @override
@@ -44,7 +51,6 @@ class _UiToolKitSDKState extends State<UiToolKitSDK> {
           return Center(
             child: InkWell(
                 onTap: () {
-                  // AuthController.login(context);
                   AuthController.login(context);
                 },
                 child: Text(
@@ -55,10 +61,14 @@ class _UiToolKitSDKState extends State<UiToolKitSDK> {
         }
         if (snapshot.hasData == true &&
             snapshot.connectionState == ConnectionState.done) {
-          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-            return context.navigatepushReplacement(CategoryListView(
-              categoryName: widget.categoryName,
-            ));
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            return widget.categoryName == CategoryName.trainingPLans
+                ? context.navigatepushReplacement(TrainingPlanListView(
+                    categoryName: widget.categoryName,
+                  ))
+                : context.navigatepushReplacement(VideoAudioClassesListView(
+                    categoryName: widget.categoryName,
+                  ));
           });
         }
         return Center(

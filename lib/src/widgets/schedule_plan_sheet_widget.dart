@@ -121,7 +121,6 @@ class _ShedulePlanSheetState extends State<ShedulePlanSheet> {
               child: CustomElevatedButton(
                   elevation: 0,
                   btnColor: const Color(0xffE6EDFD),
-                  padding: const EdgeInsets.all(8),
                   onPressed: () {},
                   child: Padding(
                     padding:

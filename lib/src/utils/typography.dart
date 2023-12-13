@@ -16,6 +16,8 @@ class AppTypography {
       fontFamily: _fontFamily, fontWeight: FontWeight.w600, fontSize: 14);
   static TextStyle paragraph18XL = const TextStyle(
       fontFamily: _fontFamily, fontWeight: FontWeight.w400, fontSize: 18);
+  static TextStyle paragraph16LG = const TextStyle(
+      fontFamily: _fontFamily, fontWeight: FontWeight.w400, fontSize: 16);
   static TextStyle paragraph14MD = const TextStyle(
       fontFamily: _fontFamily, fontWeight: FontWeight.w400, fontSize: 14);
   static TextStyle paragraph12SM = const TextStyle(

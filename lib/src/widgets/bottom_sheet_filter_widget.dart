@@ -21,8 +21,11 @@ class FilterSheetWidget extends StatefulWidget {
 
 class _FilterSheetWidgetState extends State<FilterSheetWidget> {
   List<TypeFilterModel> selectedFilter = [];
+  ValueNotifier<bool> filterLoader = ValueNotifier(false);
   @override
   void initState() {
+    CategoryListController.runComplexTask(
+        context, widget.categoryName, filterLoader);
     selectedFilter.addAll(widget.confirmedFilter.value);
     // TODO: implement initState
     super.initState();
@@ -30,270 +33,472 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: selectedFilter.isNotEmpty
-                      ? () {
-                          CategoryListController.resetFilter(
-                              context, selectedFilter, widget.confirmedFilter);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding:
+              const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              InkWell(
+                onTap: selectedFilter.isNotEmpty
+                    ? () {
+                        CategoryListController.resetFilter(
+                            context, selectedFilter, widget.confirmedFilter);
 
-                          setState(() {});
-                        }
-                      : null,
-                  child: Text('Reset',
-                      style: selectedFilter.isNotEmpty
-                          ? AppTypography.label14SM
-                              .copyWith(color: AppColor.linkPrimaryColor)
-                          : AppTypography.label14SM
-                              .copyWith(color: AppColor.linkDisableColor)),
-                ),
-                Text(
-                  'Filter',
-                  style: AppTypography.label18LG
-                      .copyWith(color: AppColor.textEmphasisColor),
-                ),
-                InkWell(
-                  onTap: () {
-                    context.popPage();
-                    widget.onDone(selectedFilter);
-                  },
-                  child: Text('Done',
-                      style: AppTypography.label14SM
-                          .copyWith(color: AppColor.linkPrimaryColor)),
-                ),
-              ],
-            ),
+                        setState(() {});
+                      }
+                    : null,
+                child: Text('Reset',
+                    style: selectedFilter.isNotEmpty
+                        ? AppTypography.label14SM
+                            .copyWith(color: AppColor.linkPrimaryColor)
+                        : AppTypography.label14SM
+                            .copyWith(color: AppColor.linkDisableColor)),
+              ),
+              Text(
+                'Filter',
+                style: AppTypography.label18LG
+                    .copyWith(color: AppColor.textEmphasisColor),
+              ),
+              InkWell(
+                onTap: () {
+                  context.popPage();
+                  widget.onDone(selectedFilter);
+                },
+                child: Text('Done',
+                    style: AppTypography.label14SM
+                        .copyWith(color: AppColor.linkPrimaryColor)),
+              ),
+            ],
           ),
-          const CustomDivider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Level',
-                  style: AppTypography.title18LG
-                      .copyWith(color: AppColor.textEmphasisColor)),
-              12.height(),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: CategoryListController.level
-                      .map((e) => InkWell(
-                          onTap: () {
-                            CategoryListController.addFilter(
-                                TypeFilterModel(type: "level", filter: e.text),
-                                selectedFilter,
-                                widget.confirmedFilter);
-                            setState(() {});
-                            // print(ref.read(videoProvider).selectedFilter);
-                          },
-                          child: levelContainer(context,
-                              e: e,
-                              selectedFilter: selectedFilter,
-                              type: 'level')))
-                      .toList()),
-              Padding(
-                padding: const EdgeInsets.only(top: 40, bottom: 12),
-                child: Text('Duration',
-                    style: AppTypography.title18LG
-                        .copyWith(color: AppColor.textEmphasisColor)),
-              ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: widget.categoryName == CategoryName.videoClasses ||
-                          widget.categoryName == CategoryName.workouts ||
-                          widget.categoryName == CategoryName.audioClasses
-                      ? CategoryListController.duration
-                          .map((e) => InkWell(
-                              onTap: () {
-                                CategoryListController.addFilter(
-                                    TypeFilterModel(
-                                        type: "duration", filter: e.text),
-                                    selectedFilter,
-                                    widget.confirmedFilter);
-
-                                setState(() {});
-                                // print(ref.read(videoProvider).selectedFilter);
-                              },
-                              child: levelContainer(context,
-                                  e: e,
-                                  selectedFilter: selectedFilter,
-                                  type: 'duration')))
-                          .toList()
-                      : CategoryListController.durationWeek
-                          .map((e) => InkWell(
-                              onTap: () {
-                                CategoryListController.addFilter(
-                                    TypeFilterModel(
-                                        type: "duration", filter: e.text),
-                                    selectedFilter,
-                                    widget.confirmedFilter);
-
-                                setState(() {});
-                                // print(ref.read(videoProvider).selectedFilter);
-                              },
-                              child: levelContainer(context,
-                                  e: e,
-                                  selectedFilter: selectedFilter,
-                                  type: 'duration')))
-                          .toList()),
-              if (widget.categoryName == CategoryName.trainingPLans) ...[
-                Padding(
-                  padding: const EdgeInsets.only(top: 40, bottom: 12),
-                  child: Text('Workouts Per Week',
-                      style: AppTypography.title18LG
-                          .copyWith(color: AppColor.textEmphasisColor)),
-                ),
-                Column(
-                  children: [
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: Slider(
-                        min: 1.0,
-                        max: 5.0,
-                        value: CategoryListController.slderValue,
-                        divisions: 4,
-                        label: '${CategoryListController.slderValue.round()}',
-                        onChanged: (value) {
-                          if (value != 1.0) {
-                            CategoryListController.slderValue = value;
-                            CategoryListController.addAFilter(
-                                TypeFilterModel(
-                                    type: "workout per week",
-                                    filter: value.toString()),
-                                selectedFilter);
-                          }
-
-                          setState(() {});
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.dynamicHeight * 0.025,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '1',
-                            style: AppTypography.label14SM
-                                .copyWith(color: AppColor.textEmphasisColor),
-                          ),
-                          Text(
-                            '2',
-                            style: AppTypography.label14SM
-                                .copyWith(color: AppColor.textEmphasisColor),
-                          ),
-                          Text(
-                            '3',
-                            style: AppTypography.label14SM
-                                .copyWith(color: AppColor.textEmphasisColor),
-                          ),
-                          Text(
-                            '4',
-                            style: AppTypography.label14SM
-                                .copyWith(color: AppColor.textEmphasisColor),
-                          ),
-                          Text(
-                            '5',
-                            style: AppTypography.label14SM
-                                .copyWith(color: AppColor.textEmphasisColor),
-                          ),
-                        ],
-                      ),
+        ),
+        const CustomDivider(),
+        ValueListenableBuilder<bool>(
+            valueListenable: filterLoader,
+            builder: (_, value, child) {
+              return value == true
+                  ? Center(
+                      child: BaseHelper.loadingWidget(),
                     )
-                  ],
-                ),
-              ],
-              Padding(
-                padding: const EdgeInsets.only(top: 40, bottom: 12),
-                child: Text('Location',
-                    style: AppTypography.title18LG
-                        .copyWith(color: AppColor.textEmphasisColor)),
-              ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: CategoryListController.location
-                      .map((e) => InkWell(
-                          onTap: () {
-                            CategoryListController.addFilter(
-                                TypeFilterModel(
-                                    type: "location", filter: e.text),
-                                selectedFilter,
-                                widget.confirmedFilter);
-                            setState(() {});
-                            // print(ref.read(videoProvider).selectedFilter);
-                          },
-                          child: levelContainer(context,
-                              e: e,
-                              selectedFilter: selectedFilter,
-                              type: 'location')))
-                      .toList()),
-              if (widget.categoryName != CategoryName.trainingPLans) ...[
-                Padding(
-                  padding: const EdgeInsets.only(top: 40, bottom: 12),
-                  child: Text('Type',
-                      style: AppTypography.title18LG
-                          .copyWith(color: AppColor.textEmphasisColor)),
-                ),
-                Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: CategoryListController.type
-                        .map((e) => InkWell(
-                            onTap: () {
-                              CategoryListController.addFilter(
-                                  TypeFilterModel(type: "type", filter: e.text),
-                                  selectedFilter,
-                                  widget.confirmedFilter);
-                              setState(() {});
-                              // print(ref.read(videoProvider).selectedFilter);
-                            },
-                            child: levelContainer(context,
-                                e: e,
-                                selectedFilter: selectedFilter,
-                                type: 'type')))
-                        .toList()),
-              ],
-              if (widget.categoryName == CategoryName.workouts ||
-                  widget.categoryName == CategoryName.trainingPLans) ...[
-                Padding(
-                  padding: const EdgeInsets.only(top: 40, bottom: 12),
-                  child: Text('Goals',
-                      style: AppTypography.title18LG
-                          .copyWith(color: AppColor.textEmphasisColor)),
-                ),
-                Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: CategoryListController.goals
-                        .map((e) => InkWell(
-                            onTap: () {
-                              CategoryListController.addFilter(
-                                  TypeFilterModel(type: "goal", filter: e.text),
-                                  selectedFilter,
-                                  widget.confirmedFilter);
-                              setState(() {});
-                              // print(ref.read(videoProvider).selectedFilter);
-                            },
-                            child: levelContainer(context,
-                                e: e,
-                                selectedFilter: selectedFilter,
-                                type: 'goal')))
-                        .toList())
-              ]
-            ]),
-          )
-        ],
-      ),
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 20, right: 20, bottom: 20),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children:
+                                  CategoryListController.onDemandfiltersData
+                                      .map((data) => Padding(
+                                            padding: EdgeInsets.only(
+                                                top: CategoryListController
+                                                            .onDemandfiltersData
+                                                            .first ==
+                                                        data
+                                                    ? 20
+                                                    : 35,
+                                                bottom: 12),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(data.label.toString(),
+                                                    style: AppTypography
+                                                        .title18LG
+                                                        .copyWith(
+                                                            color: AppColor
+                                                                .textEmphasisColor)),
+                                                12.height(),
+                                                data.values != null
+                                                    ? Wrap(
+                                                        spacing: 8,
+                                                        runSpacing: 8,
+                                                        children: data.values!
+                                                            .map((e) => InkWell(
+                                                                onTap: () {
+                                                                  CategoryListController.addFilter(
+                                                                      TypeFilterModel(
+                                                                          id: e
+                                                                              .id,
+                                                                          type: data
+                                                                              .key
+                                                                              .toString(),
+                                                                          filter: e
+                                                                              .label
+                                                                              .toString()
+                                                                              .capitalize()),
+                                                                      selectedFilter,
+                                                                      widget
+                                                                          .confirmedFilter);
+                                                                  setState(
+                                                                      () {});
+                                                                  // print(ref.read(videoProvider).selectedFilter);
+                                                                },
+                                                                child:
+                                                                    levelContainer(
+                                                                  context,
+                                                                  e: IconTextModel(
+                                                                      text: e
+                                                                          .label
+                                                                          .toString()
+                                                                          .capitalize(),
+                                                                      id: e.id),
+                                                                  selectedFilter:
+                                                                      selectedFilter,
+                                                                  type: data.key
+                                                                      .toString(),
+                                                                )))
+                                                            .toList(),
+                                                      )
+                                                    : Wrap(
+                                                        spacing: 8,
+                                                        runSpacing: 8,
+                                                        children: data
+                                                            .dynamicValues!
+                                                            .map((e) => InkWell(
+                                                                onTap: () {
+                                                                  CategoryListController.addFilter(
+                                                                      TypeFilterModel(
+                                                                          type: data
+                                                                              .key
+                                                                              .toString(),
+                                                                          filter: e is List
+                                                                              ? e[0].toString()
+                                                                              : e.toString().capitalize()),
+                                                                      selectedFilter,
+                                                                      widget.confirmedFilter);
+                                                                  setState(
+                                                                      () {});
+                                                                  // print(ref.read(videoProvider).selectedFilter);
+                                                                },
+                                                                child:
+                                                                    levelContainer(
+                                                                  context,
+                                                                  e: IconTextModel(
+                                                                      text: e is List ? e[0].toString() : e.toString().capitalize(),
+                                                                      imageName: e == "beginner"
+                                                                          ? AppAssets.chartLowIcon
+                                                                          : e == "intermediate"
+                                                                              ? AppAssets.chatMidIcon
+                                                                              : e == 'advanced'
+                                                                                  ? AppAssets.chartFullIcon
+                                                                                  : null),
+                                                                  selectedFilter:
+                                                                      selectedFilter,
+                                                                  type: data.key
+                                                                      .toString(),
+                                                                )))
+                                                            .toList(),
+                                                      )
+
+                                                // Row(
+                                                //     mainAxisAlignment:
+                                                //         MainAxisAlignment.spaceBetween,
+                                                //     children: CategoryListController.level
+                                                //         .map((e) => InkWell(
+                                                //             onTap: () {
+                                                //               CategoryListController.addFilter(
+                                                //                   TypeFilterModel(
+                                                //                       type: data.key.toString(),
+                                                //                       filter: e.text),
+                                                //                   selectedFilter,
+                                                //                   widget.confirmedFilter);
+                                                //               setState(() {});
+                                                //               // print(ref.read(videoProvider).selectedFilter);
+                                                //             },
+                                                //             child: levelContainer(context,
+                                                //                 e: e,
+                                                //                 selectedFilter: selectedFilter,
+                                                //                 type: 'level')))
+                                                //         .toList()),
+                                              ],
+                                            ),
+                                          ))
+                                      .toList()
+
+                              // if (widget.categoryName != CategoryName.trainingPLans) ...[
+                              //   Padding(
+                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
+                              //     child: Text('Duration',
+                              //         style: AppTypography.title18LG
+                              //             .copyWith(color: AppColor.textEmphasisColor)),
+                              //   ),
+                              //   Row(
+                              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //       children: CategoryListController.duration
+                              //           .map((e) => InkWell(
+                              //               onTap: () {
+                              //                 CategoryListController.addFilter(
+                              //                     TypeFilterModel(
+                              //                         type: "duration", filter: e.text),
+                              //                     selectedFilter,
+                              //                     widget.confirmedFilter);
+
+                              //                 setState(() {});
+                              //                 // print(ref.read(videoProvider).selectedFilter);
+                              //               },
+                              //               child: levelContainer(context,
+                              //                   e: e,
+                              //                   selectedFilter: selectedFilter,
+                              //                   type: 'duration')))
+                              //           .toList()),
+                              // ],
+
+                              // //  CategoryListController.durationWeek
+                              // //     .map((e) => InkWell(
+                              // //         onTap: () {
+                              // //           CategoryListController.addFilter(
+                              // //               TypeFilterModel(
+                              // //                   type: "duration", filter: e.text),
+                              // //               selectedFilter,
+                              // //               widget.confirmedFilter);
+
+                              // //           setState(() {});
+                              // //           // print(ref.read(videoProvider).selectedFilter);
+                              // //         },
+                              // //         child: levelContainer(context,
+                              // //             e: e,
+                              // //             selectedFilter: selectedFilter,
+                              // //             type: 'duration')))
+                              // //     .toList()),
+
+                              // if (widget.categoryName == CategoryName.workouts) ...[
+                              //   Padding(
+                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
+                              //     child: Text('Type',
+                              //         style: AppTypography.title18LG
+                              //             .copyWith(color: AppColor.textEmphasisColor)),
+                              //   ),
+                              //   Wrap(
+                              //       spacing: 8,
+                              //       runSpacing: 8,
+                              //       children: CategoryListController.typesFilters
+                              //           .map((e) => InkWell(
+                              //               onTap: () {
+                              //                 CategoryListController.addFilter(
+                              //                     TypeFilterModel(
+                              //                         type: "type", filter: e.text, id: e.id),
+                              //                     selectedFilter,
+                              //                     widget.confirmedFilter);
+                              //                 setState(() {});
+                              //                 // print(ref.read(videoProvider).selectedFilter);
+                              //               },
+                              //               child: levelContainer(context,
+                              //                   e: e,
+                              //                   selectedFilter: selectedFilter,
+                              //                   type: 'type')))
+                              //           .toList()),
+                              // ],
+                              // if (widget.categoryName == CategoryName.workouts ||
+                              //     widget.categoryName == CategoryName.trainingPLans) ...[
+                              //   Padding(
+                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
+                              //     child: Text('Location',
+                              //         style: AppTypography.title18LG
+                              //             .copyWith(color: AppColor.textEmphasisColor)),
+                              //   ),
+                              //   Row(
+                              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //       children: CategoryListController.location
+                              //           .map((e) => InkWell(
+                              //               onTap: () {
+                              //                 CategoryListController.addFilter(
+                              //                     TypeFilterModel(
+                              //                         type: "location", filter: e.text),
+                              //                     selectedFilter,
+                              //                     widget.confirmedFilter);
+                              //                 setState(() {});
+                              //                 // print(ref.read(videoProvider).selectedFilter);
+                              //               },
+                              //               child: levelContainer(context,
+                              //                   e: e,
+                              //                   selectedFilter: selectedFilter,
+                              //                   type: 'location')))
+                              //           .toList()),
+                              // ],
+                              // if (widget.categoryName == CategoryName.videoClasses ||
+                              //     widget.categoryName == CategoryName.audioClasses) ...[
+                              //   Padding(
+                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
+                              //     child: Text('Category',
+                              //         style: AppTypography.title18LG
+                              //             .copyWith(color: AppColor.textEmphasisColor)),
+                              //   ),
+                              //   Wrap(
+                              //       spacing: 8,
+                              //       runSpacing: 8,
+                              //       children: CategoryListController.categoryTypeFilters
+                              //           .map((e) => InkWell(
+                              //               onTap: () {
+                              //                 CategoryListController.addFilter(
+                              //                     TypeFilterModel(
+                              //                         type: "category",
+                              //                         filter: e.text,
+                              //                         id: e.id),
+                              //                     selectedFilter,
+                              //                     widget.confirmedFilter);
+
+                              //                 setState(() {});
+                              //                 // print(ref.read(videoProvider).selectedFilter);
+                              //               },
+                              //               child: levelContainer(context,
+                              //                   e: e,
+                              //                   selectedFilter: selectedFilter,
+                              //                   type: 'category')))
+                              //           .toList())
+                              // ],
+                              // if (widget.categoryName == CategoryName.videoClasses ||
+                              //     widget.categoryName == CategoryName.audioClasses) ...[
+                              //   Padding(
+                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
+                              //     child: Text('Equipment',
+                              //         style: AppTypography.title18LG
+                              //             .copyWith(color: AppColor.textEmphasisColor)),
+                              //   ),
+                              //   Wrap(
+                              //       spacing: 8,
+                              //       runSpacing: 8,
+                              //       children: CategoryListController.equipmentFilter
+                              //           .map((e) => InkWell(
+                              //               onTap: () {
+                              //                 CategoryListController.addFilter(
+                              //                     TypeFilterModel(
+                              //                         type: "equipment",
+                              //                         filter: e.text,
+                              //                         id: e.id),
+                              //                     selectedFilter,
+                              //                     widget.confirmedFilter);
+                              //                 setState(() {});
+                              //                 // print(ref.read(videoProvider).selectedFilter);
+                              //               },
+                              //               child: levelContainer(context,
+                              //                   e: e,
+                              //                   selectedFilter: selectedFilter,
+                              //                   type: 'equipment')))
+                              //           .toList()),
+                              // ],
+                              // if (widget.categoryName == CategoryName.videoClasses ||
+                              //     widget.categoryName == CategoryName.audioClasses) ...[
+                              //   Padding(
+                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
+                              //     child: Text('Instructor',
+                              //         style: AppTypography.title18LG
+                              //             .copyWith(color: AppColor.textEmphasisColor)),
+                              //   ),
+                              //   Wrap(
+                              //       spacing: 8,
+                              //       runSpacing: 8,
+                              //       children: CategoryListController.instructorFilter
+                              //           .map((e) => InkWell(
+                              //               onTap: () {
+                              //                 CategoryListController.addFilter(
+                              //                     TypeFilterModel(
+                              //                         type: "instructor",
+                              //                         filter: e.text,
+                              //                         id: e.id),
+                              //                     selectedFilter,
+                              //                     widget.confirmedFilter);
+                              //                 setState(() {});
+                              //                 // print(ref.read(videoProvider).selectedFilter);
+                              //               },
+                              //               child: levelContainer(context,
+                              //                   e: e,
+                              //                   selectedFilter: selectedFilter,
+                              //                   type: 'instructor')))
+                              //           .toList()),
+                              // ],
+                              // // if (widget.categoryName != CategoryName.trainingPLans) ...[
+                              // //   Padding(
+                              // //     padding: const EdgeInsets.only(top: 40, bottom: 12),
+                              // //     child: Text('Type',
+                              // //         style: AppTypography.title18LG
+                              // //             .copyWith(color: AppColor.textEmphasisColor)),
+                              // //   ),
+                              // //   Wrap(
+                              // //       spacing: 8,
+                              // //       runSpacing: 8,
+                              // //       children: CategoryListController.categoryType
+                              // //           .map((e) => InkWell(
+                              // //               onTap: () {
+                              // //                 CategoryListController.addFilter(
+                              // //                     TypeFilterModel(type: "type", filter: e.text),
+                              // //                     selectedFilter,
+                              // //                     widget.confirmedFilter);
+                              // //                 setState(() {});
+                              // //                 // print(ref.read(videoProvider).selectedFilter);
+                              // //               },
+                              // //               child: levelContainer(context,
+                              // //                   e: e,
+                              // //                   selectedFilter: selectedFilter,
+                              // //                   type: 'type')))
+                              // //           .toList()),
+                              // // ],
+                              // if (widget.categoryName == CategoryName.workouts ||
+                              //     widget.categoryName == CategoryName.trainingPLans) ...[
+                              //   Padding(
+                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
+                              //     child: Text('Goals',
+                              //         style: AppTypography.title18LG
+                              //             .copyWith(color: AppColor.textEmphasisColor)),
+                              //   ),
+                              //   Wrap(
+                              //       spacing: 8,
+                              //       runSpacing: 8,
+                              //       children: CategoryListController.goalsFilters
+                              //           .map((e) => InkWell(
+                              //               onTap: () {
+                              //                 CategoryListController.addFilter(
+                              //                     TypeFilterModel(
+                              //                         type: "goal", filter: e.text, id: e.id),
+                              //                     selectedFilter,
+                              //                     widget.confirmedFilter);
+                              //                 setState(() {});
+                              //                 // print(ref.read(videoProvider).selectedFilter);
+                              //               },
+                              //               child: levelContainer(context,
+                              //                   e: e,
+                              //                   selectedFilter: selectedFilter,
+                              //                   type: 'goal')))
+                              //           .toList()),
+                              // ],
+                              // if (widget.categoryName == CategoryName.workouts) ...[
+                              //   Padding(
+                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
+                              //     child: Text('Bodypart',
+                              //         style: AppTypography.title18LG
+                              //             .copyWith(color: AppColor.textEmphasisColor)),
+                              //   ),
+                              //   Wrap(
+                              //       spacing: 8,
+                              //       runSpacing: 8,
+                              //       children: CategoryListController.bodyPartFilter
+                              //           .map((e) => InkWell(
+                              //               onTap: () {
+                              //                 CategoryListController.addFilter(
+                              //                     TypeFilterModel(
+                              //                         type: "bodyPart",
+                              //                         filter: e.text,
+                              //                         id: e.id),
+                              //                     selectedFilter,
+                              //                     widget.confirmedFilter);
+                              //                 setState(() {});
+                              //               },
+                              //               child: levelContainer(context,
+                              //                   e: e,
+                              //                   selectedFilter: selectedFilter,
+                              //                   type: 'bodyPart')))
+                              //           .toList()),
+                              // ]
+
+                              ),
+                        ),
+                      ),
+                    );
+            })
+      ],
     );
   }
 }
@@ -303,8 +508,8 @@ Widget levelContainer(BuildContext context,
     required List<TypeFilterModel> selectedFilter,
     required String type}) {
   return Container(
-    padding: const EdgeInsets.all(16).copyWith(top: 18),
-    width: e.imageName != null ? context.dynamicWidth * 0.28 : null,
+    padding: const EdgeInsets.all(16),
+    // width: e.imageName != null ? context.dynamicWidth * 0.3 : null,
     decoration: BoxDecoration(
         border: selectedFilter.any((element) {
           return element.filter == e.text && element.type == type;

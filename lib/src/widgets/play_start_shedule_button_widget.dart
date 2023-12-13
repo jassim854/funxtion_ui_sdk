@@ -39,57 +39,48 @@ class PlayButtonWidget extends StatelessWidget {
 }
 
 class StartButtonWidget extends StatelessWidget {
-  const StartButtonWidget({
-    super.key,
-    required this.onPressed, required this.btnChild,
-  });
+  const StartButtonWidget(
+      {super.key,
+      required this.onPressed,
+      required this.btnChild,
+      this.btnColor});
 
   final VoidCallback? onPressed;
-final Widget btnChild;
+  final Widget btnChild;
+  final Color? btnColor;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 50,
       child: CustomElevatedButton(
           elevation: 0,
-          btnColor: const Color(0xffE6EDFD),
+          btnColor: btnColor ?? AppColor.buttonTertiaryColor,
           onPressed: onPressed,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            child: btnChild
-          )),
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+              child: btnChild)),
     );
   }
 }
 
-
-
 class SheduletButtonWidget extends StatelessWidget {
-final VoidCallback? onPressed;
-  const SheduletButtonWidget({
-    super.key, this.onPressed,
-
-  });
-
-  
+  final VoidCallback? onPressed;
+  final String text;
+  const SheduletButtonWidget({super.key, this.onPressed, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return CustomElevatedButton(
         elevation: 0,
-        btnColor: const Color(0xffE6EDFD),
-        padding: const EdgeInsets.all(8),
+        btnColor: AppColor.buttonPrimaryColor,
         onPressed: onPressed,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           child: Text(
-            'Schedule Plan',
-            style: AppTypography.label18LG
-                .copyWith(color: const Color(0xff5A7DCE)),
+            text,
+            style: AppTypography.label16MD
+                .copyWith(color: AppColor.textInvertEmphasis),
           ),
         ));
   }
 }
-
-
-

@@ -6,7 +6,7 @@ import 'package:ui_tool_kit/ui_tool_kit.dart';
 class CustomListtileWidget extends StatelessWidget {
   final String imageUrl;
   final String title;
-  final String subtitle;
+  final Widget subtitle;
   final String imageHeaderIcon;
   final VoidCallback onTap;
 
@@ -15,7 +15,8 @@ class CustomListtileWidget extends StatelessWidget {
     required this.imageUrl,
     required this.title,
     required this.subtitle,
-    required this.onTap, required this.imageHeaderIcon,
+    required this.onTap,
+    required this.imageHeaderIcon,
   });
 
   @override
@@ -47,7 +48,7 @@ class CustomListtileWidget extends StatelessWidget {
               Container(
                 margin: const EdgeInsets.all(4),
                 child: SvgPicture.asset(
-              imageHeaderIcon,
+                  imageHeaderIcon,
                   color: AppColor.textInvertEmphasis,
                 ),
               ),
@@ -66,11 +67,7 @@ class CustomListtileWidget extends StatelessWidget {
                       color: AppColor.textEmphasisColor,
                     )),
                 5.height(),
-                Text(
-                  subtitle,
-                  style: AppTypography.paragraph14MD
-                      .copyWith(color: AppColor.textPrimaryColor),
-                ),
+                subtitle,
               ],
             ),
           )
@@ -80,8 +77,8 @@ class CustomListtileWidget extends StatelessWidget {
   }
 }
 
-class CustomTileWidget extends StatelessWidget {
-  const CustomTileWidget(
+class CustomTileTrainingPlanWidget extends StatelessWidget {
+  const CustomTileTrainingPlanWidget(
       {super.key,
       required this.imageUrl,
       required this.title,
@@ -121,7 +118,7 @@ class CustomTileWidget extends StatelessWidget {
             ],
           ),
           16.width(),
-          SizedBox(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

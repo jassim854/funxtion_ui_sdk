@@ -31,4 +31,6 @@ class AppAssets {
       'packages/ui_tool_kit/assets/icons_svg/person_notes_icon.svg';
   static const String workoutHeaderIcon =
       'packages/ui_tool_kit/assets/icons_svg/workout_header_icon.svg';
+        static const String video =
+      'packages/ui_tool_kit/assets/icons_svg/video.mp4';
 }

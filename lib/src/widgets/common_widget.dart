@@ -31,6 +31,8 @@ class CustomErrorWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 20, left: 20),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        // mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -51,15 +53,19 @@ class CustomErrorWidget extends StatelessWidget {
 
 class SliverAppBarWidget extends StatelessWidget {
   final bool value;
+  bool isFollowingPlan;
+  final Widget? widgetChild;
   final String appBarTitle, flexibleTitle, flexibleTitle2, backGroundImg;
 
-  const SliverAppBarWidget(
+  SliverAppBarWidget(
       {super.key,
       required this.value,
       required this.appBarTitle,
       required this.flexibleTitle,
       required this.flexibleTitle2,
-      required this.backGroundImg});
+      required this.backGroundImg,
+      this.isFollowingPlan = false,
+      this.widgetChild});
 
   @override
   Widget build(BuildContext context) {
@@ -78,16 +84,22 @@ class SliverAppBarWidget extends StatelessWidget {
               .copyWith(color: AppColor.textInvertEmphasis),
         ),
       ),
-      centerTitle: true,
       leading: Transform.scale(
-        scale: 0.65,
-        child: Container(
-          height: 20,
-          width: 20,
-          margin: const EdgeInsets.only(left: 10),
-          decoration: BoxDecoration(
-              color: AppColor.surfaceBrandDarkColor, shape: BoxShape.circle),
-          child: Transform.scale(scale: 1.5, child: const BackButton()),
+        scale: 0.6,
+        child: InkWell(
+          onTap: () {
+            context.maybePopPage();
+          },
+          child: Container(
+              alignment: Alignment.center,
+              constraints: const BoxConstraints(),
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                  color: AppColor.surfaceBrandDarkColor,
+                  shape: BoxShape.circle),
+              child: Transform.scale(
+                  scale: 1.75,
+                  child: const Icon(Icons.keyboard_arrow_left_sharp))),
         ),
       ),
       flexibleSpace: FlexibleSpaceBar(
@@ -101,21 +113,57 @@ class SliverAppBarWidget extends StatelessWidget {
           titlePadding: const EdgeInsets.only(left: 30, bottom: 16),
           title: Visibility(
             visible: value == false ? true : false,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  flexibleTitle,
-                  style: AppTypography.title24XL
-                      .copyWith(color: AppColor.textInvertEmphasis),
-                ),
-                Text(
-                  flexibleTitle2,
-                  style: AppTypography.label16MD
-                      .copyWith(color: AppColor.textInvertPrimaryColor),
-                ),
-              ],
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isFollowingPlan)
+                    Container(
+                      padding: const EdgeInsets.only(
+                          top: 4, bottom: 4, right: 16, left: 6),
+                      decoration: BoxDecoration(
+                          color: AppColor.buttonTertiaryColor,
+                          borderRadius: BorderRadius.circular(26)),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                                color: AppColor.buttonPrimaryColor,
+                                shape: BoxShape.circle),
+                            child: Icon(
+                              Icons.check,
+                              color: AppColor.surfaceBackgroundColor,
+                              size: 16,
+                            ),
+                          ),
+                          8.width(),
+                          Text(
+                            "Following",
+                            style: AppTypography.label14SM
+                                .copyWith(color: AppColor.buttonPrimaryColor),
+                          ),
+                        ],
+                      ),
+                    ),
+                  Text(
+                    flexibleTitle,
+                    style: AppTypography.title24XL
+                        .copyWith(color: AppColor.textInvertEmphasis),
+                  ),
+                  isFollowingPlan == true
+                      ? widgetChild ?? Container()
+                      : Text(
+                          flexibleTitle2,
+                          style: AppTypography.label16MD
+                              .copyWith(color: AppColor.textInvertPrimaryColor),
+                        ),
+                ],
+              ),
             ),
           ),
           background: Stack(
@@ -132,18 +180,6 @@ class SliverAppBarWidget extends StatelessWidget {
               ),
             ],
           )),
-      actions: [
-        Container(
-          margin: const EdgeInsets.only(right: 10),
-          padding: const EdgeInsets.all(2),
-          decoration: BoxDecoration(
-              color: AppColor.surfaceBrandDarkColor, shape: BoxShape.circle),
-          child: const Icon(
-            Icons.favorite_border,
-            size: 22,
-          ),
-        )
-      ],
     );
   }
 }

@@ -1,82 +1,49 @@
 import 'package:flutter/material.dart';
-
-import 'package:funxtion/funxtion_sdk.dart';
 import 'package:ui_tool_kit/src/ui/view/start_workout_view.dart';
-import 'package:ui_tool_kit/src/widgets/start_workout_header_widget.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
-
-import 'header_imagesHeader_widget.dart';
 
 class GetReadyViewWidget extends StatefulWidget {
   const GetReadyViewWidget(
       {super.key,
       required this.workoutModel,
-      required this.exerciseData,
-      required this.exerciseWorkoutData,
-      required this.exerciseWorkoutData2,
-      this.fitnessGoalModel});
+      required this.warmUpData,
+      required this.trainingData,
+      required this.coolDownData,
+      this.fitnessGoalModel,
+      required this.equipmentData});
   final WorkoutModel workoutModel;
-  final List<ExerciseModel> exerciseData;
-  final List<ExerciseModel> exerciseWorkoutData;
-  final List<ExerciseModel> exerciseWorkoutData2;
+  final Map<ExerciseDetailModel, ExerciseModel> warmUpData;
+  final Map<ExerciseDetailModel, ExerciseModel> trainingData;
+  final Map<ExerciseDetailModel, ExerciseModel> coolDownData;
   final FitnessGoalModel? fitnessGoalModel;
+  final List<EquipmentModel> equipmentData;
 
   @override
   State<GetReadyViewWidget> createState() => _GetReadyViewWidgetState();
 }
 
 class _GetReadyViewWidgetState extends State<GetReadyViewWidget> {
-  String? title, headerTitle, headerSubtitle, bodySubtitle;
-  List<ExerciseModel>? currentExerciseData;
-  ValueNotifier<bool> warmUpExpand1 = ValueNotifier(true);
+  Map<ExerciseDetailModel, ExerciseModel> circuitTimeData = {};
+  Map<ExerciseDetailModel, ExerciseModel> rftExerciseData = {};
+  Map<ExerciseDetailModel, ExerciseModel> seExerciseData = {};
+  Map<ExerciseDetailModel, ExerciseModel> ssExerciseData = {};
+  String? title;
+  Map<ExerciseDetailModel, ExerciseModel> currentListData = {};
+  ValueNotifier<bool> expand = ValueNotifier(true);
 
-  // listWarmUpFn() {
-  //   if (widget.workoutModel.phases!.first.items.isNotEmpty) {
-  //     warmUpLength =
-  //         widget.workoutModel.phases!.first.items.first.seExercises!.length;
-  //   }
-  //   if (widget.workoutModel.phases![1].items.isNotEmpty) {
-  //     if (widget.workoutModel.phases![1].items.first.ctRounds!.isNotEmpty) {
-  //       workoutLength = widget.workoutModel.phases![1].items.first.ctRounds!
-  //           .first.exercises.length;
-  //     } else {
-  //       workoutLength =
-  //           widget.workoutModel.phases![1].items.first.rftExercises?.length ??
-  //               0;
-  //     }
-  //   }
-  //   if (widget.workoutModel.phases![2].items.isNotEmpty) {
-  //     coolDOwnnLength = widget.workoutModel.phases![2].items.length;
-  //   }
-
-  //   lengthPhases = warmUpLength + workoutLength + coolDOwnnLength;
-  // }
   initFn() {
-    if (widget.exerciseData.isEmpty && widget.exerciseWorkoutData.isNotEmpty) {
+    if (widget.warmUpData.isEmpty && widget.trainingData.isNotEmpty) {
       title = 'Training';
-      headerTitle = 'Circuit Time';
-      headerSubtitle =
-          "${widget.workoutModel.phases?[1].items.first.ctRounds?.isEmpty == 0 ? 0 : widget.workoutModel.phases?[1].items.first.ctRounds?.length} rounds";
-      bodySubtitle =
-          "${widget.workoutModel.phases?[1].items.first.ctRounds?.first.exercises.map((e) => e.notes)}";
-      currentExerciseData = widget.exerciseWorkoutData;
-    } else if (widget.exerciseWorkoutData.isEmpty &&
-        widget.exerciseWorkoutData2.isNotEmpty) {
-      title = 'training 2';
-      headerTitle = 'Reps Time';
-      headerSubtitle =
-          "${widget.workoutModel.phases?[1].items.first.rftExercises?.isEmpty??false ? 0 : widget.workoutModel.phases?[1].items.first.rftExercises?.first.goalTargets.length} rounds";
-      bodySubtitle =
-          "${widget.workoutModel.phases?[1].items.first.rftExercises?.first.notes}";
-      currentExerciseData = widget.exerciseWorkoutData2;
+
+      currentListData = widget.trainingData;
+    } else if (widget.trainingData.isEmpty && widget.coolDownData.isNotEmpty) {
+      title = 'Cool Down';
+
+      currentListData = widget.coolDownData;
     } else {
       title = 'Warmup';
-      headerTitle = 'Single Exercise';
-      headerSubtitle =
-          "${widget.workoutModel.phases?.first.items.isEmpty??false ? 0 : widget.workoutModel.phases?.first.items.first.seExercises?.first.sets.length} rounds";
-      bodySubtitle =
-          "${widget.workoutModel.phases?[0].items.first.seExercises?.map((e) => e.sets.first.goalTargets.first.value)} seconds";
-      currentExerciseData = widget.exerciseData;
+
+      currentListData = widget.warmUpData;
     }
   }
 
@@ -93,15 +60,31 @@ class _GetReadyViewWidgetState extends State<GetReadyViewWidget> {
     return Scaffold(
       backgroundColor: AppColor.surfaceBackgroundBaseColor,
       appBar: StartWorkoutHeaderWidget(
-        exerciseData: widget.exerciseData,
-        exerciseWorkoutData2: widget.exerciseWorkoutData2,
-        exerciseWorkoutData: widget.exerciseWorkoutData,
+        warmUpData: widget.warmUpData,
+        coolDownData: widget.coolDownData,
+        trainingData: widget.trainingData,
         workoutModel: widget.workoutModel,
         durationNotifier: ValueNotifier(0),
         sliderWarmUp: ValueNotifier(0),
         sliderExercise: ValueNotifier(0),
         sliderCoolDown: ValueNotifier(0),
         sliderExercise2: ValueNotifier(0),
+        actionWidget: InkWell(
+            onTap: () async {
+              await showModalBottomSheet(
+                backgroundColor: AppColor.surfaceBackgroundBaseColor,
+                useSafeArea: true,
+                isScrollControlled: true,
+                context: context,
+                builder: (context) => OverviewBottomSheet(
+                  warmUpData: widget.warmUpData,
+                  coolDownData: widget.coolDownData,
+                  trainingData: widget.trainingData,
+                  workoutModel: widget.workoutModel,
+                ),
+              );
+            },
+            child: const Icon(Icons.interests_outlined)),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -121,7 +104,8 @@ class _GetReadyViewWidgetState extends State<GetReadyViewWidget> {
               ),
             ),
             Card(
-              margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
+              margin: const EdgeInsets.only(
+                  left: 20, right: 20, top: 20, bottom: 0),
               color: AppColor.surfaceBackgroundColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
@@ -147,13 +131,13 @@ class _GetReadyViewWidgetState extends State<GetReadyViewWidget> {
                           child: Row(
                             children: [
                               Text(
-                                'Kettlebell',
+                                widget.equipmentData[index].name,
                                 style: AppTypography.label16MD.copyWith(
                                     color: AppColor.textEmphasisColor),
                               ),
                               12.width(),
                               Text(
-                                '20 kg',
+                                '',
                                 style: AppTypography.paragraph14MD
                                     .copyWith(color: AppColor.textPrimaryColor),
                               )
@@ -164,36 +148,36 @@ class _GetReadyViewWidgetState extends State<GetReadyViewWidget> {
                       separatorBuilder: (context, index) {
                         return const CustomDivider();
                       },
-                      itemCount: 2)
+                      itemCount: widget.equipmentData.length)
                 ],
               ),
             ),
-            Column(
-              children: [
-                BuildHeader2(
-                  expandBodyValueListenable: ValueNotifier(true),
-                  subtitle: headerSubtitle.toString(),
-                  loaderListenable: ValueNotifier(false),
-                  expandValueListenable: warmUpExpand1,
-                  exerciseWorkoutData: currentExerciseData ?? [],
-                  title: headerTitle.toString(),
-                  onTap: () {
-                    warmUpExpand1.value = !warmUpExpand1.value;
-                  },
-                ),
-                BuildBodySingleExercise(
-                    workoutModel: widget.workoutModel,
-                    dataList: currentExerciseData ?? [],
-                    valueListenable: warmUpExpand1,
-                    valueListenable1: ValueNotifier(false),
-                    bodySubtitle: bodySubtitle.toString()),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              child: Column(
+                children: [
+                  BuildHeader(
+                    loaderListenAble: ValueNotifier(false),
+                    dataLIst: currentListData,
+                    title: title.toString(),
+                    expandHeaderValueListenable: expand,
+                    onTap: () {
+                      expand.value = !expand.value;
+                    },
+                  ),
+                  BuildBodyWidget(
+                    currentListData: currentListData,
+                    expandHeaderValueListenable: expand,
+                    loaderValueListenable: ValueNotifier(false),
+                  ),
+                ],
+              ),
             )
           ],
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(left: 24, right: 24, bottom: 20),
+        padding: const EdgeInsets.only(left: 24, right: 24, bottom: 15),
         child: Row(
           children: [
             Expanded(
@@ -214,9 +198,9 @@ class _GetReadyViewWidgetState extends State<GetReadyViewWidget> {
                   onPressed: () {
                     context.navigateTo(StartWorkoutView(
                       workoutModel: widget.workoutModel,
-                      exerciseData: widget.exerciseData,
-                      exerciseWorkoutData: widget.exerciseWorkoutData,
-                      exerciseWorkoutData2: widget.exerciseWorkoutData2,
+                      warmUpData: widget.warmUpData,
+                      trainingData: widget.trainingData,
+                      coolDownData: widget.coolDownData,
                     ));
                   },
                   child: const Text("Let's go")),

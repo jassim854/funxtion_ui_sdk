@@ -3,12 +3,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:video_cached_player/video_cached_player.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../ui_tool_kit.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
-  final CachedVideoPlayerController videoPlayerController;
+  final VideoPlayerController videoPlayerController;
   const VideoPlayerWidget({super.key, required this.videoPlayerController});
 
   @override
@@ -120,7 +120,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           : const EdgeInsets.symmetric(horizontal: 60),
       child: AspectRatio(
         aspectRatio: widget.videoPlayerController.value.aspectRatio,
-        child: CachedVideoPlayer(widget.videoPlayerController),
+        child: VideoPlayer(widget.videoPlayerController),
       ),
     );
   }

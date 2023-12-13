@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/svg.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
-import 'package:video_cached_player/video_cached_player.dart';
+import 'package:video_player/video_player.dart';
 
 class AdvancedOverlayWidget extends StatefulWidget {
-  final CachedVideoPlayerController controller;
+  final VideoPlayerController controller;
   final VoidCallback onClickedFullScreen;
 
-  bool isPortrait;
+  final bool isPortrait;
 
-  AdvancedOverlayWidget({
+  const AdvancedOverlayWidget({
     super.key,
     required this.controller,
     required this.onClickedFullScreen,
@@ -23,6 +23,7 @@ class AdvancedOverlayWidget extends StatefulWidget {
 
 class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
   static const allSpeeds = <double>[0.25, 0.5, 1, 1.5, 2, 3, 5, 10];
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -93,7 +94,7 @@ class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
   Widget buildIndicator() => Container(
         margin: const EdgeInsets.all(8).copyWith(right: 0),
         height: 16,
-        child: CachedVideoProgressIndicator(
+        child: VideoProgressIndicator(
           widget.controller,
           allowScrubbing: true,
         ),
