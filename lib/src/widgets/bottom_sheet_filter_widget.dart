@@ -117,40 +117,36 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                                                         spacing: 8,
                                                         runSpacing: 8,
                                                         children: data.values!
-                                                            .map((e) => InkWell(
-                                                                onTap: () {
-                                                                  CategoryListController.addFilter(
-                                                                      TypeFilterModel(
-                                                                          id: e
-                                                                              .id,
-                                                                          type: data
-                                                                              .key
-                                                                              .toString(),
-                                                                          filter: e
+                                                            .map((e) =>
+                                                                GestureDetector(
+                                                                    onTap: () {
+                                                                      CategoryListController.addFilter(
+                                                                          TypeFilterModel(
+                                                                              id: e.id,
+                                                                              type: data.key.toString(),
+                                                                              filter: e.label.toString().capitalizeFirst()),
+                                                                          selectedFilter,
+                                                                          widget.confirmedFilter);
+                                                                      setState(
+                                                                          () {});
+                                                                      // print(ref.read(videoProvider).selectedFilter);
+                                                                    },
+                                                                    child:
+                                                                        levelContainer(
+                                                                      context,
+                                                                      e: IconTextModel(
+                                                                          text: e
                                                                               .label
                                                                               .toString()
-                                                                              .capitalize()),
-                                                                      selectedFilter,
-                                                                      widget
-                                                                          .confirmedFilter);
-                                                                  setState(
-                                                                      () {});
-                                                                  // print(ref.read(videoProvider).selectedFilter);
-                                                                },
-                                                                child:
-                                                                    levelContainer(
-                                                                  context,
-                                                                  e: IconTextModel(
-                                                                      text: e
-                                                                          .label
-                                                                          .toString()
-                                                                          .capitalize(),
-                                                                      id: e.id),
-                                                                  selectedFilter:
-                                                                      selectedFilter,
-                                                                  type: data.key
-                                                                      .toString(),
-                                                                )))
+                                                                              .capitalizeFirst(),
+                                                                          id: e
+                                                                              .id),
+                                                                      selectedFilter:
+                                                                          selectedFilter,
+                                                                      type: data
+                                                                          .key
+                                                                          .toString(),
+                                                                    )))
                                                             .toList(),
                                                       )
                                                     : Wrap(
@@ -158,39 +154,37 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                                                         runSpacing: 8,
                                                         children: data
                                                             .dynamicValues!
-                                                            .map((e) => InkWell(
-                                                                onTap: () {
-                                                                  CategoryListController.addFilter(
-                                                                      TypeFilterModel(
-                                                                          type: data
-                                                                              .key
-                                                                              .toString(),
-                                                                          filter: e is List
-                                                                              ? e[0].toString()
-                                                                              : e.toString().capitalize()),
-                                                                      selectedFilter,
-                                                                      widget.confirmedFilter);
-                                                                  setState(
-                                                                      () {});
-                                                                  // print(ref.read(videoProvider).selectedFilter);
-                                                                },
-                                                                child:
-                                                                    levelContainer(
-                                                                  context,
-                                                                  e: IconTextModel(
-                                                                      text: e is List ? e[0].toString() : e.toString().capitalize(),
-                                                                      imageName: e == "beginner"
-                                                                          ? AppAssets.chartLowIcon
-                                                                          : e == "intermediate"
-                                                                              ? AppAssets.chatMidIcon
-                                                                              : e == 'advanced'
-                                                                                  ? AppAssets.chartFullIcon
-                                                                                  : null),
-                                                                  selectedFilter:
-                                                                      selectedFilter,
-                                                                  type: data.key
-                                                                      .toString(),
-                                                                )))
+                                                            .map((e) =>
+                                                                GestureDetector(
+                                                                    onTap: () {
+                                                                      CategoryListController.addFilter(
+                                                                          TypeFilterModel(
+                                                                              type: data.key.toString(),
+                                                                              filter: e is List ? e[0].toString() : e.toString().capitalizeFirst()),
+                                                                          selectedFilter,
+                                                                          widget.confirmedFilter);
+                                                                      setState(
+                                                                          () {});
+                                                                      // print(ref.read(videoProvider).selectedFilter);
+                                                                    },
+                                                                    child:
+                                                                        levelContainer(
+                                                                      context,
+                                                                      e: IconTextModel(
+                                                                          text: e is List ? e[0].toString() : e.toString().capitalizeFirst(),
+                                                                          imageName: e == "beginner"
+                                                                              ? AppAssets.chartLowIcon
+                                                                              : e == "intermediate"
+                                                                                  ? AppAssets.chatMidIcon
+                                                                                  : e == 'advanced'
+                                                                                      ? AppAssets.chartFullIcon
+                                                                                      : null),
+                                                                      selectedFilter:
+                                                                          selectedFilter,
+                                                                      type: data
+                                                                          .key
+                                                                          .toString(),
+                                                                    )))
                                                             .toList(),
                                                       )
 
@@ -509,13 +503,12 @@ Widget levelContainer(BuildContext context,
     required String type}) {
   return Container(
     padding: const EdgeInsets.all(16),
-    // width: e.imageName != null ? context.dynamicWidth * 0.3 : null,
     decoration: BoxDecoration(
         border: selectedFilter.any((element) {
           return element.filter == e.text && element.type == type;
         })
-            ? Border.all(color: AppColor.buttonPrimaryColor, width: 2)
-            : null,
+            ? Border.all(color: AppColor.buttonPrimaryColor, width: 1)
+            : Border.all(color: AppColor.borderOutlineColor, width: 1),
         color: AppColor.surfaceBackgroundColor,
         borderRadius: BorderRadius.circular(12)),
     child: Column(

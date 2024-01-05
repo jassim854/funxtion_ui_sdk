@@ -8,19 +8,40 @@ class FollowTrainingplanModel extends HiveObject {
   @HiveField(0)
   String trainingplanId;
   @HiveField(1)
-  String? workoutId;
+  List<Map<String, String>> workoutData = [];
+
   @HiveField(2)
-  int? workoutCount;
+  int workoutCount;
   @HiveField(3)
-  int? totalWorkoutLength;
+  int totalWorkoutLength;
   @HiveField(4)
-  bool? outOfSequence;
-  FollowTrainingplanModel(
-      {required this.trainingplanId,
-      this.workoutId,
-      this.workoutCount,
-      this.totalWorkoutLength,
-      this.outOfSequence});
+  bool outOfSequence;
+  @HiveField(5)
+  String trainingPlanTitle;
+  @HiveField(6)
+  String trainingPlanImg;
+  @HiveField(7)
+  String goalsId;
+  @HiveField(8)
+  String levelName;
+  @HiveField(9)
+  String location;
+  @HiveField(10)
+  String daysPerWeek;
+
+  FollowTrainingplanModel({
+    required this.trainingplanId,
+    required this.workoutData,
+    required this.workoutCount,
+    required this.totalWorkoutLength,
+    required this.outOfSequence,
+    required this.trainingPlanImg,
+    required this.trainingPlanTitle,
+    required this.daysPerWeek,
+    required this.goalsId,
+    required this.levelName,
+    required this.location,
+  });
 
   // @override
   // String toString() {

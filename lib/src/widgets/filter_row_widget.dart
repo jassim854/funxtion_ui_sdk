@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../ui_tool_kit.dart';
 
-
-
 class FilterContainer extends StatelessWidget {
- final String e;
- final VoidCallback onTap;
- const FilterContainer({super.key, required this.onTap, required this.e});
+  final String e;
+  final VoidCallback onTap;
+  const FilterContainer({super.key, required this.onTap, required this.e});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +26,7 @@ class FilterContainer extends StatelessWidget {
             ),
             InkWell(
               onTap: onTap,
-              child:  Icon(
+              child: Icon(
                 Icons.close,
                 color: AppColor.textInvertEmphasis,
               ),
@@ -38,23 +36,32 @@ class FilterContainer extends StatelessWidget {
   }
 }
 
-
 class FilterRowWidget extends StatelessWidget {
-     ValueNotifier<List<TypeFilterModel>> confirmedFilter; Function( TypeFilterModel value) deleteAFilterOnTap;   VoidCallback  hideOnTap;  VoidCallback showOnTap; VoidCallback clearOnTap;
-   FilterRowWidget({
-    super.key,required this.confirmedFilter, required this. deleteAFilterOnTap,  required this.  hideOnTap, required this. showOnTap,required this. clearOnTap
-  });
+  ValueNotifier<List<TypeFilterModel>> confirmedFilter;
+  Function(TypeFilterModel value) deleteAFilterOnTap;
+  VoidCallback hideOnTap;
+  VoidCallback showOnTap;
+  VoidCallback clearOnTap;
+  FilterRowWidget(
+      {super.key,
+      required this.confirmedFilter,
+      required this.deleteAFilterOnTap,
+      required this.hideOnTap,
+      required this.showOnTap,
+      required this.clearOnTap});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: confirmedFilter.value.isEmpty
-          ? []
-          : [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0).copyWith(right: 0),
+    return Padding(
+      padding: confirmedFilter.value.isEmpty
+          ? EdgeInsets.zero
+          : EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: confirmedFilter.value.isEmpty
+            ? []
+            : [
+                Expanded(
                   child: Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -69,11 +76,10 @@ class FilterRowWidget extends StatelessWidget {
                                       ? confirmedFilter.value
                                           .sublist(0, 2)
                                           .map((e) => FilterContainer(
-                                                e: e.filter.toString(),
-                                                onTap: (){
-                                                  deleteAFilterOnTap(e);
-                                                }
-                                              ))
+                                              e: e.filter.toString(),
+                                              onTap: () {
+                                                deleteAFilterOnTap(e);
+                                              }))
                                           .toList()
                                       : [
                                           for (int i = 0;
@@ -83,7 +89,8 @@ class FilterRowWidget extends StatelessWidget {
                                                 e: confirmedFilter
                                                     .value[i].filter,
                                                 onTap: () {
-                                        deleteAFilterOnTap(confirmedFilter.value[i]);
+                                                  deleteAFilterOnTap(
+                                                      confirmedFilter.value[i]);
                                                 }),
                                           Container(
                                               padding:
@@ -98,7 +105,7 @@ class FilterRowWidget extends StatelessWidget {
                                               ),
                                               child: InkWell(
                                                   onTap: hideOnTap,
-                                                  child:  Icon(
+                                                  child: Icon(
                                                     Icons.close,
                                                     size: 18,
                                                     color: AppColor
@@ -131,15 +138,13 @@ class FilterRowWidget extends StatelessWidget {
                               .map((e) => FilterContainer(
                                   e: e.filter.toString(),
                                   onTap: () {
-                                      deleteAFilterOnTap(e);
+                                    deleteAFilterOnTap(e);
                                   }))
                               .toList()),
                 ),
-              ),
-              if (confirmedFilter.value != null)
+                // if (confirmedFilter.value.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: 6, top: 16, bottom: 16, right: 16),
+                  padding: const EdgeInsets.only(),
                   child: InkWell(
                     onTap: clearOnTap,
                     child: Text(
@@ -151,9 +156,8 @@ class FilterRowWidget extends StatelessWidget {
                     ),
                   ),
                 )
-            ],
+              ],
+      ),
     );
   }
 }
-
-

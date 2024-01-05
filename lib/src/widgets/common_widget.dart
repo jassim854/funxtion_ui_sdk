@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../ui_tool_kit.dart';
 
@@ -51,21 +52,50 @@ class CustomErrorWidget extends StatelessWidget {
   }
 }
 
+class NoResultFOundWIdget extends StatelessWidget {
+  const NoResultFOundWIdget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, left: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'No Results',
+            style: AppTypography.title18LG,
+          ),
+          5.height(),
+          Text(
+            "We couldn’t find anything",
+            style: AppTypography.paragraph14MD
+                .copyWith(color: AppColor.textPrimaryColor),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class SliverAppBarWidget extends StatelessWidget {
   final bool value;
   bool isFollowingPlan;
-  final Widget? widgetChild;
-  final String appBarTitle, flexibleTitle, flexibleTitle2, backGroundImg;
-
+  final Widget? bottomWidget;
+  final String appBarTitle, flexibleTitle, backGroundImg;
+  final Widget flexibleSubtitleWidget;
   SliverAppBarWidget(
       {super.key,
       required this.value,
       required this.appBarTitle,
       required this.flexibleTitle,
-      required this.flexibleTitle2,
+      required this.flexibleSubtitleWidget,
       required this.backGroundImg,
       this.isFollowingPlan = false,
-      this.widgetChild});
+      this.bottomWidget});
 
   @override
   Widget build(BuildContext context) {
@@ -84,23 +114,26 @@ class SliverAppBarWidget extends StatelessWidget {
               .copyWith(color: AppColor.textInvertEmphasis),
         ),
       ),
-      leading: Transform.scale(
-        scale: 0.6,
-        child: InkWell(
-          onTap: () {
-            context.maybePopPage();
-          },
-          child: Container(
-              alignment: Alignment.center,
-              constraints: const BoxConstraints(),
-              padding: const EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                  color: AppColor.surfaceBrandDarkColor,
-                  shape: BoxShape.circle),
-              child: Transform.scale(
-                  scale: 1.75,
-                  child: const Icon(Icons.keyboard_arrow_left_sharp))),
-        ),
+      // leadingWidth: 50,
+      leading: InkWell(
+        onTap: () {
+          context.maybePopPage();
+        },
+        child: Container(
+            margin: const EdgeInsets.only(
+              left: 19,
+            ),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+                color: AppColor.surfaceBrandDarkColor, shape: BoxShape.circle),
+            child: Transform.scale(
+              scale: 1.05,
+              child: SvgPicture.asset(
+                AppAssets.backArrowIcon,
+                color: AppColor.textInvertEmphasis,
+              ),
+            )),
       ),
       flexibleSpace: FlexibleSpaceBar(
           collapseMode: CollapseMode.pin,
@@ -156,12 +189,8 @@ class SliverAppBarWidget extends StatelessWidget {
                         .copyWith(color: AppColor.textInvertEmphasis),
                   ),
                   isFollowingPlan == true
-                      ? widgetChild ?? Container()
-                      : Text(
-                          flexibleTitle2,
-                          style: AppTypography.label16MD
-                              .copyWith(color: AppColor.textInvertPrimaryColor),
-                        ),
+                      ? bottomWidget ?? Container()
+                      : flexibleSubtitleWidget
                 ],
               ),
             ),
@@ -195,11 +224,35 @@ class DescriptionBoxWidget extends StatelessWidget {
           padding:
               const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
           child: Text(text,
-              style: AppTypography.paragraph14MD
+              style: AppTypography.paragraph16LG
                   .copyWith(color: AppColor.textPrimaryColor))),
     );
   }
 }
+
+class HeaderTitleWIdget extends StatelessWidget {
+  final CategoryName categoryName;
+  const HeaderTitleWIdget({
+    super.key,
+    required this.categoryName,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      categoryName == CategoryName.videoClasses
+          ? "Video Classes"
+          : categoryName == CategoryName.workouts
+              ? "Workouts"
+              :categoryName == CategoryName.audioClasses
+                      ? "Audio Classes"
+                      : '',
+      style:
+          AppTypography.label18LG.copyWith(color: AppColor.textEmphasisColor),
+    );
+  }
+}
+
 /// no data widget in video detail 
 /*Padding(
                       padding: const EdgeInsets.symmetric(

@@ -1,13 +1,11 @@
 import 'dart:async';
-import 'dart:developer';
-import 'dart:isolate';
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:funxtion/funxtion_sdk.dart';
+import 'package:hive/hive.dart';
+import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
 
 import '../../ui_tool_kit.dart';
 
@@ -30,7 +28,7 @@ class CategoryListController {
           if (checkfilter('level', confirmedFilter.value))
             "filter[where][level][in]":
                 searchFilter('level', confirmedFilter.value),
-          "filter[offset]": pageNumber ?? 1,
+          "filter[offset]": pageNumber ?? 0,
           "filter[where][type][eq]": 'virtual-class',
           if (checkfilter('categories', confirmedFilter.value))
             "filter[where][categories][in]":
@@ -74,7 +72,7 @@ class CategoryListController {
           if (checkfilter('level', confirmedFilter.value))
             "filter[where][level][in]":
                 searchFilter('level', confirmedFilter.value),
-          "filter[offset]": pageNumber ?? 1,
+          "filter[offset]": pageNumber ?? 0,
           "filter[where][type][eq]": 'audio-workout',
           if (checkfilter('categories', confirmedFilter.value))
             "filter[where][categories][in]":
@@ -103,7 +101,7 @@ class CategoryListController {
   static Future<List<WorkoutModel>?> getListWorkoutData(context,
       {String? mainSearch,
       String? limitContentPerPage,
-      required String pageNumber,
+      String? pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
     print(pageNumber);
     // if (checkfilter('level', confirmedFilter.value)) {
@@ -114,7 +112,7 @@ class CategoryListController {
       final fetcheddata = await WorkoutRequest.listOfWorkout(
         queryParameters: {
           "filter[limit]": limitContentPerPage ?? '10',
-          "filter[offset]": pageNumber,
+          "filter[offset]": pageNumber ?? "0",
           if (mainSearch != null) "filter[where][q][contains]": mainSearch,
           if (checkfilter('goals', confirmedFilter.value))
             "filter[where][goals][in]":
@@ -160,7 +158,7 @@ class CategoryListController {
       final fetcheddata = await TrainingPlanRequest.listOfTrainingPlan(
         queryParameters: {
           "filter[limit]": limitContentPerPage ?? '10',
-          "filter[offset]": pageNumber ?? '1',
+          "filter[offset]": pageNumber ?? '0',
           if (mainSearch != null) "filter[where][q][contains]": mainSearch,
           if (checkfilter('goals', confirmedFilter.value))
             "filter[where][goals][in]":
@@ -168,10 +166,10 @@ class CategoryListController {
           if (checkfilter('level', confirmedFilter.value))
             "filter[where][level][in]":
                 searchFilter('level', confirmedFilter.value),
-          if (searchFilter('locations', confirmedFilter.value) != null)
+          if (checkfilter('locations', confirmedFilter.value))
             "filter[where][locations][in]":
                 searchFilter('locations', confirmedFilter.value),
-          if (searchFilter('max_days_per_week', confirmedFilter.value) != null)
+          if (checkfilter('max_days_per_week', confirmedFilter.value))
             "filter[where][max_days_per_week][in]":
                 searchFilter('max_days_per_week', confirmedFilter.value),
         },
@@ -189,7 +187,57 @@ class CategoryListController {
     return null;
   }
 
-  static void getFiltrationData(List<dynamic> args) {}
+  static List<FollowTrainingplanModel> searchFilterLocal(
+    ValueNotifier<List<TypeFilterModel>> confirmedFilter,
+    Box<FollowTrainingplanModel> box,
+  ) {
+    List<FollowTrainingplanModel> result = [];
+    if (checkfilter('goals', confirmedFilter.value)) {
+      result.addAll(box.values
+          .toList()
+          .where((element) => element.goalsId
+              .contains(searchFilter('goals', confirmedFilter.value) ?? ""))
+          .toList());
+    }
+    if (checkfilter('level', confirmedFilter.value)) {
+      result.addAll(box.values.toList().where((element) => element.levelName
+          .contains(searchFilter('level', confirmedFilter.value) ?? "")));
+    }
+
+    if (checkfilter('locations', confirmedFilter.value)) {
+      result.addAll(box.values.toList().where((element) => element.location
+          .contains(searchFilter('locations', confirmedFilter.value) ?? "")));
+    }
+
+    if (checkfilter('max_days_per_week', confirmedFilter.value)) {
+      result.addAll(box.values.toList().where((element) => element.daysPerWeek
+          .contains(
+              searchFilter('max_days_per_week', confirmedFilter.value) ?? "")));
+    }
+    return result;
+  }
+
+  // static checkMultipleFilter(
+  //   List<TypeFilterModel>? confirmedFilter,
+  //   Box<FollowTrainingplanModel> box,
+  // ) {
+  //   if (confirmedFilter != null) {
+  //     List<FollowTrainingplanModel> data = [];
+  //     for (var ele in confirmedFilter) {
+  //       data.addAll(box.values.toList().where((element) =>
+  //           element.goalsId.contains(
+  //               searchFilter(ele.id.toString(), confirmedFilter) ?? "") &&
+  //           element.levelName.contains(
+  //               searchFilter(ele.filter.toString(), confirmedFilter) ?? "") &&
+  //           element.location.contains(
+  //               searchFilter(ele.filter.toString(), confirmedFilter) ?? "") &&
+  //           element.daysPerWeek.contains(
+  //               searchFilter(ele.filter.toString(), confirmedFilter) ?? "")));
+  //     }
+  //   }
+  // }
+
+  // static void getFiltrationData(List<dynamic> args) {}
   static bool checkfilter(String type, List<TypeFilterModel>? confirmedFilter) {
     if (confirmedFilter != null) {
       for (var element in confirmedFilter) {
@@ -586,7 +634,7 @@ class CategoryListController {
     if (selectedFilter.any((element) =>
         element.filter == value.filter && element.type == value.type)) {
       if (confirmedFilter.value.isNotEmpty) {
-        restConfirmFilterAlso = true;
+        // restConfirmFilterAlso = true;
       }
       selectedFilter.removeWhere((element) =>
           element.filter == value.filter && element.type == value.type);
@@ -628,6 +676,7 @@ class CategoryListController {
       ValueNotifier<List<TypeFilterModel>> confirmedFilter) {
     if (confirmedFilter.value.isNotEmpty) {
       restConfirmFilterAlso = true;
+      confirmedFilter.value.clear();
     }
     selectedFilter.clear();
     // slderValue = 1;
@@ -636,7 +685,7 @@ class CategoryListController {
   static void clearAppliedFilter(
       ValueNotifier<List<TypeFilterModel>> confirmedFilter) {
     confirmedFilter.value.clear();
-    // slderValue = 1;
+
     hideAllFilter();
   }
 
@@ -645,6 +694,34 @@ class CategoryListController {
     required List<TypeFilterModel> selectedFilter,
   }) {
     confirmedFilter.value = selectedFilter;
+  }
+
+  static List<ContentProvidersCategoryOnDemandModel> categoryTypeData = [];
+  static Map<int, String> filterCategoryTypeData = {};
+  static getCategoryTypeDataFn(
+    context,
+    ValueNotifier<bool> loader,
+  ) async {
+    if (CategoryListController.categoryTypeData.isEmpty) {
+      loader.value = true;
+      try {
+        await ContentProviderCategoryOnDemandRequest.contentCategory(
+            queryParameters: {
+              // "filter[where][id][in]": map((e) => e).join(','),
+            }).then((value) {
+          List<ContentProvidersCategoryOnDemandModel> fetchData = List.from(
+              value!.map(
+                  (e) => ContentProvidersCategoryOnDemandModel.fromJson(e)));
+          for (var i = 0; i <= 50; i++) {
+            CategoryListController.categoryTypeData.add(fetchData[i]);
+          }
+        });
+        loader.value = false;
+      } on RequestException catch (e) {
+        BaseHelper.showSnackBar(context, e.error);
+        loader.value = false;
+      }
+    }
   }
 
   static Timer? timer;
@@ -670,6 +747,26 @@ class CategoryListController {
             : listOndemandData.length;
   }
 
+  static List? chekList({
+    required CategoryName categoryName,
+    required List<OnDemandModel> listOndemandData,
+    required List<WorkoutModel> listWorkoutData,
+  }) {
+    switch (categoryName) {
+      case CategoryName.videoClasses:
+        return listOndemandData;
+
+      case CategoryName.audioClasses:
+        return listOndemandData;
+
+      case CategoryName.workouts:
+        return listWorkoutData;
+
+      default:
+        return [];
+    }
+  }
+
   static String title({
     required int index,
     required CategoryName categoryName,
@@ -690,10 +787,10 @@ class CategoryListController {
     required List<WorkoutModel> listWorkoutData,
   }) {
     return categoryName == CategoryName.videoClasses
-        ? "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${listOndemandData[index].type}` • ${listOndemandData[index].level}"
+        ? "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${listOndemandData[index].type.toString().removeSymbolGetText()} • ${listOndemandData[index].level.toString().capitalizeFirst()}"
         : categoryName == CategoryName.workouts
-            ? "${listWorkoutData[index].duration!.substring(listWorkoutData[index].duration!.indexOf('-') + 1)} min • ${listWorkoutData[index].types!.map((e) => e)}` • ${listWorkoutData[index].level}"
-            : "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${listOndemandData[index].type}` • ${listOndemandData[index].level}";
+            ? "${listWorkoutData[index].duration!.substring(listWorkoutData[index].duration!.indexOf('-') + 1)} min • ${CategoryListController.filterCategoryTypeData[index]} • ${listWorkoutData[index].level.toString().capitalizeFirst()}"
+            : "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${listOndemandData[index].type.toString().removeSymbolGetText()} • ${listOndemandData[index].level.toString().capitalizeFirst()}";
   }
 
   static String imageUrl({

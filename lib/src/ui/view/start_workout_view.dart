@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:ui_tool_kit/src/ui/view/training_plan_detail_view.dart';
 
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
@@ -13,14 +13,20 @@ class StartWorkoutView extends StatefulWidget {
   final Map<ExerciseDetailModel, ExerciseModel> warmUpData;
   final Map<ExerciseDetailModel, ExerciseModel> trainingData;
   final Map<ExerciseDetailModel, ExerciseModel> coolDownData;
-
-  const StartWorkoutView({
-    super.key,
-    required this.workoutModel,
-    required this.warmUpData,
-    required this.trainingData,
-    required this.coolDownData,
-  });
+  final FitnessGoalModel? fitnessGoalModel;
+  final ValueNotifier<int> durationNotifier;
+  final Timer? mainTimer;
+  final List<EquipmentModel> equipmentData;
+  const StartWorkoutView(
+      {super.key,
+      required this.workoutModel,
+      required this.warmUpData,
+      required this.trainingData,
+      required this.coolDownData,
+      this.fitnessGoalModel,
+      required this.durationNotifier,
+      required this.equipmentData,
+      required this.mainTimer});
 
   @override
   State<StartWorkoutView> createState() => _StartWorkoutViewState();
@@ -40,10 +46,10 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
   int pageIndex = 0;
   ValueNotifier<int> secondsCountDown = ValueNotifier(5);
 
-  ValueNotifier<int> durationNotifier = ValueNotifier(0);
   Timer? _timer;
-  Timer? _mainTimer;
+
   Map<String, String> resistanceTargetsValue = {};
+  int totalTime = 0;
   // Future<ExerciseModel?> getAExercise(String id) async {
   //   ExerciseModel exerciseModel =
   //       await ExerciseRequest.exerciseById(id: id) as ExerciseModel;
@@ -58,13 +64,19 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
 
           print(secondsCountDown);
         } else if (secondsCountDown.value == 0) {
-          await pageController.animateToPage(index + 1,
-              duration: const Duration(milliseconds: 100),
-              curve: Curves.easeIn);
-          getCurrentExerciseViewFn(index + 1);
+          if (nextElementText == "Training") {
+            getReadyFn(context, "Training", widget.trainingData);
+          } else if (nextElementText == "Cool Down") {
+            getReadyFn(context, "Cool Down", widget.coolDownData);
+          } else {
+            await pageController.animateToPage(index + 1,
+                duration: const Duration(milliseconds: 100),
+                curve: Curves.easeIn);
+            getCurrentExerciseViewFn(index + 1);
 
-          setState(() {});
-          isPlaying.value = true;
+            setState(() {});
+            isPlaying.value = true;
+          }
           _timer?.cancel();
         }
       });
@@ -76,12 +88,6 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
     super.initState();
     pageController = PageController(initialPage: 0);
     getCurrentExerciseViewFn(pageController.initialPage);
-
-    _mainTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (isPlaying.value) {
-        durationNotifier.value += 1;
-      }
-    });
   }
 
   // Future<ExerciseModel?> futureFn(int index) async {
@@ -130,7 +136,10 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
       sliderTraining.value = 0;
       sliderCoolDown.value = 0;
 
-      detailOfWorkoutFn(index: index, currentBlock: widget.warmUpData);
+      detailOfWorkoutFn(
+          currentPageIndex: index,
+          index: index,
+          currentBlock: widget.warmUpData);
       if (index == widget.warmUpData.length - 1 &&
           widget.trainingData.isNotEmpty) {
         nextElementText = 'Training';
@@ -148,6 +157,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
       sliderCoolDown.value = 0;
 
       detailOfWorkoutFn(
+          currentPageIndex: index,
           index: index - widget.warmUpData.length,
           currentBlock: widget.trainingData);
       if (index - widget.warmUpData.length == widget.trainingData.length - 1 &&
@@ -168,6 +178,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
           widget.trainingData.length +
           1.toDouble();
       detailOfWorkoutFn(
+          currentPageIndex: index,
           index: index - widget.warmUpData.length - widget.trainingData.length,
           currentBlock: widget.coolDownData);
       if (index - widget.warmUpData.length - widget.trainingData.length ==
@@ -179,6 +190,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
 
   detailOfWorkoutFn(
       {required int index,
+      required currentPageIndex,
       required Map<ExerciseDetailModel, ExerciseModel> currentBlock}) {
     data = currentBlock.entries.toList()[index].value;
 
@@ -207,9 +219,10 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
       for (var element
           in currentBlock.entries.toList()[index].key.goalTargets!) {
         if (element.metric == Metric.duration) {
-          repsOrTimeText = "Time";
+          repsOrTimeText = "TIME";
+          totalTime = element.value!.toInt();
           timeLinearProgressNotifier.value = 0;
-          repsOrTimeNotifier.value = element.value!.toInt();
+          timeNotifier.value = element.value!.toInt();
           if (workoutCountDownTimer?.isActive ?? false) {
             workoutCountDownTimer?.cancel();
             if (_timer?.isActive ?? false) {
@@ -225,11 +238,37 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
               _timer?.cancel();
             }
           }
-          repsOrTimeText = "Reps";
+          repsOrTimeText = "REPS";
+          totalTime = 0;
           timeLinearProgressNotifier.value = 0;
-          repsOrTimeNotifier.value = 0;
+          timeNotifier.value = 0;
+          reps = element.value?.toInt() ?? 0;
         }
       }
+    } else if (currentBlock.entries.toList()[index].key.exerciseCategoryName ==
+        ItemType.circuitTime) {
+      isPlaying.value = true;
+
+      if (workoutCountDownTimer?.isActive ?? false) {
+        workoutCountDownTimer?.cancel();
+        if (_timer?.isActive ?? false) {
+          _timer?.cancel();
+        }
+      }
+
+      repsOrTimeText = "TIME";
+      totalTime = currentBlock.entries.toList()[index].key.mainWork!.toInt();
+      timeLinearProgressNotifier.value = 0;
+      timeNotifier.value =
+          currentBlock.entries.toList()[index].key.mainWork!.toInt();
+      if (workoutCountDownTimer?.isActive ?? false) {
+        workoutCountDownTimer?.cancel();
+        if (_timer?.isActive ?? false) {
+          _timer?.cancel();
+        }
+      }
+      workoutCountDownTimerFn(currentPageIndex);
+      reps = 0;
     } else {
       isPlaying.value = true;
       if (workoutCountDownTimer?.isActive ?? false) {
@@ -239,10 +278,11 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
         }
       }
       currentBlock.entries.toList()[index].key.mainSets;
-      repsOrTimeText = "Reps";
+      repsOrTimeText = "REPS";
+      totalTime = 0;
       timeLinearProgressNotifier.value = 0;
-      repsOrTimeNotifier.value =
-          currentBlock.entries.toList()[index].key.mainSets?.toInt() ?? 0;
+      timeNotifier.value = 0;
+      reps = 0;
     }
     if (currentBlock.entries
             .toList()[index]
@@ -254,16 +294,18 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
       //     currentBlock.entries.toList()[index].key.resistanceTargets;
       resistanceTargetsValue =
           currentBlock.entries.toList()[index].key.getResistanceTarget();
+    } else {
+      resistanceTargetsValue = {};
     }
   }
 
   workoutCountDownTimerFn(int index) {
     workoutCountDownTimer =
         Timer.periodic(const Duration(seconds: 1), (timer) async {
-      if (isPlaying.value && repsOrTimeNotifier.value > 0) {
-        repsOrTimeNotifier.value -= 1;
+      if (isPlaying.value && timeNotifier.value > 0) {
+        timeNotifier.value -= 1;
         timeLinearProgressNotifier.value += 1;
-      } else if (isPlaying.value && repsOrTimeNotifier.value == 0) {
+      } else if (isPlaying.value && timeNotifier.value == 0) {
         secondsCountDown.value = 5;
         isPlaying.value = false;
         timerFn(index);
@@ -274,9 +316,6 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
 
   @override
   void dispose() {
-    if (_mainTimer?.isActive == true) {
-      _mainTimer?.cancel();
-    }
     if (workoutCountDownTimer?.isActive == true) {
       workoutCountDownTimer?.cancel();
     }
@@ -328,7 +367,8 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
   String infoHeader = '';
   double _height = 40;
   double _width = 40;
-  ValueNotifier<int> repsOrTimeNotifier = ValueNotifier(0);
+  ValueNotifier<int> timeNotifier = ValueNotifier(0);
+  int reps = 0;
   ValueNotifier<int> timeLinearProgressNotifier = ValueNotifier(0);
   Timer? workoutCountDownTimer;
   ValueNotifier<bool> isPlaying = ValueNotifier(true);
@@ -340,46 +380,42 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
     return WillPopScope(
       onWillPop: () async {
         // isPlaying.value = false;
-        bool sholdPop = await showDialog(
-          // barrierDismissible: false,
+        bool sholdPop = await showAdaptiveDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
-            return AlertDialog(
-              title: Text("Quit workout?"),
-              content: Text("You will not be able to resume the workout."),
-              actions: [
-                TextButton(
-                  child: Text("Cancel"),
-                  onPressed: () {
-                    context.popPage(result: false);
-                  },
-                ),
-                TextButton(
-                  child: Text(
-                    "Quit",
-                    style: TextStyle(color: Colors.red),
-                  ),
-                  onPressed: () {
-                    context.popPage(result: true);
-                  },
-                ),
-              ],
-            );
+            return const ShowAlertDialogWidget(
+                title: "Quit workout?",
+                body: "You will not be able to resume the workout.",
+                btnText1: "Cancel",
+                btnText2: "Quit");
           },
         );
-        return Future.value(sholdPop);
+        if (sholdPop == true) {
+          if (widget.warmUpData.isEmpty &&
+              widget.trainingData.isNotEmpty &&
+              widget.coolDownData.isEmpty) {
+            context.multiPopPage(popPageCount: 2);
+          } else if (widget.warmUpData.isNotEmpty &&
+              widget.trainingData.isEmpty &&
+              widget.coolDownData.isEmpty) {
+            context.multiPopPage(popPageCount: 2);
+          } else {
+            context.multiPopPage(popPageCount: 3);
+          }
+        }
+        return Future.value(false);
       },
       child: Scaffold(
         backgroundColor: AppColor.surfaceBackgroundColor,
         appBar: StartWorkoutHeaderWidget(
+          mainTimer: widget.mainTimer,
           warmUpData: widget.warmUpData,
           coolDownData: widget.coolDownData,
           trainingData: widget.trainingData,
-          sliderExercise2: sliderCoolDown,
           workoutModel: widget.workoutModel,
-          durationNotifier: durationNotifier,
           sliderCoolDown: sliderCoolDown,
-          sliderExercise: sliderTraining,
+          sliderTraining: sliderTraining,
           sliderWarmUp: sliderWarmUp,
           actionWidget: InkWell(
               onTap: () async {
@@ -389,10 +425,9 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                   useSafeArea: true,
                   isScrollControlled: true,
                   context: context,
-                  builder: (context) => WillPopScope(
-                    onWillPop: () {
+                  builder: (context) => PopScope(
+                    onPopInvoked: (didPop) {
                       isPlaying.value = true;
-                      return Future.value(true);
                     },
                     child: OverviewBottomSheet(
                       warmUpData: widget.warmUpData,
@@ -438,11 +473,18 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                         getCurrentExerciseViewFn(pageController.page!.toInt());
                         setState(() {});
                       },
+                      warmupHeader: widget.warmUpData.isNotEmpty,
+                      coolDownHeader: false,
+                      trainingHeaer: widget.warmUpData.isEmpty ? true : false,
+                      warmUpWorkoutComplete: false,
+                      trainingWorkoutComplete: false,
+                      coolDownWorkoutComplete: false,
                     ),
                   ),
                 );
               },
-              child: const Icon(Icons.interests_outlined)),
+              child: SvgPicture.asset(AppAssets.exploreIcon)),
+          durationNotifier: widget.durationNotifier,
         ),
         body: Stack(
           fit: StackFit.expand,
@@ -456,6 +498,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
               itemBuilder: (context, index) {
                 pageIndex = index;
                 return Column(
+                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     8.height(),
@@ -470,6 +513,8 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                         InkWell(
                             onTap: () async {
                               await showModalBottomSheet(
+                                backgroundColor:
+                                    AppColor.surfaceBackgroundColor,
                                 useSafeArea: true,
                                 isScrollControlled: true,
                                 context: context,
@@ -485,14 +530,8 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                             ))
                       ],
                     ),
-                    Flexible(
-                      flex: repsOrTimeText == "Time" && trainerNotes == ""
-                          ? 3
-                          : repsOrTimeText == "Time"
-                              ? 2
-                              : trainerNotes == ""
-                                  ? 3
-                                  : 4,
+                    Expanded(
+                      // flex: 4,
                       child: ValueListenableBuilder<bool>(
                           valueListenable: isPlaying,
                           builder: (context, value, child) {
@@ -512,313 +551,308 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                         : data?.mapImage?.url ?? ''));
                           }),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          data?.name ?? "",
-                          style: AppTypography.title24XL,
-                        ),
-                        8.width(),
-                        InkWell(
-                            onTap: () async {
-                              await showModalBottomSheet(
-                                useSafeArea: true,
-                                isScrollControlled: true,
-                                context: context,
-                                builder: (context) => DetailWorkoutBottomSheet(
-                                    exerciseModel: data as ExerciseModel),
-                              );
-                            },
-                            child: SvgPicture.asset(
-                              AppAssets.infoIcon,
-                              color: AppColor.textPrimaryColor,
-                            ))
-                      ],
+                    Padding(
+                      padding: resistanceTargetsValue.isEmpty &&
+                              trainerNotes.trim() == ""
+                          ? const EdgeInsets.only(bottom: 140)
+                          : resistanceTargetsValue.isEmpty &&
+                                  trainerNotes.trim() != ""
+                              ? const EdgeInsets.only(bottom: 87)
+                              : EdgeInsets.zero,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            data?.name ?? "",
+                            style: AppTypography.title24XL
+                                .copyWith(color: AppColor.textEmphasisColor),
+                          ),
+                          8.width(),
+                          InkWell(
+                              onTap: () async {
+                                await showModalBottomSheet(
+                                  backgroundColor:
+                                      AppColor.surfaceBackgroundColor,
+                                  useSafeArea: true,
+                                  isScrollControlled: true,
+                                  context: context,
+                                  builder: (context) =>
+                                      DetailWorkoutBottomSheet(
+                                          exerciseModel: data as ExerciseModel),
+                                );
+                              },
+                              child: SvgPicture.asset(
+                                AppAssets.infoIcon,
+                                color: AppColor.textEmphasisColor,
+                              ))
+                        ],
+                      ),
                     ),
+
                     if (resistanceTargetsValue.isNotEmpty)
                       Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                  color: AppColor.surfaceBackgroundColor,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                      color: AppColor.borderSecondaryColor,
-                                      width: 2)),
-                              child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children:
-                                      resistanceTargetsValue.entries.map((e) {
-                                    return RichText(
-                                        text: TextSpan(children: [
-                                      if (e.key.contains("Range") ||
-                                          resistanceTargetsValue
-                                                      .entries.length >
-                                                  1 &&
-                                              resistanceTargetsValue.entries
-                                                      .toList()[0]
-                                                      .key !=
-                                                  e.key)
-                                        TextSpan(
-                                            text: '  •  ',
-                                            style: AppTypography.title24XL
+                        padding: EdgeInsets.only(
+                            top: 8,
+                            bottom: trainerNotes.trim() != "" ? 0 : 100),
+                        child: Wrap(
+                          children: resistanceTargetsValue.entries
+                              .map((e) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                      color: AppColor.surfaceBackgroundColor,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                          color: AppColor.borderSecondaryColor,
+                                          width: 2)),
+                                  child: RichText(
+                                      text: TextSpan(children: [
+                                    TextSpan(
+                                        text: e.value,
+                                        style: AppTypography.title24XL.copyWith(
+                                            color: AppColor.textEmphasisColor)),
+                                    TextSpan(
+                                        text: " ${e.key}",
+                                        style: AppTypography.label14SM.copyWith(
+                                            color: AppColor.textSubTitleColor))
+                                  ]))))
+                              .toList(),
+                        ),
+                      ),
+
+                    if (trainerNotes.trim() != "")
+                      Container(
+                          margin: EdgeInsets.only(
+                              top: resistanceTargetsValue.isNotEmpty ? 18 : 0,
+                              bottom: 24),
+                          alignment: Alignment.centerRight,
+                          child: AnimatedSize(
+                            alignment: Alignment.centerRight,
+                            duration: const Duration(seconds: 1),
+                            curve: Curves.fastOutSlowIn,
+                            child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 32),
+                                padding: padding,
+                                height: _height,
+                                width: _width,
+                                decoration: BoxDecoration(
+                                  color: AppColor.buttonTertiaryColor,
+                                  borderRadius: _border,
+                                ),
+                                child: _width == 40
+                                    ? InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            _width = context.dynamicWidth;
+                                            padding = const EdgeInsets.all(16);
+                                            _border = BorderRadius.circular(16);
+                                            _height = 80;
+                                          });
+                                        },
+                                        child: SvgPicture.asset(
+                                            AppAssets.personNotesIcon))
+                                    : Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Trainer notes',
+                                                style: AppTypography.title14XS
+                                                    .copyWith(
+                                                        color: AppColor
+                                                            .textPrimaryColor),
+                                              ),
+                                              InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      _height = 40;
+                                                      _width = 40;
+                                                      _border =
+                                                          BorderRadius.circular(
+                                                              20);
+                                                      padding =
+                                                          const EdgeInsets.all(
+                                                              6);
+                                                    });
+                                                  },
+                                                  child: Icon(
+                                                    Icons.close_rounded,
+                                                    color: AppColor
+                                                        .textPrimaryColor,
+                                                  ))
+                                            ],
+                                          ),
+                                          Text(
+                                            trainerNotes,
+                                            style: AppTypography.paragraph14MD
                                                 .copyWith(
                                                     color: AppColor
-                                                        .surfaceBrandDarkColor)),
-                                      TextSpan(
-                                          text: e.value,
+                                                        .textPrimaryColor),
+                                          )
+                                        ],
+                                      )),
+                          )),
+                    // const Spacer(),
+                    Container(
+                      margin: const EdgeInsets.only(
+                          left: 10, right: 10, bottom: 12),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                      width: 1.5,
+                                      color: AppColor.borderSecondaryColor)),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        // left: 8, right: 8
+                                        ),
+                                    width: 70,
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          currentROund.toString(),
                                           style: AppTypography.title24XL
                                               .copyWith(
                                                   color: AppColor
-                                                      .surfaceBrandDarkColor)),
-                                      TextSpan(
-                                          text: " ${e.key}",
-                                          style: AppTypography.label14SM
+                                                      .textEmphasisColor),
+                                        ),
+                                        1.width(),
+                                        Text(
+                                          '/',
+                                          style: AppTypography.title18LG
                                               .copyWith(
                                                   color: AppColor
-                                                      .textSubTitleColor))
-                                    ]));
-                                  }).toList()))),
-                    if (trainerNotes.trim() != "")
-                      Flexible(
-                        child: Align(
-                            alignment: Alignment.centerRight,
-                            child: AnimatedSize(
-                              alignment: Alignment.centerRight,
-                              duration: const Duration(seconds: 1),
-                              curve: Curves.fastOutSlowIn,
-                              child: Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 32),
-                                  padding: padding,
-                                  height: _height,
-                                  width: _width,
-                                  decoration: BoxDecoration(
-                                    color: AppColor.buttonTertiaryColor,
-                                    borderRadius: _border,
-                                  ),
-                                  child: _width == 40
-                                      ? InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              _width = context.dynamicWidth;
-                                              padding =
-                                                  const EdgeInsets.all(16);
-                                              _border =
-                                                  BorderRadius.circular(16);
-                                              _height = 80;
-                                            });
-                                          },
-                                          child: SvgPicture.asset(
-                                              AppAssets.personNotesIcon))
-                                      : Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Trainer notes',
-                                                  style: AppTypography.title14XS
-                                                      .copyWith(
-                                                          color: AppColor
-                                                              .textPrimaryColor),
-                                                ),
-                                                InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        _height = 40;
-                                                        _width = 40;
-                                                        _border = BorderRadius
-                                                            .circular(20);
-                                                        padding =
-                                                            const EdgeInsets
-                                                                .all(6);
-                                                      });
-                                                    },
-                                                    child: Icon(
-                                                      Icons.close_rounded,
-                                                      color: AppColor
-                                                          .textPrimaryColor,
-                                                    ))
-                                              ],
-                                            ),
-                                            Text(
-                                              trainerNotes,
-                                              style: AppTypography.paragraph14MD
-                                                  .copyWith(
-                                                      color: AppColor
-                                                          .textPrimaryColor),
-                                            )
-                                          ],
-                                        )),
-                            )),
-                      ),
-                    18.height(),
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 10,
-                          right: 10,
-                        ),
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                        width: 1.5,
-                                        color: AppColor.borderSecondaryColor)),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left: context.dynamicWidth * 0.05,
-                                        right: context.dynamicWidth * 0.05,
-                                      ),
-                                      child: RichText(
-                                          text: TextSpan(children: [
-                                        TextSpan(
-                                            text: currentROund.toString(),
-                                            style: AppTypography.title24XL
-                                                .copyWith(
-                                                    color: AppColor
-                                                        .textEmphasisColor)),
-                                        TextSpan(
-                                            text: '/',
-                                            style: AppTypography.title14XS
-                                                .copyWith(
-                                                    color: AppColor
-                                                        .textSubTitleColor)),
-                                        TextSpan(
-                                            text: totalRounds.toString(),
-                                            style: AppTypography.title24XL
-                                                .copyWith(
-                                                    color: AppColor
-                                                        .textEmphasisColor))
-                                      ])),
-                                    ),
-                                    Flexible(
-                                      child: VerticalDivider(
-                                        color: AppColor.borderSecondaryColor,
-                                        thickness: 1.5,
-                                      ),
-                                    ),
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                          left: context.dynamicWidth * 0.01,
-                                          right: context.dynamicWidth * 0.01,
+                                                      .textSubTitleColor),
                                         ),
-                                        child: ValueListenableBuilder<int>(
-                                            valueListenable: repsOrTimeNotifier,
-                                            builder: (_, value, child) {
-                                              return value != 0
-                                                  ? mordernDurationMSTextWidget(
-                                                      clockTimer: Duration(
-                                                          seconds: value))
-                                                  : Text(
-                                                      value.toString(),
-                                                      style: AppTypography
-                                                          .title60_6XL
-                                                          .copyWith(
-                                                              color: AppColor
-                                                                  .textEmphasisColor),
-                                                    );
-                                            })),
-                                    Flexible(
-                                      child: VerticalDivider(
-                                        color: AppColor.borderSecondaryColor,
-                                        thickness: 1.5,
-                                      ),
+                                        1.width(),
+                                        Text(
+                                          totalRounds.toString(),
+                                          style: AppTypography.title24XL
+                                              .copyWith(
+                                                  color: AppColor
+                                                      .textEmphasisColor),
+                                        ),
+                                      ],
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left: context.dynamicWidth * 0.05,
-                                        right: context.dynamicWidth * 0.05,
-                                      ),
-                                      child: RichText(
-                                          text: TextSpan(children: [
-                                        TextSpan(
-                                            text: currentExerciseInBlock
-                                                .toString(),
+                                  ),
+                                  SizedBox(
+                                    height: 100,
+                                    child: VerticalDivider(
+                                      color: AppColor.borderSecondaryColor,
+                                      thickness: 1.5,
+                                    ),
+                                  ),
+                                  Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: ValueListenableBuilder<bool>(
+                                          valueListenable: isPlaying,
+                                          builder: (_, isPlayvalue, child) {
+                                            return ValueListenableBuilder<int>(
+                                                valueListenable: timeNotifier,
+                                                builder: (_, value, child) {
+                                                  return value != 0
+                                                      ? mordernDurationMSTextWidget(
+                                                          clockTimer: Duration(
+                                                              seconds: value),
+                                                          color: isPlayvalue
+                                                              ? AppColor
+                                                                  .textEmphasisColor
+                                                              : AppColor
+                                                                  .textPrimaryColor)
+                                                      : Text(
+                                                          reps.toString(),
+                                                          style: AppTypography
+                                                              .title60_6XL
+                                                              .copyWith(
+                                                                  color: AppColor
+                                                                      .textEmphasisColor),
+                                                        );
+                                                });
+                                          })),
+                                  SizedBox(
+                                    height: 100,
+                                    child: VerticalDivider(
+                                      color: AppColor.borderSecondaryColor,
+                                      thickness: 1.5,
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        // left: 12, right: 16
+                                        ),
+                                    width: 70,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(currentExerciseInBlock.toString(),
                                             style: AppTypography.title24XL
                                                 .copyWith(
                                                     color: AppColor
                                                         .textEmphasisColor)),
-                                        TextSpan(
-                                            text: '/',
-                                            style: AppTypography.title14XS
+                                        1.width(),
+                                        Text('/',
+                                            style: AppTypography.title18LG
                                                 .copyWith(
                                                     color: AppColor
                                                         .textSubTitleColor)),
-                                        TextSpan(
-                                            text: totalExerciseInBlock
-                                                .toString(),
+                                        1.width(),
+                                        Text(totalExerciseInBlock.toString(),
                                             style: AppTypography.title24XL
                                                 .copyWith(
-                                                    color: AppColor
-                                                        .textEmphasisColor))
-                                      ])),
+                                              color: AppColor.textEmphasisColor,
+                                            ))
+                                      ],
                                     ),
-                                  ],
-                                )),
-                            Positioned(
-                              top: -8,
-                              left: 10,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 2),
-                                decoration: BoxDecoration(
-                                    color: AppColor.surfaceBackgroundColor,
-                                    border: Border.all(
-                                      color: AppColor.borderSecondaryColor,
-                                    ),
-                                    borderRadius: BorderRadius.circular(4)),
-                                child: Text(
-                                  'ROUND',
-                                  style: AppTypography.label10XXSM.copyWith(
-                                      color: AppColor.textPrimaryColor),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              top: -8,
-                              left: 0,
-                              right: 0,
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 2),
-                                  decoration: BoxDecoration(
-                                      color: AppColor.surfaceBackgroundColor,
-                                      border: Border.all(
-                                        color: AppColor.borderSecondaryColor,
-                                      ),
-                                      borderRadius: BorderRadius.circular(4)),
-                                  child: Text(
-                                    repsOrTimeText,
-                                    style: AppTypography.label10XXSM.copyWith(
-                                        color: AppColor.textPrimaryColor),
                                   ),
-                                ),
+                                ],
+                              )),
+                          Positioned(
+                            top: -8,
+                            left: 12,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                  color: AppColor.surfaceBackgroundColor,
+                                  border: Border.all(
+                                    color: AppColor.borderSecondaryColor,
+                                  ),
+                                  borderRadius: BorderRadius.circular(4)),
+                              child: Text(
+                                'ROUND',
+                                style: AppTypography.label10XXSM
+                                    .copyWith(color: AppColor.textPrimaryColor),
                               ),
                             ),
-                            Positioned(
-                              top: -8,
-                              right: 10,
+                          ),
+                          Positioned(
+                            top: -8,
+                            left: 12,
+                            right: 12,
+                            child: Align(
+                              alignment: Alignment.center,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 2),
+                                    horizontal: 4, vertical: 2),
                                 decoration: BoxDecoration(
                                     color: AppColor.surfaceBackgroundColor,
                                     border: Border.all(
@@ -826,49 +860,63 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                     ),
                                     borderRadius: BorderRadius.circular(4)),
                                 child: Text(
-                                  'EXERCISE',
+                                  repsOrTimeText,
                                   style: AppTypography.label10XXSM.copyWith(
                                       color: AppColor.textPrimaryColor),
                                 ),
                               ),
-                            )
-                          ],
-                        ),
+                            ),
+                          ),
+                          Positioned(
+                            top: -8,
+                            right: 12,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                  color: AppColor.surfaceBackgroundColor,
+                                  border: Border.all(
+                                    color: AppColor.borderSecondaryColor,
+                                  ),
+                                  borderRadius: BorderRadius.circular(4)),
+                              child: Text(
+                                'EXERCISE',
+                                style: AppTypography.label10XXSM
+                                    .copyWith(color: AppColor.textPrimaryColor),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
-                    35.height(),
-                    if (repsOrTimeText == "Time")
-                      Flexible(
-                        flex: 1,
+                    if (repsOrTimeText.toLowerCase().contains("time"))
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 24,
+                          right: 24,
+                        ),
                         child: ValueListenableBuilder<int>(
                             valueListenable: timeLinearProgressNotifier,
                             builder: (_, value1, child) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TweenAnimationBuilder(
-                                  duration: const Duration(seconds: 1),
-                                  tween: Tween(begin: 0.0, end: value1),
-                                  builder: (_, value, child) =>
-                                      LinearProgressIndicator(
-                                          minHeight: 10,
-                                          color: AppColor
-                                              .surfaceBackgroundSecondaryColor,
-                                          backgroundColor: AppColor
-                                              .surfaceBackgroundSecondaryColor,
-                                          valueColor: AlwaysStoppedAnimation(
-                                            AppColor.linkSecondaryColor,
-                                          ),
-                                          value: value.toDouble() / 30),
+                              return TweenAnimationBuilder(
+                                duration: const Duration(seconds: 1),
+                                tween: Tween(begin: 0.0, end: value1),
+                                builder: (_, value, child) =>
+                                    CustomSLiderWidget(
+                                  backgroundColor:
+                                      AppColor.surfaceBackgroundSecondaryColor,
+                                  valueColor: AppColor.linkSecondaryColor,
+                                  sliderValue: value.toDouble(),
+                                  division: totalTime,
                                 ),
                               );
                             }),
                       ),
-                    const Spacer()
+                    bottomWidget(context),
                   ],
                 );
               },
             ),
-            bottomWidget(context),
             ValueListenableBuilder<bool>(
                 valueListenable: isPlaying,
                 builder: (context, value, child) {
@@ -965,23 +1013,29 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
     );
   }
 
-  Align bottomWidget(
+  bottomWidget(
     BuildContext context,
   ) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 24, right: 24, bottom: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                    child: SizedBox(
-                  height: 50,
+    return Padding(
+      padding: EdgeInsets.only(
+          left: 24,
+          right: 24,
+          bottom: 20,
+          top: repsOrTimeText.toLowerCase().contains("time") ? 10 : 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            // mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
                   child: CustomElevatedButton(
+                      radius: 16,
                       btnColor: AppColor.buttonTertiaryColor,
                       onPressed: () async {
                         await pageController.animateToPage(
@@ -991,59 +1045,82 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                         getCurrentExerciseViewFn(pageController.page!.toInt());
                         setState(() {});
                       },
+                      childPadding: EdgeInsets.symmetric(
+                          horizontal: context.dynamicWidth * 0.03,
+                          vertical: 16),
                       child: Text('Prev',
-                          style: AppTypography.label18LG
+                          style: AppTypography.label16MD
                               .copyWith(color: AppColor.buttonSecondaryColor))),
-                )),
-                if (repsOrTimeText == "Time") ...[
-                  16.width(),
-                  Expanded(
-                      child: ValueListenableBuilder<bool>(
-                          valueListenable: isPlaying,
-                          builder: (context, value, child) {
-                            return SizedBox(
-                              height: 50,
-                              child: CustomElevatedButton(
-                                  btnColor: value == true
-                                      ? AppColor.buttonTertiaryColor
-                                      : null,
-                                  onPressed: () {
-                                    isPlaying.value = !isPlaying.value;
-                                  },
-                                  child: value == true
-                                      ? Icon(
-                                          Icons.pause,
-                                          color: AppColor.buttonSecondaryColor,
-                                          size: 40,
-                                        )
-                                      : Icon(
-                                          Icons.play_arrow_rounded,
-                                          color: AppColor.buttonLabelColor,
-                                          size: 40,
-                                        )),
-                            );
-                          })),
-                ],
-                16.width(),
+                ),
+              ),
+              if (repsOrTimeText.toLowerCase().contains("time")) ...[
+                8.width(),
                 Expanded(
-                    child: SizedBox(
-                  height: 50,
+                  flex: 2,
+                  child: ValueListenableBuilder<bool>(
+                      valueListenable: isPlaying,
+                      builder: (_, value, child) {
+                        return CustomElevatedButton(
+                          childPadding: const EdgeInsets.only(
+                              // right: context.dynamicWidth * 0.034,
+                              // left: context.dynamicWidth * 0.03,
+                              top: 12,
+                              bottom: 12),
+                          btnColor: value == true
+                              ? AppColor.buttonTertiaryColor
+                              : null,
+                          onPressed: () {
+                            isPlaying.value = !isPlaying.value;
+                          },
+                          child: value == true
+                              ? Icon(
+                                  Icons.pause,
+                                  color: AppColor.buttonSecondaryColor,
+                                  size: 32,
+                                )
+                              : Icon(
+                                  Icons.play_arrow_rounded,
+                                  color: AppColor.buttonLabelColor,
+                                  size: 32,
+                                ),
+                        );
+                      }),
+                ),
+                8.width(),
+              ],
+              // 16.width(),
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8),
                   child: CustomElevatedButton(
+                      radius: 16,
+                      childPadding: EdgeInsets.symmetric(
+                          horizontal: context.dynamicWidth * 0.03,
+                          vertical: 16),
                       onPressed: () async {
                         if (nextElementText != '') {
-                          await pageController.animateToPage(
-                              pageController.page!.toInt() + 1,
-                              duration: const Duration(milliseconds: 100),
-                              curve: Curves.easeIn);
+                          if (nextElementText == "Training") {
+                            await getReadyFn(
+                                context, "Training", widget.trainingData);
+                          } else if (nextElementText == "Cool Down") {
+                            await getReadyFn(
+                                context, "Cool Dwon", widget.coolDownData);
+                          } else {
+                            await pageController.animateToPage(
+                                pageController.page!.toInt() + 1,
+                                duration: const Duration(milliseconds: 100),
+                                curve: Curves.easeIn);
 
-                          getCurrentExerciseViewFn(
-                              pageController.page!.toInt());
-                          setState(() {});
+                            getCurrentExerciseViewFn(
+                                pageController.page!.toInt());
+                            setState(() {});
+                          }
                         } else {
                           isPlaying.value = false;
                           await showModalBottomSheet(
                             useSafeArea: true,
-                            isScrollControlled: false,
+                            isScrollControlled: true,
                             isDismissible: false,
                             enableDrag: false,
                             context: context,
@@ -1053,46 +1130,102 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                 return Future.value(true);
                               },
                               child: DoneWorkoutSheet(
-                                type: '',
+                                type:
+                                    widget.fitnessGoalModel?.name.toString() ??
+                                        "",
                                 workoutName:
                                     widget.workoutModel.title.toString(),
-                                totalDuration: durationNotifier.value,
+                                totalDuration: widget.durationNotifier.value,
                               ),
                             ),
                           );
                         }
                       },
-                      child: Text(nextElementText == "" ? 'Done' : "Next")),
-                ))
-              ],
-            ),
-            if (nextElementText != '')
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(
-                  'Up next: $nextElementText',
-                  style: AppTypography.label12XSM
-                      .copyWith(color: AppColor.textPrimaryColor),
+                      child: Text(
+                        nextElementText == "" ? 'Done' : "Next",
+                        style: AppTypography.label16MD
+                            .copyWith(color: AppColor.textInvertEmphasis),
+                      )),
                 ),
               )
-          ],
-        ),
+            ],
+          ),
+          if (nextElementText != '')
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                'Up next: $nextElementText',
+                style: AppTypography.label12XSM
+                    .copyWith(color: AppColor.textPrimaryColor),
+              ),
+            )
+        ],
       ),
     );
   }
 
-  mordernDurationHMSTextWidget({required Duration clockTimer}) {
-    return Text(
-      "${clockTimer.inHours.remainder(60).toString()}:${clockTimer.inMinutes.remainder(60).toString().padLeft(2, '0')}:${clockTimer.inSeconds.remainder(60).toString().padLeft(2, '0')}",
-      style: AppTypography.label14SM.copyWith(color: AppColor.textPrimaryColor),
-    );
+  Future<void> getReadyFn(BuildContext context, String title,
+      Map<ExerciseDetailModel, ExerciseModel> currentListData) async {
+    isPlaying.value = false;
+    await showModalBottomSheet(
+      useSafeArea: true,
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return PopScope(
+          onPopInvoked: (didPop) {
+            if (isPlaying.value == false) {
+              isPlaying.value = true;
+            }
+          },
+          child: UpNextSheetWidget(
+            isFromNext: true,
+            workoutModel: widget.workoutModel,
+            warmUpData: widget.warmUpData,
+            trainingData: widget.trainingData,
+            coolDownData: widget.coolDownData,
+            equipmentData: widget.equipmentData,
+            durationNotifier: widget.durationNotifier,
+            fitnessGoalModel: widget.fitnessGoalModel,
+            title: title,
+            currentListData: currentListData,
+            sliderWarmUp: sliderWarmUp,
+            sliderTraining: sliderTraining,
+            sliderCoolDown: sliderCoolDown,
+            mainTimer: widget.mainTimer,
+          ),
+        );
+      },
+    ).then((value) async {
+      if (value == false) {
+        await pageController.animateToPage(0,
+            duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
+
+        getCurrentExerciseViewFn(0);
+        setState(() {});
+      } else if (value == true) {
+        await pageController.animateToPage(pageController.page!.toInt() + 1,
+            duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
+
+        getCurrentExerciseViewFn(pageController.page!.toInt());
+        setState(() {});
+      }
+    });
   }
 
-  Text mordernDurationMSTextWidget({required Duration clockTimer}) {
+  // mordernDurationHMSTextWidget({required Duration clockTimer}) {
+  //   return Text(
+  //     "${clockTimer.inHours.remainder(60).toString()}:${clockTimer.inMinutes.remainder(60).toString().padLeft(2, '0')}:${clockTimer.inSeconds.remainder(60).toString().padLeft(2, '0')}",
+  //     style: AppTypography.label14SM.copyWith(color: AppColor.textPrimaryColor),
+  //   );
+  // }
+
+  Text mordernDurationMSTextWidget(
+      {required Duration clockTimer, Color? color}) {
     return Text(
       "${clockTimer.inMinutes.toString().padLeft(2, '0')}:${clockTimer.inSeconds.remainder(60).toString().padLeft(2, '0')}",
-      style:
-          AppTypography.title60_6XL.copyWith(color: AppColor.textEmphasisColor),
+      style: AppTypography.title60_6XL
+          .copyWith(color: color ?? AppColor.textEmphasisColor),
     );
   }
 }

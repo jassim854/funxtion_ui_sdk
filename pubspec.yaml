@@ -1,7 +1,7 @@
 name: ui_tool_kit
 description: A new Flutter package project.
 version: 0.0.1
-homepage:
+homepage: https://github.com/Evolverstech/funxtion-ui-sdk.git
 
 environment:
   sdk: '>=2.19.0 <3.0.0'
@@ -11,13 +11,12 @@ dependencies:
   flutter:
     sdk: flutter
   funxtion: 
-    path: /Users/pro/Desktop/flutter projects/flutter_package/funxtion_sdk/
+    path: /Users/pro/Desktop/Flutter Packages/funxtion_sdk/
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.1.1
   flutter_svg: ^2.0.5
   cached_network_image: ^3.2.3
-  
   # video_cached_player: ^2.4.9+1
   intl: ^0.18.1
   # video_player:
@@ -31,6 +30,9 @@ dependencies:
   sliver_tools: ^0.2.12
   video_player: ^2.7.2
   hive_generator: ^2.0.1
+  carousel_slider: ^4.2.1
+  # sensors_plus: ^4.0.2
+  
 
 
 
@@ -69,47 +71,16 @@ flutter:
     - family: Poppins
       fonts:
         - asset: assets/fonts/Poppins-Black.ttf
-        - asset: assets/fonts/Poppins-BlackItalic.ttf
-          style: italic
         - asset: assets/fonts/Poppins-Bold.ttf
-          weight: 700  
-        - asset: assets/fonts/Poppins-BoldItalic.ttf
-          weight: 700  
-          style: italic
         - asset: assets/fonts/Poppins-ExtraBold.ttf
-          weight: 800  
-        - asset: assets/fonts/Poppins-ExtraBoldItalic.ttf
-          weight: 800  
-          style: italic
         - asset: assets/fonts/Poppins-ExtraLight.ttf
-          weight: 200  
-        - asset: assets/fonts/Poppins-ExtraLightItalic.ttf
-          weight: 200  
-          style: italic
-        - asset: assets/fonts/Poppins-Italic.ttf
-          style: italic 
-        - asset: assets/fonts/Poppins-Light.ttf
-          weight: 300      
-        - asset: assets/fonts/Poppins-LightItalic.ttf
-          weight: 300  
-          style: italic 
-        - asset: assets/fonts/Poppins-Medium.ttf  
-          weight: 500       
-        - asset: assets/fonts/Poppins-MediumItalic.ttf
-          weight: 500  
-          style: italic         
-        - asset: assets/fonts/Poppins-Regular.ttf
-          weight: 400  
-        - asset: assets/fonts/Poppins-SemiBold.ttf
-          weight: 600        
-        - asset: assets/fonts/Poppins-SemiBoldItalic.ttf
-          weight: 600   
-          style: italic         
+        - asset: assets/fonts/Poppins-Light.ttf           
+        - asset: assets/fonts/Poppins-Medium.ttf                    
+        - asset: assets/fonts/Poppins-Regular.ttf       
+        - asset: assets/fonts/Poppins-SemiBold.ttf                      
         - asset: assets/fonts/Poppins-Thin.ttf
-          weight: 100                    
-        - asset: assets/fonts/Poppins-ThinItalic.ttf
-          weight: 100  
-          style: italic           
+                 
+          
                                                                                                               
   #   - family: Trajan Pro
   #     fonts:

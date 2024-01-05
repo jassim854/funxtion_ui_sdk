@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:funxtion/funxtion_sdk.dart';
+import 'package:hive/hive.dart';
+import 'package:ui_tool_kit/src/helper/boxes.dart';
 import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
 
 import 'package:ui_tool_kit/ui_tool_kit.dart';
@@ -10,19 +12,20 @@ import 'package:sliver_tools/sliver_tools.dart';
 
 class WorkoutDetailView extends StatefulWidget {
   final String id;
-  final String? trainingPlanName;
+
   final FollowTrainingplanModel? followTrainingplanModel;
-  const WorkoutDetailView(
-      {super.key,
-      required this.id,
-      this.followTrainingplanModel,
-      this.trainingPlanName});
+  const WorkoutDetailView({
+    super.key,
+    required this.id,
+    this.followTrainingplanModel,
+  });
 
   @override
   State<WorkoutDetailView> createState() => _WorkoutDetailViewState();
 }
 
 class _WorkoutDetailViewState extends State<WorkoutDetailView> {
+  Box<FollowTrainingplanModel>? _box;
   bool isLoadingNotifier = false;
   bool isNodData = false;
   late ScrollController scrollController;
@@ -46,11 +49,15 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   ValueNotifier<bool> trainingExpand = ValueNotifier(false);
   ValueNotifier<bool> coolDownExpand = ValueNotifier(false);
   ValueNotifier<bool> btnLoader = ValueNotifier(false);
+  ValueNotifier<bool> typeLoader = ValueNotifier(true);
+  List<ContentProvidersCategoryOnDemandModel> data = [];
+  List<EquipmentModel> equipmentData = [];
   Timer? _timer;
   @override
   void initState() {
+    _box = Boxes.getData();
     WorkoutDetailController.shouldBreakLoop = false;
-
+    checkData();
     scrollController = ScrollController()
       ..addListener(() {
         print(scrollController.offset);
@@ -67,6 +74,21 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     super.initState();
   }
 
+  checkData() {
+    if (warmUpLoader.value || trainingLoader.value || coolDownLoader.value) {
+      _timer = Timer.periodic(const Duration(milliseconds: 800), (_) async {
+        if (warmUpLoader.value ||
+            trainingLoader.value ||
+            coolDownLoader.value) {
+          btnLoader.value = true;
+        } else {
+          btnLoader.value = false;
+          _timer?.cancel();
+        }
+      });
+    }
+  }
+
   checkDataWarmUpTraining() {
     if (workoutData?.phases?[0].items?.isEmpty ?? false) {
       warmUpLoader.value = false;
@@ -81,8 +103,11 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   fetchData() async {
     isLoadingNotifier = true;
     isNodData = false;
-    WorkoutDetailController.equipmentData.value.clear();
 
+    CategoryListController.getCategoryTypeDataFn(
+      context,
+      typeLoader,
+    );
     WorkoutDetailController.getworkoutData(context, id: widget.id)
         .then((value) async {
       if (value != null &&
@@ -90,16 +115,18 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
           WorkoutDetailController.shouldBreakLoop == false) {
         isLoadingNotifier = false;
         workoutData = value;
+
         checkDataWarmUpTraining();
         setState(() {});
+
+        addCategoryData();
         if (workoutData?.phases?[0].items?.isNotEmpty == true &&
             WorkoutDetailController.shouldBreakLoop == false) {
-          await WorkoutDetailController.getWarmUpData(
-            context,
-            warmUpLoader: warmUpLoader,
-            warmupData: warmUpData,
-            workoutData: workoutData,
-          );
+          await WorkoutDetailController.getWarmUpData(context,
+              warmUpLoader: warmUpLoader,
+              warmupData: warmUpData,
+              workoutData: workoutData,
+              equipmentData: equipmentData);
         }
         if (workoutData?.goals?.isNotEmpty == true &&
             WorkoutDetailController.shouldBreakLoop == false) {
@@ -140,29 +167,29 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
 
         if (workoutData?.phases?[1].items?.isNotEmpty == true &&
             WorkoutDetailController.shouldBreakLoop == false) {
-          await WorkoutDetailController.getTrainingData(
-            context,
-            trainingLoader: trainingLoader,
-            workoutData: workoutData,
-            trainingData: trainingData,
-            // circuitTimeTrainingData: circuitTimeTrainingData,
-            // rftExerciseTrainingData: rftExerciseTrainingData,
-            // seExerciseTrainingData: seExerciseTrainingData,
-            // ssExerciseTrainingData: ssExerciseTrainingData,
-          );
+          await WorkoutDetailController.getTrainingData(context,
+              trainingLoader: trainingLoader,
+              workoutData: workoutData,
+              trainingData: trainingData,
+              equipmentData: equipmentData
+              // circuitTimeTrainingData: circuitTimeTrainingData,
+              // rftExerciseTrainingData: rftExerciseTrainingData,
+              // seExerciseTrainingData: seExerciseTrainingData,
+              // ssExerciseTrainingData: ssExerciseTrainingData,
+              );
         }
         if (workoutData?.phases?[2].items?.isNotEmpty == true &&
             WorkoutDetailController.shouldBreakLoop == false) {
-          await WorkoutDetailController.getCoolDownData(
-            context,
-            coolDownLoader: coolDownLoader,
-            workoutData: workoutData,
-            coolDownData: coolDownData,
-            // circuitTimeCoolDownData: circuitTimeCoolDownData,
-            // rftExerciseCoolDownData: rftExerciseCoolDownData,
-            // seExerciseCoolDownData: seExerciseCoolDownData,
-            // ssExerciseCoolDOwnData: ssExerciseCoolDOwnData,
-          );
+          await WorkoutDetailController.getCoolDownData(context,
+              coolDownLoader: coolDownLoader,
+              workoutData: workoutData,
+              coolDownData: coolDownData,
+              equipmentData: equipmentData
+              // circuitTimeCoolDownData: circuitTimeCoolDownData,
+              // rftExerciseCoolDownData: rftExerciseCoolDownData,
+              // seExerciseCoolDownData: seExerciseCoolDownData,
+              // ssExerciseCoolDOwnData: ssExerciseCoolDOwnData,
+              );
         }
         if (workoutData?.phases?[2].items?.isEmpty ?? false) {
           coolDownLoader.value = false;
@@ -195,6 +222,37 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     super.dispose();
   }
 
+  updateData() async {
+    for (var i = 0; i < _box!.values.length; i++) {
+      if (_box!.values.toList()[i].trainingplanId ==
+          widget.followTrainingplanModel?.trainingplanId) {
+        if (widget.followTrainingplanModel!.workoutCount >
+            _box!.values.toList()[i].workoutCount) {
+          if (_box!.values.toList()[i].outOfSequence == true) {
+            _box!.values.toList()[i].outOfSequence = false;
+            // element.save();
+          }
+          _box!.putAt(i, widget.followTrainingplanModel!);
+
+          log(widget.followTrainingplanModel!.workoutCount.toString());
+          log(_box!.values.toList()[i].workoutCount.toString());
+        }
+      }
+    }
+  }
+
+  addCategoryData() {
+    typeLoader.value = true;
+    for (var typeElement in workoutData!.types!) {
+      for (var j = 0; j < CategoryListController.categoryTypeData.length; j++) {
+        if (CategoryListController.categoryTypeData[j].id == typeElement) {
+          data.add(CategoryListController.categoryTypeData[j]);
+        }
+      }
+    }
+    typeLoader.value = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -218,8 +276,36 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                       workoutData?.mapImage?.url.toString() ??
                                           "",
                                   flexibleTitle: "${workoutData?.title}",
-                                  flexibleTitle2:
-                                      "${workoutData?.duration?.getTextAfterSymbol()} min • ${workoutData?.types.toString()}",
+
+                                  flexibleSubtitleWidget:
+                                      ValueListenableBuilder<bool>(
+                                          valueListenable: typeLoader,
+                                          builder: (_, value, child) {
+                                            return RichText(
+                                                text: TextSpan(
+                                                    style: AppTypography
+                                                        .label16MD
+                                                        .copyWith(
+                                                            color: AppColor
+                                                                .textInvertPrimaryColor),
+                                                    children: [
+                                                  TextSpan(
+                                                      text:
+                                                          "${workoutData?.duration?.getTextAfterSymbol()} min"),
+                                                  value == true
+                                                      ? WidgetSpan(
+                                                          child: BaseHelper
+                                                              .loadingWidget())
+                                                      : TextSpan(
+                                                          text:
+                                                              " • ${data.map((e) => e.name).join(',')}"),
+                                                  // TextSpan(
+                                                  //     text:
+                                                  //         " • ${widget.listTrainingPLanData[index].level}"),
+                                                ]));
+                                          }),
+                                  // flexibleTitle2:
+                                  //     "${workoutData?.duration?.getTextAfterSymbol()} min • ${workoutData!.types!.isNotEmpty ? data.map((e) => e.name).join(',') : ''}",
                                   value: value,
                                 ),
                                 if (workoutData?.description?.isNotEmpty ??
@@ -231,52 +317,73 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                 cardBoxWidget(context),
                                 SliverToBoxAdapter(
                                   child: Padding(
-                                    padding: const EdgeInsets.only(left: 20),
+                                    padding: const EdgeInsets.only(
+                                        left: 25, bottom: 8),
                                     child: Text(
                                       'Workout Overview',
-                                      style: AppTypography.title24XL.copyWith(
+                                      style: AppTypography.title18LG.copyWith(
                                           color: AppColor.textEmphasisColor),
                                     ),
                                   ),
                                 ),
                                 if (workoutData
                                         ?.phases?.first.items?.isNotEmpty !=
-                                    false)
+                                    false) ...[
                                   phasesBodyWidget(
                                       title: "Warmup",
                                       expandNotifier: warmUpExpand,
                                       loaderNotifier: warmUpLoader,
                                       dataList: warmUpData),
+                                ],
                                 if (workoutData?.phases?[1].items?.isNotEmpty !=
-                                    false)
-                                  SliverPadding(
-                                    padding: const EdgeInsets.only(
-                                      top: 12,
+                                    false) ...[
+                                  if (workoutData
+                                          ?.phases?.first.items?.isNotEmpty !=
+                                      false)
+                                    const SliverToBoxAdapter(
+                                      child: SizedBox(
+                                        height: 8,
+                                      ),
                                     ),
-                                    sliver: phasesBodyWidget(
-                                        title: "Training",
-                                        expandNotifier: trainingExpand,
-                                        loaderNotifier: trainingLoader,
-                                        dataList: trainingData),
-                                  ),
+                                  phasesBodyWidget(
+                                      title: "Training",
+                                      expandNotifier: trainingExpand,
+                                      loaderNotifier: trainingLoader,
+                                      dataList: trainingData),
+                                ],
                                 if (workoutData?.phases?[2].items?.isNotEmpty !=
-                                    false)
-                                  SliverPadding(
-                                    padding: const EdgeInsets.only(
-                                        top: 12, bottom: 20),
-                                    sliver: phasesBodyWidget(
-                                        title: "CoolDown",
-                                        expandNotifier: coolDownExpand,
-                                        loaderNotifier: coolDownLoader,
-                                        dataList: coolDownData),
+                                    false) ...[
+                                  if (workoutData
+                                              ?.phases?[1].items?.isNotEmpty !=
+                                          false ||
+                                      workoutData?.phases?.first.items
+                                              ?.isNotEmpty !=
+                                          false)
+                                    const SliverToBoxAdapter(
+                                      child: SizedBox(
+                                        height: 8,
+                                      ),
+                                    ),
+                                  phasesBodyWidget(
+                                      title: "CoolDown",
+                                      expandNotifier: coolDownExpand,
+                                      loaderNotifier: coolDownLoader,
+                                      dataList: coolDownData),
+                                ],
+                                const SliverToBoxAdapter(
+                                  child: SizedBox(
+                                    height: 8,
                                   ),
+                                )
                               ],
                             );
                           }),
                     ),
                   ],
                 ),
-      bottomNavigationBar: isLoadingNotifier == false ? bottomWidget() : null,
+      bottomNavigationBar: isLoadingNotifier == false && isNodData == false
+          ? bottomWidget()
+          : null,
     );
   }
 
@@ -311,7 +418,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${widget.trainingPlanName}",
+                          "${widget.followTrainingplanModel?.trainingPlanTitle}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: AppTypography.title14XS
@@ -327,39 +434,32 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
           Expanded(
             child: ValueListenableBuilder(
                 valueListenable: btnLoader,
-                builder: (context, value, child) {
+                builder: (_, value, child) {
                   return StartButtonWidget(
                     onPressed: value == false
                         ? () async {
-                            if (warmUpLoader.value ||
-                                trainingLoader.value ||
-                                coolDownLoader.value) {
-                              _timer = Timer.periodic(
-                                  const Duration(milliseconds: 800), (_) async {
-                                if (warmUpLoader.value ||
-                                    trainingLoader.value ||
-                                    coolDownLoader.value) {
-                                  btnLoader.value = true;
-                                } else {
-                                  _timer?.cancel();
-                                  btnLoader.value = false;
-                                  if (widget.followTrainingplanModel
-                                          ?.outOfSequence ==
-                                      true) {
-                                    log("out of Sequence");
-                                  } else {
-                                    await startWorkoutSheet(context);
-                                  }
+                            if (widget.followTrainingplanModel?.outOfSequence ==
+                                true) {
+                              await showAdaptiveDialog(
+                                context: context,
+                                builder: (context) {
+                                  return const ShowAlertDialogWidget(
+                                    title: 'Start workout out of sequence?',
+                                    body:
+                                        'Any incomplete workouts listed before this one will be marked as complete.',
+                                    btnText1: 'Cancel',
+                                    btnText2: 'Start Workout',
+                                  );
+                                },
+                              ).then((value) async {
+                                if (value == true) {
+                                  updateData();
+                                  await startWorkoutSheet(context);
                                 }
                               });
                             } else {
-                              if (widget
-                                      .followTrainingplanModel?.outOfSequence ==
-                                  true) {
-                                log("out of Sequence");
-                              } else {
-                                await startWorkoutSheet(context);
-                              }
+                              updateData();
+                              await startWorkoutSheet(context);
                             }
                           }
                         : null,
@@ -367,7 +467,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                         ? BaseHelper.loadingWidget()
                         : Text(
                             'Start Workout',
-                            style: AppTypography.label18LG.copyWith(
+                            style: AppTypography.label16MD.copyWith(
                                 color: widget.followTrainingplanModel
                                             ?.outOfSequence ==
                                         true
@@ -397,8 +497,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               onWillPop: () {
                 return Future.value(false);
               },
-              child: StartWorkoutSheet(
-                equipmentData: WorkoutDetailController.equipmentData.value,
+              child: GetReadySheetWidget(
+                equipmentData: equipmentData,
                 fitnessGoalModel: fitnessGoalData,
                 warmUpData: warmUpData,
                 trainingData: trainingData,
@@ -439,7 +539,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     return SliverToBoxAdapter(
       child: Card(
         elevation: 0.2,
-        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
+        margin: const EdgeInsets.only(left: 25, right: 20, bottom: 40, top: 20),
         color: AppColor.surfaceBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
@@ -450,7 +550,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               CustomRowTextChartIcon(
                 level: workoutData?.level.toString() ?? "",
                 text1: 'Level',
-                text2: workoutData?.level.toString() ?? "",
+                text2: workoutData?.level.toString().capitalizeFirst() ?? "",
                 isChartIcon: true,
               ),
               const Padding(
@@ -464,73 +564,68 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                         ? Center(child: BaseHelper.loadingWidget())
                         : CustomRowTextChartIcon(
                             text1: 'Equipment',
-                            secondWidget: ValueListenableBuilder<
-                                    List<EquipmentModel>>(
-                                valueListenable:
-                                    WorkoutDetailController.equipmentData,
-                                builder: (_, value, child) {
-                                  return SizedBox(
-                                    height: 20,
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      padding: EdgeInsets.zero,
-                                      shrinkWrap: true,
-                                      itemCount: value.length,
-                                      itemBuilder: (context, index) {
-                                        if (index ==
-                                                WorkoutDetailController
-                                                        .equipmentData
-                                                        .value
-                                                        .length -
-                                                    2 &&
-                                            index > 1) {
-                                          return Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text("+${value.length - 2}"),
-                                              2.width(),
-                                              InkWell(
-                                                onTap: () {
-                                                  showModalBottomSheet(
-                                                    backgroundColor: AppColor
-                                                        .surfaceBackgroundBaseColor,
-                                                    useSafeArea: true,
-                                                    isScrollControlled: true,
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        EquipmentExtendedSheet(
-                                                            workoutModel:
-                                                                workoutData
-                                                                    as WorkoutModel,
-                                                            equipmentData:
-                                                                WorkoutDetailController
-                                                                    .equipmentData
-                                                                    .value),
-                                                  );
-                                                },
-                                                child: Transform.translate(
-                                                  offset: Offset(0, -4),
-                                                  child: Icon(Icons.more_horiz),
-                                                ),
-                                              )
-                                            ],
-                                          );
-                                        }
-                                        if (index > 0 && index < 2) {
-                                          return Text(",${value[index].name}");
-                                        }
-                                        if (index == 0) {
-                                          return Text(value[index].name);
-                                        }
-                                        return Container();
-                                      },
-                                    ),
-                                  );
-                                }));
+                            secondWidget: SizedBox(
+                              height: 20,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                physics: const NeverScrollableScrollPhysics(),
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                itemCount: equipmentData.length,
+                                itemBuilder: (context, index) {
+                                  if (index == 2) {
+                                    return Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text("+${equipmentData.length - 2}",
+                                            style: AppTypography.label14SM
+                                                .copyWith(
+                                              color: AppColor.textPrimaryColor,
+                                            )),
+                                        2.width(),
+                                        InkWell(
+                                          onTap: () {
+                                            showModalBottomSheet(
+                                              backgroundColor: AppColor
+                                                  .surfaceBackgroundBaseColor,
+                                              useSafeArea: true,
+                                              isScrollControlled: true,
+                                              context: context,
+                                              builder: (context) =>
+                                                  EquipmentExtendedSheet(
+                                                      title: workoutData?.title
+                                                              .toString() ??
+                                                          "",
+                                                      equipmentData:
+                                                          equipmentData),
+                                            );
+                                          },
+                                          child: Transform.translate(
+                                            offset: const Offset(0, -4),
+                                            child: const Icon(Icons.more_horiz),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  }
+                                  if (index == 1) {
+                                    return Text(",${equipmentData[index].name}",
+                                        style: AppTypography.label14SM.copyWith(
+                                          color: AppColor.textPrimaryColor,
+                                        ));
+                                  }
+                                  if (index == 0) {
+                                    return Text(equipmentData[index].name,
+                                        style: AppTypography.label14SM.copyWith(
+                                          color: AppColor.textPrimaryColor,
+                                        ));
+                                  }
+                                  return Container();
+                                },
+                              ),
+                            ));
                   }),
               const Padding(
                 padding: EdgeInsets.only(top: 16, bottom: 16),
@@ -573,3 +668,45 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     );
   }
 }
+
+// class OnDemandCategoryTypeWIdget extends StatefulWidget {
+//   final List<int> onDemadData;
+//   const OnDemandCategoryTypeWIdget({super.key, required this.onDemadData});
+
+//   @override
+//   State<OnDemandCategoryTypeWIdget> createState() =>
+//       _OnDemandCategoryTypeWIdgetState();
+// }
+
+// class _OnDemandCategoryTypeWIdgetState
+//     extends State<OnDemandCategoryTypeWIdget> {
+//   bool isLoading = false;
+//   @override
+//   void initState() {
+//     fetchDataFn();
+//     // TODO: implement initState
+//     super.initState();
+//   }
+
+//   fetchDataFn() {
+//     isLoading = true;
+//     setState(() {});
+//     for (var i = 0; i < widget.onDemadData.length; i++) {
+//       try {
+//         ContentProviderCategoryOnDemandRequest.contentCategory(
+//             queryParameters: {
+//               "filter[where][id][in]": widget.onDemadData[i],
+//             }).then((value) {
+//           print(value);
+//         });
+//       } on RequestException catch (e) {
+//         BaseHelper.showSnackBar(context, e.error);
+//       }
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Text('');
+//   }
+// }

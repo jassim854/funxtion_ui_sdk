@@ -8,7 +8,7 @@ import 'package:ui_tool_kit/src/model/exercise_detail_model.dart';
 import '../../ui_tool_kit.dart';
 
 class WorkoutDetailController {
- static bool shouldBreakLoop = false;
+  static bool shouldBreakLoop = false;
   static Future<WorkoutModel?> getworkoutData(context,
       {required String id}) async {
     try {
@@ -64,18 +64,15 @@ class WorkoutDetailController {
     return null;
   }
 
-  static ValueNotifier<List<EquipmentModel>> equipmentData = ValueNotifier([]);
-
-  static getWarmUpData(
-    context, {
-    required ValueNotifier<bool> warmUpLoader,
-    required WorkoutModel? workoutData,
-    required Map<ExerciseDetailModel, ExerciseModel> warmupData,
-  }) async {
+  static getWarmUpData(context,
+      {required ValueNotifier<bool> warmUpLoader,
+      required WorkoutModel? workoutData,
+      required Map<ExerciseDetailModel, ExerciseModel> warmupData,
+      required List<EquipmentModel> equipmentData}) async {
     warmUpLoader.value = true;
 
     warmupData.clear();
-    await phasesFn(0, workoutData, context, warmupData);
+    await phasesFn(0, workoutData, context, warmupData, equipmentData);
 
     // for (var element in warmupData.entries) {
     //   if (element.key.exerciseCategoryName == ItemType.circuitTime) {
@@ -100,14 +97,14 @@ class WorkoutDetailController {
     warmUpLoader.value = false;
   }
 
-  static getEquipmentDataFn(String id) async {
+  static getEquipmentDataFn(
+      String id, List<EquipmentModel> equipmentData) async {
     try {
       await EquipmentRequest.equipmentById(id: id).then((value) {
         if (value != null) {
           EquipmentModel data = EquipmentModel.fromJson(value);
-          if (equipmentData.value
-              .every((element) => element.name != data.name)) {
-            equipmentData.value.add(data);
+          if (equipmentData.every((element) => element.name != data.name)) {
+            equipmentData.add(data);
           }
         }
       });
@@ -116,16 +113,15 @@ class WorkoutDetailController {
     }
   }
 
-  static getTrainingData(
-    context, {
-    required ValueNotifier<bool> trainingLoader,
-    required WorkoutModel? workoutData,
-    required Map<ExerciseDetailModel, ExerciseModel> trainingData,
-  }) async {
+  static getTrainingData(context,
+      {required ValueNotifier<bool> trainingLoader,
+      required WorkoutModel? workoutData,
+      required Map<ExerciseDetailModel, ExerciseModel> trainingData,
+      required List<EquipmentModel> equipmentData}) async {
     trainingLoader.value = true;
 
     trainingData.clear();
-    await phasesFn(1, workoutData, context, trainingData);
+    await phasesFn(1, workoutData, context, trainingData, equipmentData);
     // for (var element in trainingData.entries) {
     //   if (element.key.exerciseCategoryName == ItemType.circuitTime) {
     //     circuitTimeTrainingData.addEntries({element});
@@ -148,8 +144,12 @@ class WorkoutDetailController {
     trainingLoader.value = false;
   }
 
-  static Future<void> phasesFn(int phaseIndex, WorkoutModel? workoutData,
-      context, Map<ExerciseDetailModel, ExerciseModel> exerciseList) async {
+  static Future<void> phasesFn(
+      int phaseIndex,
+      WorkoutModel? workoutData,
+      context,
+      Map<ExerciseDetailModel, ExerciseModel> exerciseList,
+      List<EquipmentModel> equipmentData) async {
     for (var j = 0; j < workoutData!.phases![phaseIndex].items!.length; j++) {
       if (workoutData.phases![phaseIndex].items![j].type ==
           ItemType.circuitTime) {
@@ -167,10 +167,11 @@ class WorkoutDetailController {
                           .exercises![k].exerciseId
                           .toString())
                   .then((value) async {
-                if (value != null&&shouldBreakLoop==false ) {
+                if (value != null && shouldBreakLoop == false) {
                   ExerciseModel data = ExerciseModel.fromJson(value);
 
-                  getEquipmentDataFn(data.equipment.first.toString());
+                  getEquipmentDataFn(
+                      data.equipment.first.toString(), equipmentData);
 
                   exerciseList.addAll({
                     ExerciseDetailModel(
@@ -203,7 +204,6 @@ class WorkoutDetailController {
                     ): data
                   });
                 }
-          
               });
             } on RequestException catch (e) {
               BaseHelper.showSnackBar(context, e.message);
@@ -212,17 +212,17 @@ class WorkoutDetailController {
               break;
             }
           }
-             if (shouldBreakLoop) {
-              break;
-            }
+          if (shouldBreakLoop) {
+            break;
+          }
         }
-           if (shouldBreakLoop) {
-              break;
-            }
+        if (shouldBreakLoop) {
+          break;
+        }
       }
-         if (shouldBreakLoop) {
-              break;
-            }
+      if (shouldBreakLoop) {
+        break;
+      }
       if (workoutData.phases![phaseIndex].items![j].type ==
           ItemType.circuitRep) {
         for (var i = 0;
@@ -242,7 +242,8 @@ class WorkoutDetailController {
                 if (value != null) {
                   ExerciseModel data = ExerciseModel.fromJson(value);
 
-                  getEquipmentDataFn(data.equipment.first.toString());
+                  getEquipmentDataFn(
+                      data.equipment.first.toString(), equipmentData);
 
                   exerciseList.addAll({
                     ExerciseDetailModel(
@@ -299,10 +300,11 @@ class WorkoutDetailController {
                           .exercises![k].exerciseId
                           .toString())
                   .then((value) async {
-                if (value != null&&shouldBreakLoop==false) {
+                if (value != null && shouldBreakLoop == false) {
                   ExerciseModel data = ExerciseModel.fromJson(value);
 
-                  getEquipmentDataFn(data.equipment.first.toString());
+                  getEquipmentDataFn(
+                      data.equipment.first.toString(), equipmentData);
 
                   exerciseList.addAll({
                     ExerciseDetailModel(
@@ -339,21 +341,21 @@ class WorkoutDetailController {
             } on RequestException catch (e) {
               BaseHelper.showSnackBar(context, e.message);
             }
-               if (shouldBreakLoop) {
+            if (shouldBreakLoop) {
               break;
             }
           }
-             if (shouldBreakLoop) {
-              break;
-            }
+          if (shouldBreakLoop) {
+            break;
+          }
         }
-           if (shouldBreakLoop) {
-              break;
-            }
+        if (shouldBreakLoop) {
+          break;
+        }
       }
-         if (shouldBreakLoop) {
-              break;
-            }
+      if (shouldBreakLoop) {
+        break;
+      }
       if (workoutData.phases![phaseIndex].items![j].type == ItemType.rft) {
         for (var i = 0;
             i < workoutData.phases![phaseIndex].items![j].rftExercises!.length;
@@ -364,10 +366,11 @@ class WorkoutDetailController {
                         .rftExercises![i].exerciseId
                         .toString())
                 .then((value) async {
-              if (value != null&&shouldBreakLoop==false) {
+              if (value != null && shouldBreakLoop == false) {
                 ExerciseModel data = ExerciseModel.fromJson(value);
 
-                getEquipmentDataFn(data.equipment.first.toString());
+                getEquipmentDataFn(
+                    data.equipment.first.toString(), equipmentData);
 
                 exerciseList.addAll({
                   ExerciseDetailModel(
@@ -406,17 +409,17 @@ class WorkoutDetailController {
           } on RequestException catch (e) {
             BaseHelper.showSnackBar(context, e.message);
           }
-             if (shouldBreakLoop) {
-              break;
-            }
+          if (shouldBreakLoop) {
+            break;
+          }
         }
-           if (shouldBreakLoop) {
-              break;
-            }
+        if (shouldBreakLoop) {
+          break;
+        }
       }
-         if (shouldBreakLoop) {
-              break;
-            }
+      if (shouldBreakLoop) {
+        break;
+      }
       if (workoutData.phases![phaseIndex].items![j].type ==
           ItemType.singleExercise) {
         for (var i = 0;
@@ -428,10 +431,11 @@ class WorkoutDetailController {
                         .seExercises![i].exerciseId
                         .toString())
                 .then((value) async {
-              if (value != null&&shouldBreakLoop==false) {
+              if (value != null && shouldBreakLoop == false) {
                 ExerciseModel data = ExerciseModel.fromJson(value);
 
-                getEquipmentDataFn(data.equipment.first.toString());
+                getEquipmentDataFn(
+                    data.equipment.first.toString(), equipmentData);
                 // exerciseList.addAll({
                 //   "exercise $i seExercisesSets ${workoutData.phases![phaseIndex].items![j].seExercises![i].sets!.length}, notes ${workoutData.phases![phaseIndex].items![j].seExercises![i].notes}, goalTargetMetric ${workoutData.phases![phaseIndex].items![j].seExercises![i].sets?.first.goalTargets?.first.metric}, goalTargetMin ${workoutData.phases![phaseIndex].items![j].seExercises![i].sets?.first.goalTargets?.first.min}, goalTargetMax ${workoutData.phases![phaseIndex].items![j].seExercises![i].sets?.first.goalTargets?.first.max}, goalTargetValue ${workoutData.phases![phaseIndex].items![j].seExercises![i].sets?.first.goalTargets?.first.value}":
                 //       data
@@ -487,17 +491,17 @@ class WorkoutDetailController {
           } on RequestException catch (e) {
             BaseHelper.showSnackBar(context, e.message);
           }
-             if (shouldBreakLoop) {
-              break;
-            }
+          if (shouldBreakLoop) {
+            break;
+          }
         }
-           if (shouldBreakLoop) {
-              break;
-            }
+        if (shouldBreakLoop) {
+          break;
+        }
       }
-         if (shouldBreakLoop) {
-              break;
-            }
+      if (shouldBreakLoop) {
+        break;
+      }
       if (workoutData.phases![phaseIndex].items![j].type == ItemType.superSet) {
         for (var i = 0;
             i < workoutData.phases![phaseIndex].items![j].ssExercises!.length;
@@ -508,9 +512,10 @@ class WorkoutDetailController {
                         .ssExercises![i].exerciseId
                         .toString())
                 .then((value) async {
-              if (value != null&&shouldBreakLoop==false) {
+              if (value != null && shouldBreakLoop == false) {
                 ExerciseModel data = ExerciseModel.fromJson(value);
-                getEquipmentDataFn(data.equipment.first.toString());
+                getEquipmentDataFn(
+                    data.equipment.first.toString(), equipmentData);
                 // exerciseList.addAll({'exercise $i ssExercises   ': data});
                 exerciseList.addAll({
                   ExerciseDetailModel(
@@ -543,19 +548,18 @@ class WorkoutDetailController {
           } on RequestException catch (e) {
             BaseHelper.showSnackBar(context, e.message);
           }
-             if (shouldBreakLoop) {
-              break;
-            }
+          if (shouldBreakLoop) {
+            break;
+          }
         }
-           if (shouldBreakLoop) {
-              break;
-            }
+        if (shouldBreakLoop) {
+          break;
+        }
       }
-         if (shouldBreakLoop) {
-              break;
-            }
+      if (shouldBreakLoop) {
+        break;
+      }
     }
-    
   }
 
   // static getCoolDownData(context,
@@ -586,16 +590,15 @@ class WorkoutDetailController {
   //   }
   //   trainingLoader2.value = false;
   // }
-  static getCoolDownData(
-    context, {
-    required ValueNotifier<bool> coolDownLoader,
-    required WorkoutModel? workoutData,
-    required Map<ExerciseDetailModel, ExerciseModel> coolDownData,
-  }) async {
+  static getCoolDownData(context,
+      {required ValueNotifier<bool> coolDownLoader,
+      required WorkoutModel? workoutData,
+      required Map<ExerciseDetailModel, ExerciseModel> coolDownData,
+      required List<EquipmentModel> equipmentData}) async {
     coolDownLoader.value = true;
 
     coolDownData.clear();
-    await phasesFn(2, workoutData, context, coolDownData);
+    await phasesFn(2, workoutData, context, coolDownData, equipmentData);
 
     // for (var element in coolDownData.entries) {
     //   if (element.key.exerciseCategoryName == ItemType.circuitTime) {

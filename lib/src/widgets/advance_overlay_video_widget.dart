@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_svg/svg.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
@@ -22,16 +23,20 @@ class AdvancedOverlayWidget extends StatefulWidget {
 }
 
 class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
-  static const allSpeeds = <double>[0.25, 0.5, 1, 1.5, 2, 3, 5, 10];
+  static const allSpeeds = <double>[0.25, 0.5, 1, 1.5, 2.0];
 
   @override
   Widget build(BuildContext context) {
     return Stack(
+      clipBehavior: Clip.antiAlias,
+      fit: StackFit.expand,
       children: [
-        playButton(),
+        widget.controller.value.isBuffering
+            ? Center(child: BaseHelper.loadingWidget())
+            : playButton(),
         Positioned(
-          left: 20,
-          top: 50,
+          left: 16,
+          top: widget.isPortrait == false ? 18 : 0,
           child: Container(
             height: 30,
             width: 30,
@@ -41,16 +46,15 @@ class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
                 borderRadius: BorderRadius.circular(8)),
             child: InkWell(
               onTap: () {
-                Future.delayed(const Duration(milliseconds: 190),
-                    () => Navigator.of(context).maybePop());
+                context.maybePopPage();
               },
               child: Icon(Icons.close, color: AppColor.textInvertEmphasis),
             ),
           ),
         ),
         Positioned(
-          right: 20,
-          top: 50,
+          right: 16,
+          top: widget.isPortrait == false ? 18 : 0,
           child: Container(
             height: 30,
             width: 30,
@@ -67,7 +71,7 @@ class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
           ),
         ),
         Positioned(
-          left: 8,
+          left: 12,
           bottom: 28,
           child: Text(
             "${VideoController.getPosition(widget.controller)}/${VideoController.getVideoDuration(widget.controller)}",
@@ -78,14 +82,17 @@ class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
         Positioned(
             bottom: 0,
             left: 0,
-            right: 0,
-            child: Row(
-              children: [
-                Expanded(child: buildIndicator()),
-                const SizedBox(width: 12),
-                buildSpeed(),
-                const SizedBox(width: 8),
-              ],
+            right: 12,
+            child: Card(
+              color: Colors.transparent,
+              child: Row(
+                children: [
+                  Expanded(child: buildIndicator()),
+                  const SizedBox(width: 12),
+                  buildSpeed(),
+                  // const SizedBox(width: 8),
+                ],
+              ),
             )),
       ],
     );
@@ -121,22 +128,18 @@ class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
 
   Widget playButton() {
     return widget.controller.value.isPlaying
-        ? widget.controller.value.isBuffering
-            ? const Center(child: CircularProgressIndicator.adaptive())
-            : Center(
-                child: IconButton(
-                    iconSize: 40,
-                    onPressed: () {
-                      setState(() {
-                        VideoController.showControls = true;
+        ? Center(
+            child: IconButton(
+                iconSize: 40,
+                onPressed: () {
+                  VideoController.showControls.value = true;
 
-                        widget.controller.pause();
-                      });
-                    },
-                    icon: Icon(
-                      Icons.pause,
-                      color: AppColor.textInvertEmphasis,
-                    )))
+                  widget.controller.pause();
+                },
+                icon: Icon(
+                  Icons.pause,
+                  color: AppColor.textInvertEmphasis,
+                )))
         : Center(
             child: IconButton(
                 iconSize: 40,
@@ -145,9 +148,7 @@ class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
                   Future.delayed(
                     const Duration(milliseconds: 250),
                     () {
-                      setState(() {
-                        VideoController.showControls = false;
-                      });
+                      VideoController.showControls.value = false;
                     },
                   );
                 },
