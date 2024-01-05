@@ -19,19 +19,21 @@ class PlayButtonWidget extends StatelessWidget {
           onPressed: onPressed,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  AppAssets.playArrowIcon,
-                  color: AppColor.textInvertEmphasis,
-                ),
-                5.width(),
-                Text(
-                  'Play class',
-                  style: AppTypography.label18LG
-                      .copyWith(color: AppColor.textInvertEmphasis),
-                )
-              ],
+            child: FittedBox(
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    AppAssets.playArrowIcon,
+                    color: AppColor.textInvertEmphasis,
+                  ),
+                  5.width(),
+                  Text(
+                    'Play class',
+                    style: AppTypography.label18LG
+                        .copyWith(color: AppColor.textInvertEmphasis),
+                  )
+                ],
+              ),
             ),
           )),
     );
@@ -66,7 +68,9 @@ class StartButtonWidget extends StatelessWidget {
 class SheduletButtonWidget extends StatelessWidget {
   final VoidCallback? onPressed;
   final String text;
-  const SheduletButtonWidget({super.key, this.onPressed, required this.text});
+  final Widget? child;
+  const SheduletButtonWidget(
+      {super.key, this.onPressed, required this.text, this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -76,11 +80,12 @@ class SheduletButtonWidget extends StatelessWidget {
         onPressed: onPressed,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          child: Text(
-            text,
-            style: AppTypography.label16MD
-                .copyWith(color: AppColor.textInvertEmphasis),
-          ),
+          child: child ??
+              Text(
+                text.toString(),
+                style: AppTypography.label16MD
+                    .copyWith(color: AppColor.textInvertEmphasis),
+              ),
         ));
   }
 }

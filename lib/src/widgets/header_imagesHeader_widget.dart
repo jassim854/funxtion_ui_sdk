@@ -1,12 +1,7 @@
-import 'dart:developer';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:funxtion/funxtion_sdk.dart';
 
 import '../../ui_tool_kit.dart';
-import 'detail_exercise_bottom_sheet_widget.dart';
 
 class BuildBodyWidget extends StatefulWidget {
   const BuildBodyWidget({
@@ -16,6 +11,13 @@ class BuildBodyWidget extends StatefulWidget {
     this.showTrailing = false,
     required this.expandHeaderValueListenable,
     required this.loaderValueListenable,
+    this.ctExpandNew,
+    this.crExpandNew,
+    this.seExpandNew,
+    this.rftExpandNew,
+    this.ssExpandNew,
+    this.amrapExpandNew,
+    this.enomExpandNew,
   });
   final Map<ExerciseDetailModel, ExerciseModel> currentListData;
 
@@ -26,18 +28,26 @@ class BuildBodyWidget extends StatefulWidget {
   final ValueNotifier<bool> expandHeaderValueListenable;
   final void Function(int)? goHereTap;
 
+  final ValueNotifier<bool>? ctExpandNew;
+  final ValueNotifier<bool>? crExpandNew;
+  final ValueNotifier<bool>? seExpandNew;
+  final ValueNotifier<bool>? rftExpandNew;
+  final ValueNotifier<bool>? ssExpandNew;
+  final ValueNotifier<bool>? amrapExpandNew;
+  final ValueNotifier<bool>? enomExpandNew;
+
   @override
   State<BuildBodyWidget> createState() => _BuildBodyWidgetState();
 }
 
 class _BuildBodyWidgetState extends State<BuildBodyWidget> {
-  ValueNotifier<bool> ctExpand = ValueNotifier(true);
-  ValueNotifier<bool> crExpand = ValueNotifier(true);
-  ValueNotifier<bool> seExpand = ValueNotifier(true);
-  ValueNotifier<bool> rftExpand = ValueNotifier(true);
-  ValueNotifier<bool> ssExpand = ValueNotifier(true);
-  ValueNotifier<bool> amrapExpand = ValueNotifier(true);
-  ValueNotifier<bool> enomExpand = ValueNotifier(true);
+  ValueNotifier<bool>? ctExpand = ValueNotifier(true);
+  ValueNotifier<bool>? crExpand = ValueNotifier(true);
+  ValueNotifier<bool>? seExpand = ValueNotifier(true);
+  ValueNotifier<bool>? rftExpand = ValueNotifier(true);
+  ValueNotifier<bool>? ssExpand = ValueNotifier(true);
+  ValueNotifier<bool>? amrapExpand = ValueNotifier(true);
+  ValueNotifier<bool>? enomExpand = ValueNotifier(true);
   Map<ExerciseDetailModel, ExerciseModel> seExercise = {};
   Map<ExerciseDetailModel, ExerciseModel> circuitTimeExercise = {};
   Map<ExerciseDetailModel, ExerciseModel> rftExercise = {};
@@ -73,6 +83,12 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 16, right: 16),
@@ -97,7 +113,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                               child: Text('No Data'),
                             )
                           : ListView.builder(
-                              padding: EdgeInsets.zero,
+                              padding: const EdgeInsets.only(bottom: 0),
                               itemCount: widget.currentListData.length,
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -105,6 +121,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                 if (index == 0) {
                                   addData();
                                 }
+
                                 return widget.currentListData.keys
                                             .toList()[index]
                                             .exerciseCategoryName ==
@@ -113,9 +130,12 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                         children: [
                                           header2CheckWidget(
                                               index: index,
-                                              expandVar: ctExpand),
+                                              expandVar: widget.ctExpandNew ??
+                                                  ctExpand!),
                                           ValueListenableBuilder<bool>(
-                                              valueListenable: ctExpand,
+                                              valueListenable:
+                                                  widget.ctExpandNew ??
+                                                      ctExpand!,
                                               builder: (context, value, child) {
                                                 return ExpandedSection(
                                                   expand: value,
@@ -140,9 +160,13 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                             children: [
                                               header2CheckWidget(
                                                   index: index,
-                                                  expandVar: seExpand),
+                                                  expandVar:
+                                                      widget.seExpandNew ??
+                                                          seExpand!),
                                               ValueListenableBuilder<bool>(
-                                                  valueListenable: seExpand,
+                                                  valueListenable:
+                                                      widget.seExpandNew ??
+                                                          seExpand!,
                                                   builder:
                                                       (context, value, child) {
                                                     return ExpandedSection(
@@ -171,9 +195,13 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                 children: [
                                                   header2CheckWidget(
                                                       index: index,
-                                                      expandVar: ssExpand),
+                                                      expandVar:
+                                                          widget.ssExpandNew ??
+                                                              ssExpand!),
                                                   ValueListenableBuilder<bool>(
-                                                      valueListenable: ssExpand,
+                                                      valueListenable:
+                                                          widget.ssExpandNew ??
+                                                              ssExpand!,
                                                       builder: (context, value,
                                                           child) {
                                                         return ExpandedSection(
@@ -203,11 +231,14 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                     children: [
                                                       header2CheckWidget(
                                                           index: index,
-                                                          expandVar: crExpand),
+                                                          expandVar: widget
+                                                                  .crExpandNew ??
+                                                              crExpand!),
                                                       ValueListenableBuilder<
                                                               bool>(
-                                                          valueListenable:
-                                                              crExpand,
+                                                          valueListenable: widget
+                                                                  .crExpandNew ??
+                                                              crExpand!,
                                                           builder: (context,
                                                               value, child) {
                                                             return ExpandedSection(
@@ -237,12 +268,14 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                         children: [
                                                           header2CheckWidget(
                                                               index: index,
-                                                              expandVar:
-                                                                  rftExpand),
+                                                              expandVar: widget
+                                                                      .rftExpandNew ??
+                                                                  rftExpand!),
                                                           ValueListenableBuilder<
                                                                   bool>(
                                                               valueListenable:
-                                                                  rftExpand,
+                                                                  widget.rftExpandNew ??
+                                                                      rftExpand!,
                                                               builder: (context,
                                                                   value,
                                                                   child) {
@@ -275,12 +308,14 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                             children: [
                                                               header2CheckWidget(
                                                                   index: index,
-                                                                  expandVar:
-                                                                      enomExpand),
+                                                                  expandVar: widget
+                                                                          .enomExpandNew ??
+                                                                      enomExpand!),
                                                               ValueListenableBuilder<
                                                                       bool>(
                                                                   valueListenable:
-                                                                      enomExpand,
+                                                                      widget.enomExpandNew ??
+                                                                          enomExpand!,
                                                                   builder:
                                                                       (context,
                                                                           value,
@@ -314,11 +349,13 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                                       index:
                                                                           index,
                                                                       expandVar:
-                                                                          enomExpand),
+                                                                          widget.amrapExpandNew ??
+                                                                              amrapExpand!),
                                                                   ValueListenableBuilder<
                                                                           bool>(
                                                                       valueListenable:
-                                                                          amrapExpand,
+                                                                          widget.amrapExpandNew ??
+                                                                              amrapExpand!,
                                                                       builder: (context,
                                                                           value,
                                                                           child) {
@@ -336,7 +373,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                                             cutomDiviDerWidget(index)
                                                                           ]),
                                                                         );
-                                                                      })
+                                                                      }),
                                                                 ],
                                                               )
                                                             : Container();
@@ -385,26 +422,37 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                         .exerciseCategoryName
                 ? Padding(
                     padding: const EdgeInsets.only(top: 20),
-                    child: BuildHeader2(
-                        subtitle: widget.currentListData.currentHeaderSubTitle(
-                          index: index,
-                          amrapExercise: amrapExercise,
-                          circuitRepExercise: circuitRepExercise,
-                          circuitTimeExercise: circuitTimeExercise,
-                          enomExercise: enomExercise,
-                          rftExercise: rftExercise,
-                          seExercise: seExercise,
-                          ssExercise: ssExercise,
+                    child: Column(
+                      children: [
+                        CustomDivider(
+                          indent: context.dynamicWidth * 0.18,
+                          endIndent: context.dynamicWidth * 0.02,
                         ),
-                        expandValueListenable: expandVar,
-                        exerciseWorkoutData:
-                            WorkoutDetailController.addCurrentList(
-                                index, widget.currentListData),
-                        title: widget.currentListData.currentHeaderTitle(index),
-                        onExpand: () {
-                          expandVar.value = !expandVar.value;
-                          // setState(() {});
-                        }),
+                        8.height(),
+                        BuildHeader2(
+                            subtitle:
+                                widget.currentListData.currentHeaderSubTitle(
+                              index: index,
+                              amrapExercise: amrapExercise,
+                              circuitRepExercise: circuitRepExercise,
+                              circuitTimeExercise: circuitTimeExercise,
+                              enomExercise: enomExercise,
+                              rftExercise: rftExercise,
+                              seExercise: seExercise,
+                              ssExercise: ssExercise,
+                            ),
+                            expandValueListenable: expandVar,
+                            exerciseWorkoutData:
+                                WorkoutDetailController.addCurrentList(
+                                    index, widget.currentListData),
+                            title: widget.currentListData
+                                .currentHeaderTitle(index),
+                            onExpand: () {
+                              expandVar.value = !expandVar.value;
+                              // setState(() {});
+                            }),
+                      ],
+                    ),
                   )
                 : Container();
   }
@@ -428,18 +476,18 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
 
   StatelessWidget cutomDiviDerWidget(int i) {
     return i == 0
-        ? const CustomDivider(
-            indent: 130,
-            endIndent: 20,
+        ? CustomDivider(
+            indent: context.dynamicWidth * 0.29,
+            endIndent: context.dynamicWidth * 0.02,
           )
         : i == widget.currentListData.length - 1
             ? Container()
             : widget.currentListData.entries.toList()[i + 1].key.setsCount !=
                     widget.currentListData.entries.toList()[i].key.setsCount
                 ? Container()
-                : const CustomDivider(
-                    indent: 130,
-                    endIndent: 20,
+                : CustomDivider(
+                    indent: context.dynamicWidth * 0.29,
+                    endIndent: context.dynamicWidth * 0.02,
                   );
   }
 
@@ -455,11 +503,18 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
       child: ListTile(
           contentPadding: EdgeInsets.zero,
           leading: Transform.scale(
-            scale: 1.5,
+            scale: 1.4,
             child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(11)),
+              color: AppColor.surfaceBackgroundBaseColor,
               clipBehavior: Clip.antiAlias,
-              child: SizedBox(
+              child: Container(
                 width: context.dynamicWidth * 0.12,
+                margin: const EdgeInsets.all(0.5),
+                decoration: BoxDecoration(
+                    color: AppColor.surfaceBackgroundColor,
+                    borderRadius: BorderRadius.circular(11)),
                 child: cacheNetworkWidget(
                     imageUrl:
                         dataList.values.toList()[index].mapImage?.url ?? ""),
@@ -562,7 +617,7 @@ class RoundWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 40, top: 20, bottom: 8),
+      padding: const EdgeInsets.only(left: 38, top: 20, bottom: 8),
       child: Row(children: [
         Text(
           listData.entries.toList()[i].key.exerciseCategoryName ==
@@ -574,10 +629,10 @@ class RoundWidget extends StatelessWidget {
           style: AppTypography.label14SM
               .copyWith(color: AppColor.textPrimaryColor),
         ),
-        const Expanded(
+        Expanded(
           child: CustomDivider(
-            endIndent: 20,
-            indent: 40,
+            endIndent: context.dynamicWidth * 0.02,
+            indent: context.dynamicWidth * 0.05,
           ),
         )
       ]),
@@ -601,14 +656,17 @@ class BuildHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: AppColor.surfaceBackgroundColor,
+    return Container(
+      decoration: BoxDecoration(
+          color: AppColor.surfaceBackgroundColor,
+          borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20))),
       child: Padding(
         padding: const EdgeInsets.only(left: 12),
         child: ListTile(
           title: Text(
             title,
-            style: AppTypography.label18LG
+            style: AppTypography.title14XS
                 .copyWith(color: AppColor.textEmphasisColor),
           ),
           subtitle: Padding(
@@ -690,7 +748,7 @@ class _BuildHeader2State extends State<BuildHeader2> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 4, vertical: 4),
+                              horizontal: 0.5, vertical: 0.5),
                           child: Column(
                             children: [
                               if (widget.exerciseWorkoutData.isNotEmpty) ...[
@@ -700,12 +758,17 @@ class _BuildHeader2State extends State<BuildHeader2> {
                                     Expanded(
                                       child: Container(
                                         decoration: BoxDecoration(
-                                            color: AppColor
-                                                .surfaceBackgroundColor,
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(8))),
+                                            color:
+                                                AppColor.surfaceBackgroundColor,
+                                            borderRadius: BorderRadius.only(
+                                                topRight: widget
+                                                            .exerciseWorkoutData
+                                                            .length >
+                                                        3
+                                                    ? const Radius.circular(0)
+                                                    : const Radius.circular(11),
+                                                topLeft:
+                                                    const Radius.circular(11))),
                                         child: Transform.scale(
                                           scale: 1.2,
                                           child: cacheNetworkWidget(
@@ -721,16 +784,17 @@ class _BuildHeader2State extends State<BuildHeader2> {
                                     ),
                                     if (widget.exerciseWorkoutData.length >
                                         3) ...[
-                                      4.width(),
                                       Expanded(
                                         child: Container(
+                                          margin:
+                                              const EdgeInsets.only(left: 0.5),
                                           decoration: BoxDecoration(
                                               color: AppColor
                                                   .surfaceBackgroundColor,
                                               borderRadius:
                                                   const BorderRadius.only(
-                                                      topRight:
-                                                          Radius.circular(8))),
+                                                topRight: Radius.circular(11),
+                                              )),
                                           child: Transform.scale(
                                             scale: 1.2,
                                             child: cacheNetworkWidget(
@@ -748,34 +812,11 @@ class _BuildHeader2State extends State<BuildHeader2> {
                                   ],
                                 )),
                                 if (widget.exerciseWorkoutData.length > 1) ...[
-                                  4.height(),
                                   Expanded(
-                                      child: Row(
-                                    children: [
-                                      Expanded(
-                                          child: Container(
-                                        decoration: BoxDecoration(
-                                            color: AppColor
-                                                .surfaceBackgroundColor,
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(8))),
-                                        child: Transform.scale(
-                                          scale: 1.2,
-                                          child: cacheNetworkWidget(
-                                              imageUrl: widget
-                                                      .exerciseWorkoutData
-                                                      .values
-                                                      .toList()[1]
-                                                      .mapImage
-                                                      ?.url ??
-                                                  ''),
-                                        ),
-                                      )),
-                                      if (widget.exerciseWorkoutData.length >
-                                          2) ...[
-                                        4.width(),
+                                      child: Padding(
+                                    padding: const EdgeInsets.only(top: 0.5),
+                                    child: Row(
+                                      children: [
                                         Expanded(
                                             child: Container(
                                           decoration: BoxDecoration(
@@ -783,22 +824,50 @@ class _BuildHeader2State extends State<BuildHeader2> {
                                                   .surfaceBackgroundColor,
                                               borderRadius:
                                                   const BorderRadius.only(
-                                                      topRight:
-                                                          Radius.circular(8))),
+                                                      bottomLeft:
+                                                          Radius.circular(11))),
                                           child: Transform.scale(
                                             scale: 1.2,
                                             child: cacheNetworkWidget(
                                                 imageUrl: widget
                                                         .exerciseWorkoutData
                                                         .values
-                                                        .toList()[2]
+                                                        .toList()[1]
                                                         .mapImage
                                                         ?.url ??
-                                                    ""),
+                                                    ''),
                                           ),
-                                        ))
-                                      ]
-                                    ],
+                                        )),
+                                        if (widget.exerciseWorkoutData.length >
+                                            2) ...[
+                                          Expanded(
+                                              child: Container(
+                                            margin: const EdgeInsets.only(
+                                              left: 0.5,
+                                            ),
+                                            decoration: BoxDecoration(
+                                                color: AppColor
+                                                    .surfaceBackgroundColor,
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                        bottomRight:
+                                                            Radius.circular(
+                                                                11))),
+                                            child: Transform.scale(
+                                              scale: 1.2,
+                                              child: cacheNetworkWidget(
+                                                  imageUrl: widget
+                                                          .exerciseWorkoutData
+                                                          .values
+                                                          .toList()[2]
+                                                          .mapImage
+                                                          ?.url ??
+                                                      ""),
+                                            ),
+                                          ))
+                                        ]
+                                      ],
+                                    ),
                                   ))
                                 ]
                               ]

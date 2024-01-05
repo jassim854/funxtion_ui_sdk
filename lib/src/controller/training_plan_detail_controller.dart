@@ -20,6 +20,7 @@ class TrainingPlanDetailController {
     return null;
   }
 
+  static int daysPerWeek = 0;
   static shedulePlanFn(context,
       {required ValueNotifier<bool> shedulePlanLoader,
       required List<WorkoutModel?> listSheduleWorkoutData,
@@ -28,7 +29,8 @@ class TrainingPlanDetailController {
     shedulePlanLoader.value = true;
     listSheduleWorkoutData.clear();
     for (int j = 0; j < trainingPlanData!.weeks!.length; j++) {
-      for (int i = 0; i < trainingPlanData.weeks![j].days.length.toInt(); i++) {
+      daysPerWeek = 0;
+      for (int i = 0; i < trainingPlanData.weeks![j].days.length; i++) {
         try {
           await WorkoutRequest.workoutById(
                   id: trainingPlanData
@@ -42,6 +44,7 @@ class TrainingPlanDetailController {
         } on RequestException catch (e) {
           BaseHelper.showSnackBar(context, e.message);
         }
+        daysPerWeek = i + 1;
       }
     }
 

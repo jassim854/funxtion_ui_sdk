@@ -16,7 +16,7 @@ class BuildCardWidget extends StatelessWidget {
     return Container(
         // height: context.dynamicHeight * 0.12,
         // width: context.dynamicHeight * 0.13,
-        alignment: Alignment.center,
+        alignment: Alignment.centerLeft,
         padding:
             const EdgeInsets.only(left: 16, top: 20, bottom: 20, right: 16),
         decoration: BoxDecoration(

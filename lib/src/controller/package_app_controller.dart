@@ -8,12 +8,14 @@ class PkgAppController {
   static getPath() async {
     var directory = await getApplicationDocumentsDirectory();
     Hive.init(directory.path);
-  
+    // Hive.deleteBoxFromDisk("trainingplan");
+    if (!Hive.isAdapterRegistered(0)) {
+      Hive.registerAdapter(FollowTrainingplanModelAdapter());
+    }
+    if (!Hive.isBoxOpen("trainingplan")) {
+      await Hive.openBox<FollowTrainingplanModel>("trainingplan");
+    }
 
-    Hive.registerAdapter(FollowTrainingplanModelAdapter());
-
-    await Hive.openBox<FollowTrainingplanModel>("trainingplan");
-
-    // log(directory.path);
+    log(directory.path);
   }
 }

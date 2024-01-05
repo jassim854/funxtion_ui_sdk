@@ -56,7 +56,7 @@ class DoneWorkoutSheet extends StatelessWidget {
                       title: 'Total Duration'),
                 ),
                 20.width(),
-                Expanded(child: BuildCardWidget(title: 'Type', subtitle: ''))
+                Expanded(child: BuildCardWidget(title: 'Type', subtitle: type))
               ],
             ),
           ),
@@ -70,7 +70,7 @@ class DoneWorkoutSheet extends StatelessWidget {
                 btnColor: AppColor.buttonPrimaryColor,
                 onPressed: () {
                   context.navigateToRemovedUntil(
-                      const VideoAudioClassesListView(
+                      const VideoAudioWorkoutListView(
                           categoryName: CategoryName.workouts));
                 },
                 child: Text(

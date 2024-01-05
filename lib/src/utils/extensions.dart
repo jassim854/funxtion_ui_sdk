@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:funxtion/funxtion_sdk.dart';
 
 import '../../ui_tool_kit.dart';
 
@@ -21,8 +22,24 @@ extension NavigationExtensions on BuildContext {
     return Navigator.of(this).pop(result);
   }
 
-  Future<bool> maybePopPage() {
-    return Navigator.of(this).maybePop();
+  void multiPopPage({required int popPageCount, Object? result}) {
+    switch (popPageCount) {
+      case 2:
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        break;
+      case 3:
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        break;
+      default:
+        return;
+    }
+  }
+
+  Future<bool> maybePopPage({Object? result}) {
+    return Navigator.of(this).maybePop(result);
   }
 
   void navigateTo(
@@ -72,6 +89,16 @@ extension OmitSymbolText on String {
     } else {
       return "";
     }
+  }
+
+  String capitalizeFirst() {
+    return "${this[0].toUpperCase()}${substring(1)}";
+  }
+
+  removeSymbolGetText() {
+    int atIndex = indexOf('-');
+
+    return "${substring(0, atIndex).capitalizeFirst()} ${substring(atIndex + 1).capitalizeFirst()}";
   }
 }
 
@@ -501,10 +528,4 @@ extension ResistanceTarget on ExerciseDetailModel {
       return data;
     }
   }
-}
-
-extension StringExtensions on String { 
-  String capitalize() { 
-    return "${this[0].toUpperCase()}${substring(1)}"; 
-  } 
 }

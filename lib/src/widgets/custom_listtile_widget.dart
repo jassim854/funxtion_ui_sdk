@@ -6,17 +6,24 @@ import 'package:ui_tool_kit/ui_tool_kit.dart';
 class CustomListtileWidget extends StatelessWidget {
   final String imageUrl;
   final String title;
-  final Widget subtitle;
+  final Color? titleColor;
+  final Color? subtitleColor;
+  final Widget? onSubtitleWidget;
+  final String? subtitle;
   final String imageHeaderIcon;
   final VoidCallback onTap;
-
+  // final double width;
   const CustomListtileWidget({
     super.key,
     required this.imageUrl,
+    this.subtitleColor,
+    this.titleColor,
     required this.title,
-    required this.subtitle,
+    this.subtitle,
     required this.onTap,
     required this.imageHeaderIcon,
+    this.onSubtitleWidget,
+    // required this.width
   });
 
   @override
@@ -24,6 +31,7 @@ class CustomListtileWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Stack(
@@ -55,8 +63,7 @@ class CustomListtileWidget extends StatelessWidget {
             ],
           ),
           16.width(),
-          SizedBox(
-            width: context.dynamicWidth * 0.65,
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -64,10 +71,19 @@ class CustomListtileWidget extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: AppTypography.label16MD.copyWith(
-                      color: AppColor.textEmphasisColor,
+                      color: titleColor ?? AppColor.textEmphasisColor,
                     )),
                 5.height(),
-                subtitle,
+                Container(
+                  // width: context.dynamicWidth * 0.2,
+                  child: onSubtitleWidget ??
+                      Text(
+                        subtitle.toString(),
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.paragraph14MD.copyWith(
+                            color: subtitleColor ?? AppColor.textPrimaryColor),
+                      ),
+                ),
               ],
             ),
           )

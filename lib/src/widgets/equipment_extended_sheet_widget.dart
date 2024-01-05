@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:funxtion/funxtion_sdk.dart';
-import 'package:ui_tool_kit/src/widgets/get_ready_widget.dart';
 
 import '../../ui_tool_kit.dart';
 
 class EquipmentExtendedSheet extends StatelessWidget {
   const EquipmentExtendedSheet({
     super.key,
-    required this.workoutModel,
+    required this.title,
     required this.equipmentData,
   });
-  final WorkoutModel workoutModel;
+  final String title;
   final List<EquipmentModel> equipmentData;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
           padding: const EdgeInsets.only(
@@ -30,27 +27,33 @@ class EquipmentExtendedSheet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                width: context.dynamicWidth * 0.8,
-                child: FittedBox(
-                  child: Text(
-                    workoutModel.title.toString(),
-                    style: AppTypography.label18LG
-                        .copyWith(color: AppColor.textEmphasisColor),
-                  ),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: Colors.transparent, shape: BoxShape.circle),
+                child: Icon(
+                  Icons.close,
+                  size: 19,
+                  color: Colors.transparent,
+                  // size: 30,
                 ),
+              ),
+              Text(
+                title,
+                style: AppTypography.title18LG
+                    .copyWith(color: AppColor.textEmphasisColor),
               ),
               InkWell(
                   onTap: () {
                     context.popPage();
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                        color: AppColor.textInvertSubtitle,
+                        color: AppColor.borderSecondaryColor,
                         shape: BoxShape.circle),
                     child: Icon(
                       Icons.close,
-                      size: 19,
+                      size: 22,
                       color: AppColor.textPrimaryColor,
                       // size: 30,
                     ),
