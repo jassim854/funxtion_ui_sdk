@@ -23,7 +23,7 @@ class BottomSearchWIdget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Flexible(
+        Expanded(
             child: CustomSearchTextFieldWidget(
                 showCloseIcon: searchController.text.isNotEmpty,
                 onChange: (value) {

@@ -49,8 +49,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   ValueNotifier<bool> trainingExpand = ValueNotifier(false);
   ValueNotifier<bool> coolDownExpand = ValueNotifier(false);
   ValueNotifier<bool> btnLoader = ValueNotifier(false);
-  ValueNotifier<bool> typeLoader = ValueNotifier(true);
-  List<ContentProvidersCategoryOnDemandModel> data = [];
+  // ValueNotifier<bool> typeLoader = ValueNotifier(true);
+  List<ContentProvidersCategoryOnDemandModel> categoryTypeData = [];
   List<EquipmentModel> equipmentData = [];
   Timer? _timer;
   @override
@@ -104,10 +104,12 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     isLoadingNotifier = true;
     isNodData = false;
 
-    CategoryListController.getCategoryTypeDataFn(
-      context,
-      typeLoader,
-    );
+    // if (CategoryListController.categoryTypeData.isEmpty) {
+    //   CategoryListController.getCategoryTypeDataFn(
+    //     context,
+    //     typeLoader,
+    //   );
+    // }
     WorkoutDetailController.getworkoutData(context, id: widget.id)
         .then((value) async {
       if (value != null &&
@@ -242,15 +244,15 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   }
 
   addCategoryData() {
-    typeLoader.value = true;
+    // typeLoader.value = true;
     for (var typeElement in workoutData!.types!) {
-      for (var j = 0; j < CategoryListController.categoryTypeData.length; j++) {
-        if (CategoryListController.categoryTypeData[j].id == typeElement) {
-          data.add(CategoryListController.categoryTypeData[j]);
+      for (var j = 0; j < CommonController.categoryTypeData.length; j++) {
+        if (CommonController.categoryTypeData[j].id == typeElement) {
+          categoryTypeData.add(CommonController.categoryTypeData[j]);
         }
       }
     }
-    typeLoader.value = false;
+    // typeLoader.value = false;
   }
 
   @override
@@ -277,33 +279,27 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                           "",
                                   flexibleTitle: "${workoutData?.title}",
 
-                                  flexibleSubtitleWidget:
-                                      ValueListenableBuilder<bool>(
-                                          valueListenable: typeLoader,
-                                          builder: (_, value, child) {
-                                            return RichText(
-                                                text: TextSpan(
-                                                    style: AppTypography
-                                                        .label16MD
-                                                        .copyWith(
-                                                            color: AppColor
-                                                                .textInvertPrimaryColor),
-                                                    children: [
-                                                  TextSpan(
-                                                      text:
-                                                          "${workoutData?.duration?.getTextAfterSymbol()} min"),
-                                                  value == true
-                                                      ? WidgetSpan(
-                                                          child: BaseHelper
-                                                              .loadingWidget())
-                                                      : TextSpan(
-                                                          text:
-                                                              " • ${data.map((e) => e.name).join(',')}"),
-                                                  // TextSpan(
-                                                  //     text:
-                                                  //         " • ${widget.listTrainingPLanData[index].level}"),
-                                                ]));
-                                          }),
+                                  flexibleSubtitleWidget: RichText(
+                                      text: TextSpan(
+                                          style: AppTypography.label16MD
+                                              .copyWith(
+                                                  color: AppColor
+                                                      .textInvertPrimaryColor),
+                                          children: [
+                                        TextSpan(
+                                            text:
+                                                "${workoutData?.duration} min"),
+                                        value == true
+                                            ? WidgetSpan(
+                                                child:
+                                                    BaseHelper.loadingWidget())
+                                            : TextSpan(
+                                                text:
+                                                    " • ${categoryTypeData.map((e) => e.name).join(',')}"),
+                                        // TextSpan(
+                                        //     text:
+                                        //         " • ${widget.listTrainingPLanData[index].level}"),
+                                      ])),
                                   // flexibleTitle2:
                                   //     "${workoutData?.duration?.getTextAfterSymbol()} min • ${workoutData!.types!.isNotEmpty ? data.map((e) => e.name).join(',') : ''}",
                                   value: value,
@@ -407,8 +403,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                               .copyWith(color: AppColor.textEmphasisColor),
                         ),
                         4.height(),
-                        Text(
-                            "${workoutData?.duration?.getTextAfterSymbol()} min",
+                        Text("${workoutData?.duration} min",
                             style: AppTypography.paragraph12SM
                                 .copyWith(color: AppColor.textPrimaryColor))
                       ],
@@ -443,12 +438,13 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                               await showAdaptiveDialog(
                                 context: context,
                                 builder: (context) {
-                                  return const ShowAlertDialogWidget(
+                                  return ShowAlertDialogWidget(
                                     title: 'Start workout out of sequence?',
                                     body:
                                         'Any incomplete workouts listed before this one will be marked as complete.',
                                     btnText1: 'Cancel',
                                     btnText2: 'Start Workout',
+                                    color: AppColor.linkPrimaryColor,
                                   );
                                 },
                               ).then((value) async {
@@ -465,14 +461,16 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                         : null,
                     btnChild: value == true
                         ? BaseHelper.loadingWidget()
-                        : Text(
-                            'Start Workout',
-                            style: AppTypography.label16MD.copyWith(
-                                color: widget.followTrainingplanModel
-                                            ?.outOfSequence ==
-                                        true
-                                    ? AppColor.buttonSecondaryColor
-                                    : AppColor.textInvertEmphasis),
+                        : FittedBox(
+                            child: Text(
+                              'Start Workout',
+                              style: AppTypography.label16MD.copyWith(
+                                  color: widget.followTrainingplanModel
+                                              ?.outOfSequence ==
+                                          true
+                                      ? AppColor.buttonSecondaryColor
+                                      : AppColor.textInvertEmphasis),
+                            ),
                           ),
                     btnColor:
                         widget.followTrainingplanModel?.outOfSequence == true
@@ -504,6 +502,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                 trainingData: trainingData,
                 workoutModel: workoutData as WorkoutModel,
                 coolDownData: coolDownData,
+                followTrainingplanModel: widget.followTrainingplanModel,
               ),
             ));
   }
@@ -550,7 +549,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               CustomRowTextChartIcon(
                 level: workoutData?.level.toString() ?? "",
                 text1: 'Level',
-                text2: workoutData?.level.toString().capitalizeFirst() ?? "",
+                text2: workoutData?.level.toString() ?? "",
                 isChartIcon: true,
               ),
               const Padding(

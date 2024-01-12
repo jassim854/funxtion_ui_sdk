@@ -6,16 +6,15 @@ class CustomElevatedButton extends StatelessWidget {
   final Color? btnColor;
   final Widget child;
   final double? radius, elevation;
-final EdgeInsetsGeometry? childPadding;
-  const CustomElevatedButton({
-    super.key,
-    required this.onPressed,
-    required this.child,
-    this.btnColor,
-    this.elevation,
-    this.radius,
-    this.childPadding
-  });
+  final EdgeInsetsGeometry? childPadding;
+  const CustomElevatedButton(
+      {super.key,
+      required this.onPressed,
+      required this.child,
+      this.btnColor,
+      this.elevation,
+      this.radius,
+      this.childPadding});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +24,9 @@ final EdgeInsetsGeometry? childPadding;
           elevation: elevation,
           backgroundColor: btnColor ?? AppColor.linkSecondaryColor,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(radius ?? 12))),
+              borderRadius: BorderRadius.circular(radius ?? 16))),
       child: Padding(
-        padding:childPadding??EdgeInsets.zero,
+        padding: childPadding ?? EdgeInsets.zero,
         child: Container(child: child),
       ),
     );

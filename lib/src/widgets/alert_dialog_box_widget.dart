@@ -3,14 +3,14 @@ import 'package:ui_tool_kit/ui_tool_kit.dart';
 
 class ShowAlertDialogWidget extends StatelessWidget {
   final String title, body, btnText1, btnText2;
-
-  const ShowAlertDialogWidget({
-    super.key,
-    required this.title,
-    required this.body,
-    required this.btnText1,
-    required this.btnText2,
-  });
+  final Color? color;
+  const ShowAlertDialogWidget(
+      {super.key,
+      required this.title,
+      required this.body,
+      required this.btnText1,
+      required this.btnText2,
+      this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class ShowAlertDialogWidget extends StatelessWidget {
             .copyWith(fontSize: 13)
             .copyWith(color: AppColor.textEmphasisColor),
       ),
-      actionsPadding: const EdgeInsets.only(right: 10, bottom: 10),
+      actionsPadding: const EdgeInsets.only(bottom: 10),
       // buttonPadding: EdgeInsets.zero,
       actions: [
         TextButton(
@@ -43,7 +43,7 @@ class ShowAlertDialogWidget extends StatelessWidget {
         TextButton(
           child: Text(btnText2,
               style: AppTypography.label18LG
-                  .copyWith(fontSize: 17, color: AppColor.redColor)),
+                  .copyWith(fontSize: 17, color: color ?? AppColor.redColor)),
           onPressed: () {
             context.popPage(result: true);
           },

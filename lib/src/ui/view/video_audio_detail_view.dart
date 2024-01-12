@@ -23,6 +23,7 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
   late ScrollController scrollController;
   List<EquipmentModel> equipmentData = [];
   ValueNotifier<bool> centerTitle = ValueNotifier(false);
+  String onDemandCategoryFilterData = "";
   @override
   void initState() {
     scrollController = ScrollController()
@@ -45,11 +46,14 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
       isNodData = false;
     });
     try {
-      CategoryDetailController.getOnDemandData(context, id: widget.id)
+      await CategoryDetailController.getOnDemandData(context, id: widget.id)
           .then((value) async {
         if (value != null) {
           isLoadingNotifier = false;
           onDemamdModelData = value;
+          onDemandCategoryFilterData =
+              CategoryDetailController.getOnDemandCategoryData(value);
+
           if (onDemamdModelData?.instructorId.toString() != "null") {
             instructorModelData = await CategoryDetailController.getInstructor(
                 context,
@@ -66,7 +70,6 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
           }
 
           setState(() {});
-          return;
         } else {
           isLoadingNotifier = false;
           isNodData = true;
@@ -176,21 +179,34 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
                                 controller: scrollController,
                                 slivers: [
                                   SliverAppBarWidget(
-                                    appBarTitle: "${onDemamdModelData?.title}",
+                                    appBarTitle:
+                                        "${onDemamdModelData?.title.trim()}",
                                     backGroundImg: onDemamdModelData
                                             ?.mapImage?.url
                                             .toString() ??
                                         "",
                                     flexibleTitle:
-                                        "${onDemamdModelData?.title}",
+                                        "${onDemamdModelData?.title.trim()}",
 
                                     flexibleSubtitleWidget: Text(
-                                      "${onDemamdModelData?.duration.getTextAfterSymbol()} min • ${onDemamdModelData?.type.toString().removeSymbolGetText()}",
+                                      "${onDemamdModelData?.duration} min • $onDemandCategoryFilterData",
                                       style: AppTypography.label16MD.copyWith(
                                           color:
                                               AppColor.textInvertPrimaryColor),
                                     ),
-
+                                    onStackChild: Align(
+                                      alignment: Alignment.center,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          playOnTap(context);
+                                        },
+                                        child: SvgPicture.asset(
+                                          AppAssets.playArrowIcon,
+                                          height: 38,
+                                          color: AppColor.textInvertEmphasis,
+                                        ),
+                                      ),
+                                    ),
                                     // flexibleTitle2:
                                     //     "${workoutData?.duration?.getTextAfterSymbol()} min • ${workoutData!.types!.isNotEmpty ? data.map((e) => e.name).join(',') : ''}",
                                     value: value,
@@ -242,8 +258,7 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
               CustomRowTextChartIcon(
                 level: onDemamdModelData?.level.toString() ?? "No data",
                 text1: 'Level',
-                text2: onDemamdModelData?.level.toString().capitalizeFirst() ??
-                    "No data",
+                text2: onDemamdModelData?.level.toString() ?? "No data",
                 isChartIcon: true,
               ),
               const Padding(
@@ -346,7 +361,7 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
               children: [
                 Column(
                   children: [
-                    Text("${onDemamdModelData?.title}dddddddddddvbnmvbnm,bhnm",
+                    Text("${onDemamdModelData?.title}",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTypography.title14XS
@@ -355,7 +370,7 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
                 ),
                 4.height(),
                 Text(
-                  "${onDemamdModelData?.duration.getTextAfterSymbol()} min",
+                  "${onDemamdModelData?.duration} min",
                   style: AppTypography.paragraph12SM
                       .copyWith(color: AppColor.textPrimaryColor),
                 ),

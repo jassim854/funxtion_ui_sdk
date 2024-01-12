@@ -124,7 +124,7 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                                                                           TypeFilterModel(
                                                                               id: e.id,
                                                                               type: data.key.toString(),
-                                                                              filter: e.label.toString().capitalizeFirst()),
+                                                                              filter: e.label.toString()),
                                                                           selectedFilter,
                                                                           widget.confirmedFilter);
                                                                       setState(
@@ -137,8 +137,7 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                                                                       e: IconTextModel(
                                                                           text: e
                                                                               .label
-                                                                              .toString()
-                                                                              .capitalizeFirst(),
+                                                                              .toString(),
                                                                           id: e
                                                                               .id),
                                                                       selectedFilter:
@@ -160,7 +159,7 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                                                                       CategoryListController.addFilter(
                                                                           TypeFilterModel(
                                                                               type: data.key.toString(),
-                                                                              filter: e is List ? e[0].toString() : e.toString().capitalizeFirst()),
+                                                                              filter: data.key!.contains("max_days_per_week") ? e[1].toString() : e.toString()),
                                                                           selectedFilter,
                                                                           widget.confirmedFilter);
                                                                       setState(
@@ -171,12 +170,12 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                                                                         levelContainer(
                                                                       context,
                                                                       e: IconTextModel(
-                                                                          text: e is List ? e[0].toString() : e.toString().capitalizeFirst(),
-                                                                          imageName: e == "beginner"
+                                                                          text: data.key!.contains("max_days_per_week") ? e[1].toString() : e.toString(),
+                                                                          imageName: e.toString().contains(RegExp('beginner', caseSensitive: false))
                                                                               ? AppAssets.chartLowIcon
-                                                                              : e == "intermediate"
+                                                                              : e.toString().contains(RegExp("intermediate", caseSensitive: false))
                                                                                   ? AppAssets.chatMidIcon
-                                                                                  : e == 'advanced'
+                                                                                  : e.toString().contains(RegExp("advanced", caseSensitive: false))
                                                                                       ? AppAssets.chartFullIcon
                                                                                       : null),
                                                                       selectedFilter:

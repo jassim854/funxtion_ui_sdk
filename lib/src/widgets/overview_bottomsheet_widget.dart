@@ -13,28 +13,20 @@ class OverviewBottomSheet extends StatefulWidget {
   final void Function(int)? goHereTapWarmUp;
   final void Function(int)? goHereTapTraining;
   final void Function(int)? goHereTapCoolDown;
-  final bool warmupHeader, warmUpWorkoutComplete;
-  final bool trainingHeaer, trainingWorkoutComplete;
-  final bool coolDownHeader, coolDownWorkoutComplete;
 
-  const OverviewBottomSheet(
-      {super.key,
-      required this.workoutModel,
-      required this.warmUpData,
-      required this.trainingData,
-      required this.coolDownData,
-      this.warmupBody,
-      this.trainingBody,
-      this.coolDownBody,
-      required this.warmupHeader,
-      this.goHereTapWarmUp,
-      this.goHereTapTraining,
-      this.goHereTapCoolDown,
-      required this.trainingHeaer,
-      required this.coolDownHeader,
-      required this.warmUpWorkoutComplete,
-      required this.trainingWorkoutComplete,
-      required this.coolDownWorkoutComplete});
+  const OverviewBottomSheet({
+    super.key,
+    required this.workoutModel,
+    required this.warmUpData,
+    required this.trainingData,
+    required this.coolDownData,
+    this.warmupBody,
+    this.trainingBody,
+    this.coolDownBody,
+    this.goHereTapWarmUp,
+    this.goHereTapTraining,
+    this.goHereTapCoolDown,
+  });
 
   @override
   State<OverviewBottomSheet> createState() => _OverviewBottomSheetState();
@@ -76,7 +68,7 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
       children: [
         Padding(
           padding:
-              const EdgeInsets.only(top: 12, bottom: 8, left: 16, right: 16),
+              const EdgeInsets.only(top: 12, bottom: 12, left: 16, right: 16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -121,15 +113,20 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 24, top: 40, bottom: 20),
+                  padding: const EdgeInsets.only(
+                      left: 24, top: 40, bottom: 20, right: 24),
                   child: Text(
                     widget.workoutModel.title.toString(),
                     style: AppTypography.title28_2XL
                         .copyWith(color: AppColor.textEmphasisColor),
                   ),
                 ),
-                ColoredBox(
-                  color: AppColor.surfaceBackgroundColor,
+                Container(
+                  decoration: BoxDecoration(
+                      color: AppColor.surfaceBackgroundColor,
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16))),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -142,9 +139,9 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
                             30.height(),
                             if (widget.warmUpData.isNotEmpty) ...[
                               ProgressBarWidget(
-                                workoutCompleted: widget.warmupBody ==
+                                workoutCompleted: widget.warmupBody! >=
                                     widget.warmUpData.length,
-                                isActive: widget.warmupHeader,
+                                isActive: widget.warmUpData.isNotEmpty,
                                 currentList: widget.warmUpData,
                                 current: widget.warmupBody?.toInt() ?? -1,
                                 amrapExpand: amrapExpandWarmup,
@@ -159,11 +156,18 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
                             ],
                             if (widget.warmUpData.isNotEmpty &&
                                 widget.trainingData.isNotEmpty)
-                              const LineWidget(height: 95, color: Colors.black),
+                              LineWidget(
+                                  height: 55,
+                                  color: widget.trainingBody! >= 0
+                                      ? AppColor.surfaceBrandDarkColor
+                                      : null),
                             if (widget.trainingData.isNotEmpty)
                               ProgressBarWidget(
-                                workoutCompleted: false,
-                                isActive: true,
+                                workoutCompleted: widget.trainingBody! >=
+                                    widget.trainingData.length,
+                                isActive: widget.warmUpData.isEmpty &&
+                                        widget.trainingData.isNotEmpty ||
+                                    widget.trainingBody! >= 0,
                                 currentList: widget.trainingData,
                                 current: widget.trainingBody?.toInt() ?? -1,
                                 amrapExpand: amrapExpandTraining,
@@ -177,13 +181,17 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
                               ),
                             if (widget.trainingData.isNotEmpty &&
                                 widget.coolDownData.isNotEmpty)
-                              const LineWidget(
+                              LineWidget(
                                 height: 55,
+                                color: widget.coolDownBody! >= 0
+                                    ? AppColor.borderBrandDarkColor
+                                    : null,
                               ),
                             if (widget.coolDownData.isNotEmpty)
                               ProgressBarWidget(
-                                workoutCompleted: false,
-                                isActive: widget.coolDownHeader,
+                                workoutCompleted: widget.coolDownBody! >=
+                                    widget.coolDownData.length,
+                                isActive: widget.coolDownBody! >= 0,
                                 currentList: widget.coolDownData,
                                 current: widget.coolDownBody?.toInt() ?? -1,
                                 amrapExpand: amrapExpandCoolDown,
@@ -440,7 +448,7 @@ class ProgressBarWidget extends StatelessWidget {
                                             children: [
                                               if (i == 0)
                                                 LineWidget(
-                                                  height: 65,
+                                                  height: 75,
                                                   color: workoutCompleted
                                                       ? AppColor
                                                           .surfaceBrandDarkColor
@@ -467,7 +475,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                           .key
                                                           .exerciseCategoryName)
                                                 LineWidget(
-                                                  height: 70,
+                                                  height: 95,
                                                   color: workoutCompleted
                                                       ? AppColor
                                                           .surfaceBrandDarkColor
@@ -505,7 +513,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                               .surfaceBrandDarkColor
                                                           : current >= i
                                                               ? AppColor
-                                                                  .borderBrandDarkColor
+                                                                  .surfaceBrandDarkColor
                                                               : null,
                                                     ),
                                                   StepWidget(
@@ -532,7 +540,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                               .key
                                                               .exerciseCategoryName)
                                                     LineWidget(
-                                                      height: 70,
+                                                      height: 95,
                                                       color: workoutCompleted
                                                           ? AppColor
                                                               .surfaceBrandDarkColor
@@ -565,10 +573,26 @@ class ProgressBarWidget extends StatelessWidget {
                                                   child: Column(
                                                     children: [
                                                       if (i == 0)
-                                                        const LineWidget(
-                                                            height: 90),
+                                                        LineWidget(
+                                                          height: 90,
+                                                          color:
+                                                              workoutCompleted
+                                                                  ? AppColor
+                                                                      .surfaceBrandDarkColor
+                                                                  : current >= i
+                                                                      ? AppColor
+                                                                          .borderBrandDarkColor
+                                                                      : null,
+                                                        ),
                                                       StepWidget(
-                                                        isActive: i == current,
+                                                        isActive:
+                                                            workoutCompleted
+                                                                ? false
+                                                                : i == current,
+                                                        isCompleted:
+                                                            workoutCompleted
+                                                                ? true
+                                                                : current > i,
                                                       ),
                                                       roundCheckWidget(
                                                         i: i,
@@ -587,8 +611,16 @@ class ProgressBarWidget extends StatelessWidget {
                                                                       i + 1]
                                                                   .key
                                                                   .exerciseCategoryName)
-                                                        const LineWidget(
-                                                          height: 70,
+                                                        LineWidget(
+                                                          height: 95,
+                                                          color:
+                                                              workoutCompleted
+                                                                  ? AppColor
+                                                                      .surfaceBrandDarkColor
+                                                                  : current > i
+                                                                      ? AppColor
+                                                                          .surfaceBrandDarkColor
+                                                                      : null,
                                                         ),
                                                     ],
                                                   ),
@@ -614,11 +646,25 @@ class ProgressBarWidget extends StatelessWidget {
                                                       child: Column(
                                                         children: [
                                                           if (i == 0)
-                                                            const LineWidget(
-                                                                height: 65),
+                                                            LineWidget(
+                                                              height: 65,
+                                                              color: workoutCompleted
+                                                                  ? AppColor.surfaceBrandDarkColor
+                                                                  : current >= i
+                                                                      ? AppColor.borderBrandDarkColor
+                                                                      : null,
+                                                            ),
                                                           StepWidget(
                                                             isActive:
-                                                                i == current,
+                                                                workoutCompleted
+                                                                    ? false
+                                                                    : i ==
+                                                                        current,
+                                                            isCompleted:
+                                                                workoutCompleted
+                                                                    ? true
+                                                                    : current >
+                                                                        i,
                                                           ),
                                                           roundCheckWidget(
                                                             i: i,
@@ -639,8 +685,17 @@ class ProgressBarWidget extends StatelessWidget {
                                                                           i + 1]
                                                                       .key
                                                                       .exerciseCategoryName)
-                                                            const LineWidget(
-                                                              height: 70,
+                                                            LineWidget(
+                                                              height: 95,
+                                                              color:
+                                                                  workoutCompleted
+                                                                      ? AppColor
+                                                                          .surfaceBrandDarkColor
+                                                                      : current >
+                                                                              i
+                                                                          ? AppColor
+                                                                              .surfaceBrandDarkColor
+                                                                          : null,
                                                             ),
                                                         ],
                                                       ),
@@ -667,11 +722,25 @@ class ProgressBarWidget extends StatelessWidget {
                                                           child: Column(
                                                             children: [
                                                               if (i == 0)
-                                                                const LineWidget(
-                                                                    height: 90),
+                                                                LineWidget(
+                                                                  height: 90,
+                                                                  color: workoutCompleted
+                                                                      ? AppColor.surfaceBrandDarkColor
+                                                                      : current >= i
+                                                                          ? AppColor.borderBrandDarkColor
+                                                                          : null,
+                                                                ),
                                                               StepWidget(
-                                                                isActive: i ==
-                                                                    current,
+                                                                isActive:
+                                                                    workoutCompleted
+                                                                        ? false
+                                                                        : i ==
+                                                                            current,
+                                                                isCompleted:
+                                                                    workoutCompleted
+                                                                        ? true
+                                                                        : current >
+                                                                            i,
                                                               ),
                                                               roundCheckWidget(
                                                                 i: i,
@@ -692,8 +761,13 @@ class ProgressBarWidget extends StatelessWidget {
                                                                               1]
                                                                           .key
                                                                           .exerciseCategoryName)
-                                                                const LineWidget(
-                                                                  height: 70,
+                                                                LineWidget(
+                                                                  height: 95,
+                                                                  color: workoutCompleted
+                                                                      ? AppColor.surfaceBrandDarkColor
+                                                                      : current > i
+                                                                          ? AppColor.surfaceBrandDarkColor
+                                                                          : null,
                                                                 ),
                                                             ],
                                                           ),
@@ -747,9 +821,14 @@ class ProgressBarWidget extends StatelessWidget {
                                                                               .toList()[i + 1]
                                                                               .key
                                                                               .exerciseCategoryName)
-                                                                    const LineWidget(
+                                                                    LineWidget(
                                                                       height:
-                                                                          70,
+                                                                          95,
+                                                                      color: workoutCompleted
+                                                                          ? AppColor.surfaceBrandDarkColor
+                                                                          : current > i
+                                                                              ? AppColor.surfaceBrandDarkColor
+                                                                              : null,
                                                                     ),
                                                                 ],
                                                               ),
@@ -795,9 +874,14 @@ class ProgressBarWidget extends StatelessWidget {
                                                                       if (i != currentList.length - 1 &&
                                                                           currentList.entries.toList()[i].key.exerciseCategoryName ==
                                                                               currentList.entries.toList()[i + 1].key.exerciseCategoryName)
-                                                                        const LineWidget(
+                                                                        LineWidget(
                                                                           height:
-                                                                              70,
+                                                                              95,
+                                                                          color: workoutCompleted
+                                                                              ? AppColor.surfaceBrandDarkColor
+                                                                              : current > i
+                                                                                  ? AppColor.surfaceBrandDarkColor
+                                                                                  : null,
                                                                         ),
                                                                     ],
                                                                   ),
@@ -832,8 +916,11 @@ class ProgressBarWidget extends StatelessWidget {
                             .exerciseCategoryName
                 ? LineWidget(
                     height: 10,
-                    color:
-                        isActive == true ? AppColor.borderBrandDarkColor : null,
+                    color: workoutCompleted
+                        ? AppColor.surfaceBrandDarkColor
+                        : current >= i
+                            ? AppColor.borderBrandDarkColor
+                            : null,
                   )
                 : Container();
   }
@@ -852,9 +939,21 @@ class ProgressBarWidget extends StatelessWidget {
                 ? Column(
                     children: [
                       LineWidget(
-                        height: 80,
+                        height: 90,
+                        color: workoutCompleted
+                            ? AppColor.surfaceBrandDarkColor
+                            : current >= i
+                                ? AppColor.borderBrandDarkColor
+                                : null,
                       ),
-                      const StepWidget(),
+                      StepWidget(
+                        isActive: workoutCompleted
+                            ? false
+                            : current >= i
+                                ? true
+                                : false,
+                        isCompleted: workoutCompleted,
+                      ),
                       ValueListenableBuilder<bool>(
                           valueListenable: header2Expand,
                           builder: (_, value, child) {
@@ -868,7 +967,12 @@ class ProgressBarWidget extends StatelessWidget {
                                             .exerciseCategoryName ==
                                         ItemType.singleExercise
                                     ? 90
-                                    : 115,
+                                    : 105,
+                                color: workoutCompleted
+                                    ? AppColor.surfaceBrandDarkColor
+                                    : current >= i
+                                        ? AppColor.surfaceBrandDarkColor
+                                        : null,
                               )),
                             );
                           }),
@@ -886,7 +990,7 @@ class LineWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: 3.5,
+        width: 2,
         height: height,
         color: color ?? AppColor.borderSecondaryColor);
   }

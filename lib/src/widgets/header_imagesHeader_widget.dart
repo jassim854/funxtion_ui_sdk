@@ -91,7 +91,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 16, right: 16),
+      padding: const EdgeInsets.only(left: 20, right: 20),
       color: AppColor.surfaceBackgroundColor,
       child: ValueListenableBuilder(
           valueListenable: widget.expandHeaderValueListenable,
@@ -113,7 +113,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                               child: Text('No Data'),
                             )
                           : ListView.builder(
-                              padding: const EdgeInsets.only(bottom: 0),
+                              padding: const EdgeInsets.all(0),
                               itemCount: widget.currentListData.length,
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -136,7 +136,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                               valueListenable:
                                                   widget.ctExpandNew ??
                                                       ctExpand!,
-                                              builder: (context, value, child) {
+                                              builder: (_, value, child) {
                                                 return ExpandedSection(
                                                   expand: value,
                                                   child: Column(children: [
@@ -157,6 +157,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                 .exerciseCategoryName ==
                                             ItemType.singleExercise
                                         ? Column(
+                                            mainAxisSize: MainAxisSize.min,
                                             children: [
                                               header2CheckWidget(
                                                   index: index,
@@ -167,13 +168,13 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                   valueListenable:
                                                       widget.seExpandNew ??
                                                           seExpand!,
-                                                  builder:
-                                                      (context, value, child) {
+                                                  builder: (_, value, child) {
                                                     return ExpandedSection(
                                                       expand: value,
                                                       child: Column(children: [
                                                         // roundCheckWidget(index),
-                                                        12.height(),
+                                                        if (index == 0)
+                                                          12.height(),
                                                         showExerciseTileWidget(
                                                           context,
                                                           widget
@@ -202,8 +203,8 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                       valueListenable:
                                                           widget.ssExpandNew ??
                                                               ssExpand!,
-                                                      builder: (context, value,
-                                                          child) {
+                                                      builder:
+                                                          (_, value, child) {
                                                         return ExpandedSection(
                                                           expand: value,
                                                           child:
@@ -239,8 +240,8 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                           valueListenable: widget
                                                                   .crExpandNew ??
                                                               crExpand!,
-                                                          builder: (context,
-                                                              value, child) {
+                                                          builder: (_, value,
+                                                              child) {
                                                             return ExpandedSection(
                                                               expand: value,
                                                               child: Column(
@@ -276,7 +277,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                               valueListenable:
                                                                   widget.rftExpandNew ??
                                                                       rftExpand!,
-                                                              builder: (context,
+                                                              builder: (_,
                                                                   value,
                                                                   child) {
                                                                 return ExpandedSection(
@@ -316,10 +317,9 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                                   valueListenable:
                                                                       widget.enomExpandNew ??
                                                                           enomExpand!,
-                                                                  builder:
-                                                                      (context,
-                                                                          value,
-                                                                          child) {
+                                                                  builder: (_,
+                                                                      value,
+                                                                      child) {
                                                                     return ExpandedSection(
                                                                       expand:
                                                                           value,
@@ -356,7 +356,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                                       valueListenable:
                                                                           widget.amrapExpandNew ??
                                                                               amrapExpand!,
-                                                                      builder: (context,
+                                                                      builder: (_,
                                                                           value,
                                                                           child) {
                                                                         return ExpandedSection(
@@ -420,39 +420,36 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                         .toList()[index - 1]
                         .key
                         .exerciseCategoryName
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: Column(
-                      children: [
-                        CustomDivider(
-                          indent: context.dynamicWidth * 0.18,
-                          endIndent: context.dynamicWidth * 0.02,
-                        ),
-                        8.height(),
-                        BuildHeader2(
-                            subtitle:
-                                widget.currentListData.currentHeaderSubTitle(
-                              index: index,
-                              amrapExercise: amrapExercise,
-                              circuitRepExercise: circuitRepExercise,
-                              circuitTimeExercise: circuitTimeExercise,
-                              enomExercise: enomExercise,
-                              rftExercise: rftExercise,
-                              seExercise: seExercise,
-                              ssExercise: ssExercise,
-                            ),
-                            expandValueListenable: expandVar,
-                            exerciseWorkoutData:
-                                WorkoutDetailController.addCurrentList(
-                                    index, widget.currentListData),
-                            title: widget.currentListData
-                                .currentHeaderTitle(index),
-                            onExpand: () {
-                              expandVar.value = !expandVar.value;
-                              // setState(() {});
-                            }),
-                      ],
-                    ),
+                ? Column(
+                    children: [
+                      // CustomDivider(
+                      //   indent: context.dynamicWidth * 0.18,
+                      //   endIndent: context.dynamicWidth * 0.02,
+                      // ),
+                      // 8.height(),
+                      BuildHeader2(
+                          subtitle:
+                              widget.currentListData.currentHeaderSubTitle(
+                            index: index,
+                            amrapExercise: amrapExercise,
+                            circuitRepExercise: circuitRepExercise,
+                            circuitTimeExercise: circuitTimeExercise,
+                            enomExercise: enomExercise,
+                            rftExercise: rftExercise,
+                            seExercise: seExercise,
+                            ssExercise: ssExercise,
+                          ),
+                          expandValueListenable: expandVar,
+                          exerciseWorkoutData:
+                              WorkoutDetailController.addCurrentList(
+                                  index, widget.currentListData),
+                          title:
+                              widget.currentListData.currentHeaderTitle(index),
+                          onExpand: () {
+                            expandVar.value = !expandVar.value;
+                            // setState(() {});
+                          }),
+                    ],
                   )
                 : Container();
   }
@@ -474,21 +471,42 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                 : Container();
   }
 
-  StatelessWidget cutomDiviDerWidget(int i) {
+  cutomDiviDerWidget(int i) {
     return i == 0
-        ? CustomDivider(
-            indent: context.dynamicWidth * 0.29,
-            endIndent: context.dynamicWidth * 0.02,
+        ? const Padding(
+            padding: EdgeInsets.only(top: 12, bottom: 12),
+            child: CustomDivider(
+              indent: 145,
+
+              // indent: context.dynamicWidth * 0.29,
+              // endIndent: context.dynamicWidth * 0.02,
+            ),
           )
         : i == widget.currentListData.length - 1
             ? Container()
-            : widget.currentListData.entries.toList()[i + 1].key.setsCount !=
-                    widget.currentListData.entries.toList()[i].key.setsCount
-                ? Container()
-                : CustomDivider(
-                    indent: context.dynamicWidth * 0.29,
-                    endIndent: context.dynamicWidth * 0.02,
-                  );
+            : widget.currentListData.entries.toList()[i + 1].key.setsCount ==
+                        widget.currentListData.entries
+                            .toList()[i]
+                            .key
+                            .setsCount ||
+                    widget.currentListData.entries
+                            .toList()[i + 1]
+                            .key
+                            .exerciseCategoryName !=
+                        widget.currentListData.entries
+                            .toList()[i]
+                            .key
+                            .exerciseCategoryName
+                ? const Padding(
+                    padding: EdgeInsets.only(top: 12, bottom: 12),
+                    child: CustomDivider(
+                      indent: 145,
+
+                      // indent: context.dynamicWidth * 0.29,
+                      // endIndent: context.dynamicWidth * 0.02,
+                    ),
+                  )
+                : const SizedBox.shrink();
   }
 
   Padding showExerciseTileWidget(
@@ -498,52 +516,76 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
   ) {
     return Padding(
       padding: const EdgeInsets.only(
-        left: 40,
+        left: 45,
       ),
-      child: ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: Transform.scale(
-            scale: 1.4,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(11)),
-              color: AppColor.surfaceBackgroundBaseColor,
-              clipBehavior: Clip.antiAlias,
-              child: Container(
-                width: context.dynamicWidth * 0.12,
-                margin: const EdgeInsets.all(0.5),
-                decoration: BoxDecoration(
-                    color: AppColor.surfaceBackgroundColor,
-                    borderRadius: BorderRadius.circular(11)),
-                child: cacheNetworkWidget(
-                    imageUrl:
-                        dataList.values.toList()[index].mapImage?.url ?? ""),
-              ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  color: AppColor.surfaceBackgroundBaseColor,
+                  clipBehavior: Clip.antiAlias,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    // width: context.dynamicWidth * 0.12,
+                    margin: const EdgeInsets.all(1),
+                    decoration: BoxDecoration(
+                        color: AppColor.surfaceBackgroundColor,
+                        borderRadius: BorderRadius.circular(12)),
+                    child: cacheNetworkWidget(
+                        height: 80,
+                        width: 80,
+                        context,
+                        imageUrl:
+                            dataList.values.toList()[index].mapImage?.url ??
+                                ""),
+                  ),
+                ),
+                12.width(),
+                Flexible(
+                  child: Column(
+                    // direction: Axis.vertical,
+
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${dataList.values.toList()[index].name}s",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.label16MD
+                            .copyWith(color: AppColor.textEmphasisColor),
+                      ),
+                      Text(
+                          widget.currentListData.keys
+                                          .toList()[index]
+                                          .exerciseCategoryName ==
+                                      ItemType.singleExercise ||
+                                  widget.currentListData.keys
+                                          .toList()[index]
+                                          .exerciseCategoryName ==
+                                      ItemType.rft
+                              ? "${widget.currentListData.keys.toList()[index].getGoalAndResistantTargets} • ${widget.currentListData.keys.toList()[index].setsCount} sets"
+                              : widget.currentListData.keys
+                                  .toList()[index]
+                                  .getGoalAndResistantTargets,
+                          style: AppTypography.paragraph14MD.copyWith(
+                            color: AppColor.textPrimaryColor,
+                          )),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          title: Text(
-            dataList.values.toList()[index].name,
-            style: AppTypography.label16MD
-                .copyWith(color: AppColor.textEmphasisColor),
-          ),
-          subtitle: Text(
-              widget.currentListData.keys
-                              .toList()[index]
-                              .exerciseCategoryName ==
-                          ItemType.singleExercise ||
-                      widget.currentListData.keys
-                              .toList()[index]
-                              .exerciseCategoryName ==
-                          ItemType.rft
-                  ? "${widget.currentListData.keys.toList()[index].getGoalAndResistantTargets} • ${widget.currentListData.keys.toList()[index].setsCount} sets"
-                  : widget.currentListData.keys
-                      .toList()[index]
-                      .getGoalAndResistantTargets,
-              style: AppTypography.paragraph14MD.copyWith(
-                color: AppColor.textPrimaryColor,
-              )),
-          trailing: widget.showTrailing == true
+          widget.showTrailing == true
               ? PopupMenuButton(
+                  // iconSize: 16,
                   onSelected: (value) {
                     if (value == 1) {
                       showModalBottomSheet(
@@ -563,9 +605,10 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                     }
                   },
                   padding: const EdgeInsets.all(16),
-                  constraints: const BoxConstraints(minWidth: 250),
-                  elevation: 15,
-                  offset: const Offset(-10, 15),
+                  constraints: const BoxConstraints(minWidth: 228),
+                  elevation: 20,
+                  surfaceTintColor: AppColor.surfaceBackgroundBaseColor,
+                  offset: const Offset(-2, 20),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                   color: AppColor.surfaceBackgroundBaseColor,
@@ -603,7 +646,115 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                     AppAssets.horizontalVertIcon,
                     color: AppColor.surfaceBrandDarkColor,
                   ))
-              : null),
+              : const SizedBox.shrink(),
+          // ListTile(
+          //     minLeadingWidth: 0,
+          //     horizontalTitleGap: 0,
+          //     minVerticalPadding: 0,
+          //     contentPadding: EdgeInsets.zero,
+          //     leading: Card(
+          //       shape:
+          //           RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          //       color: AppColor.surfaceBackgroundBaseColor,
+          //       clipBehavior: Clip.antiAlias,
+          //       child: Container(
+          //         width: 80,
+          //         height: 80,
+          //         // width: context.dynamicWidth * 0.12,
+          //         margin: const EdgeInsets.all(0.5),
+          //         decoration: BoxDecoration(
+          //             color: AppColor.surfaceBackgroundColor,
+          //             borderRadius: BorderRadius.circular(12)),
+          //         child: cacheNetworkWidget(
+          //             imageUrl:
+          //                 dataList.values.toList()[index].mapImage?.url ?? ""),
+          //       ),
+          //     ),
+          //     title: Text(
+          //       dataList.values.toList()[index].name,
+          //       style: AppTypography.label16MD
+          //           .copyWith(color: AppColor.textEmphasisColor),
+          //     ),
+          //     subtitle: Text(
+          //         widget.currentListData.keys
+          //                         .toList()[index]
+          //                         .exerciseCategoryName ==
+          //                     ItemType.singleExercise ||
+          //                 widget.currentListData.keys
+          //                         .toList()[index]
+          //                         .exerciseCategoryName ==
+          //                     ItemType.rft
+          //             ? "${widget.currentListData.keys.toList()[index].getGoalAndResistantTargets} • ${widget.currentListData.keys.toList()[index].setsCount} sets"
+          //             : widget.currentListData.keys
+          //                 .toList()[index]
+          //                 .getGoalAndResistantTargets,
+          //         style: AppTypography.paragraph14MD.copyWith(
+          //           color: AppColor.textPrimaryColor,
+          //         )),
+          //     trailing: widget.showTrailing == true
+          //         ? PopupMenuButton(
+          //             onSelected: (value) {
+          //               if (value == 1) {
+          //                 showModalBottomSheet(
+          //                     isDismissible: false,
+          //                     isScrollControlled: true,
+          //                     useSafeArea: true,
+          //                     backgroundColor: AppColor.surfaceBackgroundBaseColor,
+          //                     context: context,
+          //                     builder: (context) => DetailWorkoutBottomSheet(
+          //                         exerciseModel: dataList.values.toList()[index]));
+          //                 // context.navigateTo(DetailExerciseBottomSheet(
+          //                 //     exerciseModel: warmupListData[index]));
+          //               } else if (value == 2) {
+          //                 if (widget.goHereTap != null) {
+          //                   widget.goHereTap!(index);
+          //                 }
+          //               }
+          //             },
+          //             padding: const EdgeInsets.all(16),
+          //             constraints: const BoxConstraints(minWidth: 250),
+          //             elevation: 15,
+          //             offset: const Offset(-10, 15),
+          //             shape: RoundedRectangleBorder(
+          //                 borderRadius: BorderRadius.circular(12)),
+          //             color: AppColor.surfaceBackgroundBaseColor,
+          //             itemBuilder: (context) {
+          //               return [
+          //                 PopupMenuItem(
+          //                   value: 1,
+          //                   child: Row(
+          //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //                     children: [
+          //                       Text('Show info',
+          //                           style: AppTypography.label16MD.copyWith(
+          //                             color: AppColor.textEmphasisColor,
+          //                           )),
+          //                       SvgPicture.asset(AppAssets.infoIcon),
+          //                     ],
+          //                   ),
+          //                 ),
+          //                 PopupMenuItem(
+          //                   value: 2,
+          //                   child: Row(
+          //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //                     children: [
+          //                       Text('Go here',
+          //                           style: AppTypography.label16MD.copyWith(
+          //                             color: AppColor.textEmphasisColor,
+          //                           )),
+          //                       SvgPicture.asset(AppAssets.returnIcon),
+          //                     ],
+          //                   ),
+          //                 )
+          //               ];
+          //             },
+          //             child: SvgPicture.asset(
+          //               AppAssets.horizontalVertIcon,
+          //               color: AppColor.surfaceBrandDarkColor,
+          //             ))
+          //         : null),
+        ],
+      ),
     );
   }
 }
@@ -617,7 +768,7 @@ class RoundWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 38, top: 20, bottom: 8),
+      padding: const EdgeInsets.only(left: 45, top: 12, bottom: 12),
       child: Row(children: [
         Text(
           listData.entries.toList()[i].key.exerciseCategoryName ==
@@ -629,10 +780,11 @@ class RoundWidget extends StatelessWidget {
           style: AppTypography.label14SM
               .copyWith(color: AppColor.textPrimaryColor),
         ),
-        Expanded(
+        const Expanded(
           child: CustomDivider(
-            endIndent: context.dynamicWidth * 0.02,
-            indent: context.dynamicWidth * 0.05,
+            indent: 31,
+            // endIndent: context.dynamicWidth * 0.02,
+            // indent: context.dynamicWidth * 0.05,
           ),
         )
       ]),
@@ -661,50 +813,48 @@ class BuildHeader extends StatelessWidget {
           color: AppColor.surfaceBackgroundColor,
           borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 12),
-        child: ListTile(
-          title: Text(
-            title,
-            style: AppTypography.title14XS
-                .copyWith(color: AppColor.textEmphasisColor),
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 4),
+      child: ListTile(
+        contentPadding: const EdgeInsets.only(left: 20, right: 20),
+        title: Text(
+          title,
+          style: AppTypography.title14XS
+              .copyWith(color: AppColor.textEmphasisColor),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: ValueListenableBuilder(
+              valueListenable: loaderListenAble,
+              builder: (_, value, child) {
+                return value == true
+                    ? Text(
+                        "0 exercise",
+                        style: AppTypography.paragraph14MD
+                            .copyWith(color: AppColor.textPrimaryColor),
+                      )
+                    : Text(
+                        "${dataLIst.length} exercises",
+                        style: AppTypography.paragraph14MD
+                            .copyWith(color: AppColor.textPrimaryColor),
+                      );
+              }),
+        ),
+        trailing: InkWell(
+            onTap: onTap,
             child: ValueListenableBuilder(
-                valueListenable: loaderListenAble,
+                valueListenable: expandHeaderValueListenable,
                 builder: (_, value, child) {
                   return value == true
-                      ? Text(
-                          "0 exercise",
-                          style: AppTypography.paragraph14MD
-                              .copyWith(color: AppColor.textPrimaryColor),
+                      ? Icon(
+                          Icons.keyboard_arrow_up,
+                          color: AppColor.textPrimaryColor,
+                          size: 32,
                         )
-                      : Text(
-                          "${dataLIst.length} exercises",
-                          style: AppTypography.paragraph14MD
-                              .copyWith(color: AppColor.textPrimaryColor),
+                      : Icon(
+                          Icons.keyboard_arrow_down,
+                          color: AppColor.textPrimaryColor,
+                          size: 32,
                         );
-                }),
-          ),
-          trailing: InkWell(
-              onTap: onTap,
-              child: ValueListenableBuilder(
-                  valueListenable: expandHeaderValueListenable,
-                  builder: (_, value, child) {
-                    return value == true
-                        ? Icon(
-                            Icons.keyboard_arrow_up,
-                            color: AppColor.textPrimaryColor,
-                            size: 32,
-                          )
-                        : Icon(
-                            Icons.keyboard_arrow_down,
-                            color: AppColor.textPrimaryColor,
-                            size: 32,
-                          );
-                  })),
-        ),
+                })),
       ),
     );
   }
@@ -730,216 +880,212 @@ class BuildHeader2 extends StatefulWidget {
 class _BuildHeader2State extends State<BuildHeader2> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8),
-      child: ColoredBox(
-        color: AppColor.surfaceBackgroundColor,
-        child: Row(
-          children: [
-            SizedBox(
-                height: context.dynamicHeight * 0.1,
-                width: context.dynamicWidth * 0.2,
-                child: Card(
-                    color: AppColor.surfaceBackgroundBaseColor,
-                    clipBehavior: Clip.antiAlias,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0.5, vertical: 0.5),
-                          child: Column(
-                            children: [
-                              if (widget.exerciseWorkoutData.isNotEmpty) ...[
-                                Expanded(
-                                    child: Row(
-                                  children: [
+    return ColoredBox(
+      color: AppColor.surfaceBackgroundColor,
+      child: Row(
+        children: [
+          SizedBox(
+              height: 80,
+              width: 80,
+              // height: context.dynamicHeight * 0.1,
+              // width: context.dynamicWidth * 0.2,
+              child: Card(
+                  color: AppColor.surfaceBackgroundBaseColor,
+                  clipBehavior: Clip.antiAlias,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 1, vertical: 1),
+                        child: Column(
+                          children: [
+                            if (widget.exerciseWorkoutData.isNotEmpty) ...[
+                              Expanded(
+                                  child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color:
+                                              AppColor.surfaceBackgroundColor,
+                                          borderRadius: BorderRadius.only(
+                                              topRight: widget
+                                                          .exerciseWorkoutData
+                                                          .length >
+                                                      3
+                                                  ? const Radius.circular(0)
+                                                  : const Radius.circular(12),
+                                              topLeft:
+                                                  const Radius.circular(12))),
+                                      child: cacheNetworkWidget(
+                                          height: 80,
+                                          width: 80,
+                                          context,
+                                          imageUrl: widget
+                                                  .exerciseWorkoutData.values
+                                                  .toList()[0]
+                                                  .mapImage
+                                                  ?.url ??
+                                              ""),
+                                    ),
+                                  ),
+                                  if (widget.exerciseWorkoutData.length >
+                                      3) ...[
                                     Expanded(
                                       child: Container(
+                                        margin: const EdgeInsets.only(left: 1),
                                         decoration: BoxDecoration(
                                             color:
                                                 AppColor.surfaceBackgroundColor,
-                                            borderRadius: BorderRadius.only(
-                                                topRight: widget
-                                                            .exerciseWorkoutData
-                                                            .length >
-                                                        3
-                                                    ? const Radius.circular(0)
-                                                    : const Radius.circular(11),
-                                                topLeft:
-                                                    const Radius.circular(11))),
-                                        child: Transform.scale(
-                                          scale: 1.2,
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topRight: Radius.circular(12),
+                                            )),
+                                        child: cacheNetworkWidget(
+                                            height: 80,
+                                            width: 80,
+                                            context,
+                                            imageUrl: widget
+                                                    .exerciseWorkoutData.values
+                                                    .toList()[3]
+                                                    .mapImage
+                                                    ?.url ??
+                                                ""),
+                                      ),
+                                    )
+                                  ]
+                                ],
+                              )),
+                              if (widget.exerciseWorkoutData.length > 1) ...[
+                                Expanded(
+                                    child: Padding(
+                                  padding: const EdgeInsets.only(top: 1),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                          child: Container(
+                                        decoration: BoxDecoration(
+                                            color:
+                                                AppColor.surfaceBackgroundColor,
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(12))),
+                                        child: cacheNetworkWidget(
+                                            height: 80,
+                                            width: 80,
+                                            context,
+                                            imageUrl: widget
+                                                    .exerciseWorkoutData.values
+                                                    .toList()[1]
+                                                    .mapImage
+                                                    ?.url ??
+                                                ''),
+                                      )),
+                                      if (widget.exerciseWorkoutData.length >
+                                          2) ...[
+                                        Expanded(
+                                            child: Container(
+                                          margin: const EdgeInsets.only(
+                                            left: 1,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              color: AppColor
+                                                  .surfaceBackgroundColor,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      bottomRight:
+                                                          Radius.circular(12))),
                                           child: cacheNetworkWidget(
+                                              height: 80,
+                                              width: 80,
+                                              context,
                                               imageUrl: widget
                                                       .exerciseWorkoutData
                                                       .values
-                                                      .toList()[0]
+                                                      .toList()[2]
                                                       .mapImage
                                                       ?.url ??
                                                   ""),
-                                        ),
-                                      ),
-                                    ),
-                                    if (widget.exerciseWorkoutData.length >
-                                        3) ...[
-                                      Expanded(
-                                        child: Container(
-                                          margin:
-                                              const EdgeInsets.only(left: 0.5),
-                                          decoration: BoxDecoration(
-                                              color: AppColor
-                                                  .surfaceBackgroundColor,
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topRight: Radius.circular(11),
-                                              )),
-                                          child: Transform.scale(
-                                            scale: 1.2,
-                                            child: cacheNetworkWidget(
-                                                imageUrl: widget
-                                                        .exerciseWorkoutData
-                                                        .values
-                                                        .toList()[3]
-                                                        .mapImage
-                                                        ?.url ??
-                                                    ""),
-                                          ),
-                                        ),
-                                      )
-                                    ]
-                                  ],
-                                )),
-                                if (widget.exerciseWorkoutData.length > 1) ...[
-                                  Expanded(
-                                      child: Padding(
-                                    padding: const EdgeInsets.only(top: 0.5),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                            child: Container(
-                                          decoration: BoxDecoration(
-                                              color: AppColor
-                                                  .surfaceBackgroundColor,
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                      bottomLeft:
-                                                          Radius.circular(11))),
-                                          child: Transform.scale(
-                                            scale: 1.2,
-                                            child: cacheNetworkWidget(
-                                                imageUrl: widget
-                                                        .exerciseWorkoutData
-                                                        .values
-                                                        .toList()[1]
-                                                        .mapImage
-                                                        ?.url ??
-                                                    ''),
-                                          ),
-                                        )),
-                                        if (widget.exerciseWorkoutData.length >
-                                            2) ...[
-                                          Expanded(
-                                              child: Container(
-                                            margin: const EdgeInsets.only(
-                                              left: 0.5,
-                                            ),
-                                            decoration: BoxDecoration(
-                                                color: AppColor
-                                                    .surfaceBackgroundColor,
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                        bottomRight:
-                                                            Radius.circular(
-                                                                11))),
-                                            child: Transform.scale(
-                                              scale: 1.2,
-                                              child: cacheNetworkWidget(
-                                                  imageUrl: widget
-                                                          .exerciseWorkoutData
-                                                          .values
-                                                          .toList()[2]
-                                                          .mapImage
-                                                          ?.url ??
-                                                      ""),
-                                            ),
-                                          ))
-                                        ]
-                                      ],
-                                    ),
-                                  ))
-                                ]
+                                        ))
+                                      ]
+                                    ],
+                                  ),
+                                ))
                               ]
-                            ],
+                            ]
+                          ],
+                        ),
+                      ),
+                      if (widget.exerciseWorkoutData.length > 4)
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                            clipBehavior: Clip.antiAlias,
+                            alignment: Alignment.center,
+                            height: 20,
+                            width: 20,
+                            // height: context.dynamicHeight * 0.022,
+                            // width: context.dynamicWidth * 0.05,
+                            decoration: BoxDecoration(
+                                color: AppColor.surfaceBackgroundBaseColor),
+                            child: FittedBox(
+                                child: Text(
+                              "+${widget.exerciseWorkoutData.length - 4}",
+                              style: AppTypography.label10XXSM
+                                  .copyWith(color: AppColor.textEmphasisColor),
+                            )),
                           ),
-                        ),
-                        if (widget.exerciseWorkoutData.length > 4)
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: Container(
-                              clipBehavior: Clip.hardEdge,
-                              alignment: Alignment.center,
-                              height: context.dynamicHeight * 0.022,
-                              width: context.dynamicWidth * 0.05,
-                              decoration: BoxDecoration(
-                                  color: AppColor.surfaceBackgroundBaseColor),
-                              child: FittedBox(
-                                  child: Text(
-                                "+${widget.exerciseWorkoutData.length - 4}",
-                                style: AppTypography.label10XXSM.copyWith(
-                                    color: AppColor.textEmphasisColor),
-                              )),
-                            ),
-                          )
-                      ],
-                    ))),
-            8.width(),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.title,
-                        style: AppTypography.label18LG
-                            .copyWith(color: AppColor.textEmphasisColor),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          widget.subtitle,
-                          style: AppTypography.paragraph14MD
-                              .copyWith(color: AppColor.textPrimaryColor),
-                        ),
-                      ),
+                        )
                     ],
-                  ),
-                  InkWell(
-                      onTap: widget.onExpand,
-                      child: ValueListenableBuilder(
-                        valueListenable: widget.expandValueListenable,
-                        builder: (_, value, child) {
-                          return value == true
-                              ? Icon(
-                                  Icons.keyboard_arrow_up,
-                                  color: AppColor.textPrimaryColor,
-                                  size: 32,
-                                )
-                              : Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: AppColor.textPrimaryColor,
-                                  size: 32,
-                                );
-                        },
-                      )),
-                ],
-              ),
+                  ))),
+          12.width(),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.title,
+                      style: AppTypography.label18LG
+                          .copyWith(color: AppColor.textEmphasisColor),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        widget.subtitle,
+                        style: AppTypography.paragraph14MD
+                            .copyWith(color: AppColor.textPrimaryColor),
+                      ),
+                    ),
+                  ],
+                ),
+                InkWell(
+                    onTap: widget.onExpand,
+                    child: ValueListenableBuilder(
+                      valueListenable: widget.expandValueListenable,
+                      builder: (_, value, child) {
+                        return value == true
+                            ? Icon(
+                                Icons.keyboard_arrow_up,
+                                color: AppColor.textPrimaryColor,
+                                size: 32,
+                              )
+                            : Icon(
+                                Icons.keyboard_arrow_down,
+                                color: AppColor.textPrimaryColor,
+                                size: 32,
+                              );
+                      },
+                    )),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -1,18 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:ui_tool_kit/ui_tool_kit.dart';
 
-CachedNetworkImage cacheNetworkWidget({required String imageUrl, BoxFit? fit}) {
+CachedNetworkImage cacheNetworkWidget(BuildContext context,
+    {required String imageUrl,
+    BoxFit? fit,
+    required int width,
+    required int height}) {
   return CachedNetworkImage(
-    imageUrl: imageUrl,
+    // imageUrl:imageUrl,
+    imageUrl: "$imageUrl/width/$width/height/$height/quality/${100}",
+
     fit: fit,
-    progressIndicatorBuilder: (context, url, downloadProgress) =>
-        Transform.scale(
-      scale: 0.6,
-      child: Center(
-          child: BaseHelper.loadingWidget(value: downloadProgress.progress)),
-    ),
+
     useOldImageOnUrlChange: false,
+
     errorWidget: (context, url, error) => const Icon(Icons.error),
   );
 }

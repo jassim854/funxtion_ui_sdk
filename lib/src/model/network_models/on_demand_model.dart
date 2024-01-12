@@ -1,3 +1,5 @@
+import 'package:ui_tool_kit/ui_tool_kit.dart';
+
 import 'model_helper/model_helper.dart';
 
 class OnDemandModel {
@@ -46,8 +48,9 @@ class OnDemandModel {
   factory OnDemandModel.fromJson(Map<String, dynamic> json) => OnDemandModel(
         id: json["id"],
         title: json["title"] is Map ? json['title']['en'] : json['title'],
-        description:
-            json.containsKey('description') ? json['description']['en'] : null,
+        description: json.containsKey('description')
+            ? json['description']['en'].toString().capitalizeFirst()
+            : null,
         type: json["type"],
         video: json['video'] is Map ? null : json['video'],
         image: json['image'] is Map ? null : json['image'],
@@ -55,7 +58,7 @@ class OnDemandModel {
         mapImage: json['image'] is Map ? Img.fromJson(json["image"]) : null,
         language: json.containsKey('language') ? json["language"] : null,
         instructorId: json["instructor_id"],
-        level: json["level"],
+        level: json["level"].toString().capitalizeFirst(),
         externalId:
             json.containsKey('external_id') ? json["external_id"] : null,
         equipment: json.containsKey('equipment')

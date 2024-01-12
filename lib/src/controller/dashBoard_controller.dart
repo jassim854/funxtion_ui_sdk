@@ -11,11 +11,23 @@ class DashBoardController {
       required List<OnDemandModel> onDemadDataVideo,
       required List<OnDemandModel> audioData,
       required List<WorkoutModel> workoutData,
-      required List<TrainingPlanModel> trainingPlanData}) async {
+      required List<TrainingPlanModel> trainingPlanData,
+      required Map<int, String> fitnessGoalData}) async {
     isLoading.value = true;
+
+    await CommonController.getListCategoryTypeDataFn(
+      context,
+    );
+
+    await CommonController.getOnDemandContentCategoryFn(context);
     try {
-      CategoryListController.getCategoryTypeDataFn(
-          context, ValueNotifier(false));
+      await CategoryListController.getListTrainingPlanData(context,
+              confirmedFilter: ValueNotifier([]), limitContentPerPage: "4")
+          .then((value) {
+        if (value != null && context.mounted) {
+          trainingPlanData.addAll(value);
+        }
+      });
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
     }
@@ -25,7 +37,6 @@ class DashBoardController {
           .then((value) async {
         if (value != null && context.mounted) {
           onDemadDataVideo.addAll(value);
-          getOnDemandContentCategoryData(value, videoDataType);
         }
       });
     } on RequestException catch (e) {
@@ -38,8 +49,6 @@ class DashBoardController {
           .then((value) async {
         if (value != null && context.mounted) {
           audioData.addAll(value);
-
-          getOnDemandContentCategoryData(value, audioDataType);
         }
       });
     } on RequestException catch (e) {
@@ -57,71 +66,50 @@ class DashBoardController {
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
     }
+    await CommonController.getListGoalData(
+        context, trainingPlanData, false, fitnessGoalData);
+    await CommonController.getListFilterOnDemandCategoryTypeFn(
+        audioData, audioDataType);
+    await CommonController.getListFilterOnDemandCategoryTypeFn(
+        onDemadDataVideo, videoDataType);
+    await CommonController.filterCategoryTypeData(workoutData, workoutDataType);
 
-    try {
-      await CategoryListController.getListTrainingPlanData(context,
-              confirmedFilter: ValueNotifier([]), limitContentPerPage: "4")
-          .then((value) {
-        if (value != null && context.mounted) {
-          trainingPlanData.addAll(value);
-        }
-      });
-    } on RequestException catch (e) {
-      BaseHelper.showSnackBar(context, e.message);
-    }
-    addDataCategories(
-      workoutData,
-      workoutDataType,
-    );
-    isLoading.value = false;
+    // addDataCategories(
+    //   workoutData,
+    //   workoutDataType,
+    // );
   }
 
-  static addDataCategories(
-    List<WorkoutModel> workoutData,
-    Map<int, String> typeData,
-  ) {
-    List<ContentProvidersCategoryOnDemandModel> data = [];
-    if (data.isEmpty) {
-      for (var i = 0; i < workoutData.length; i++) {
-        data = [];
-        for (var typeElement in workoutData[i].types!) {
-          for (var j = 0;
-              j < CategoryListController.categoryTypeData.length;
-              j++) {
-            if (CategoryListController.categoryTypeData[j].id == typeElement) {
-              data.add(CategoryListController.categoryTypeData[j]);
-            }
-          }
-        }
+  // static addDataCategories(
+  //   List<WorkoutModel> workoutData,
+  //   Map<int, String> typeData,
+  // ) async{
+  //       await ContentProviderCategoryOnDemandRequest.contentCategory(
+  //        ).then((value) {
+  //                List<ContentProvidersCategoryOnDemandModel> fetchData = List.from(
+  //             value!.map(
+  //                 (e) => ContentProvidersCategoryOnDemandModel.fromJson(e)));
+  //         for (var i = 0; i <= 50; i++) {
+  //           CategoryListController.categoryTypeData.add(fetchData[i]);
+  //         }
+  // List<ContentProvidersCategoryOnDemandModel> data = ;
+  //   if (data.isEmpty) {
+  //     for (var i = 0; i < workoutData.length; i++) {
+  //       data = [];
+  //       for (var typeElement in workoutData[i].types!) {
+  //         for (var j = 0;
+  //             j < CategoryListController.categoryTypeData.length;
+  //             j++) {
+  //           if (CategoryListController.categoryTypeData[j].id == typeElement) {
+  //             data.add(CategoryListController.categoryTypeData[j]);
+  //           }
+  //         }
+  //       }
 
-        typeData.addAll({i: data.map((e) => e.name).join(',')});
-      }
-    }
-  }
+  //       typeData.addAll({i: data.map((e) => e.name).join(',')});
+  //     }
+  //   }
+  //           });
 
-  static getOnDemandContentCategoryData(
-      List<OnDemandModel> value, Map<int, String> typeData) async {
-    await ContentProviderCategoryOnDemandRequest.onDemandCategory()
-        .then((data) {
-      List<ContentProvidersCategoryOnDemandModel> fetchCategoryData = List.from(
-          data!.map((e) => ContentProvidersCategoryOnDemandModel.fromJson(e)));
-      for (var i = 0; i < value.length; i++) {
-        List<ContentProvidersCategoryOnDemandModel> data = [];
-        for (var typeElement in value[i].categories!) {
-          for (var j = 0;
-              j <
-                  (fetchCategoryData.length > 50
-                      ? 50
-                      : fetchCategoryData.length);
-              j++) {
-            if (fetchCategoryData[j].id.toString() == typeElement) {
-              data.add(fetchCategoryData[j]);
-            }
-          }
-        }
-
-        typeData.addAll({i: data.map((e) => e.name).join(',')});
-      }
-    });
-  }
+  // }
 }

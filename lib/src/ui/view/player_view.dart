@@ -108,7 +108,9 @@ class _CategoryPlayerViewState extends State<CategoryPlayerView>
                   color: AppColor.surfaceBrandDarkColor,
                   image: DecorationImage(
                       image: cachedNetworkImageProvider(
-                          imageUrl: widget.thumbNail))),
+                        imageUrl: widget.thumbNail,
+                      ),
+                      fit: BoxFit.contain)),
               child: BaseHelper.loadingWidget()),
     );
   }

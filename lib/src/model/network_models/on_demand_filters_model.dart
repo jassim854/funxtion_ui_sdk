@@ -1,3 +1,5 @@
+import 'package:ui_tool_kit/ui_tool_kit.dart';
+
 class OnDemandFiltersModel {
   String? key;
   String? type;
@@ -23,7 +25,7 @@ class OnDemandFiltersModel {
       OnDemandFiltersModel(
         key: json["key"],
         type: json["type"],
-        label: json["label"] == null ? null : json["label"]['en'],
+        label: json["label"] == null ? null : json["label"]['en'].toString(),
         multi: json["multi"],
         values: json["values"] == null
             ? []
@@ -35,7 +37,8 @@ class OnDemandFiltersModel {
             ? []
             : json["values"][0] is Map
                 ? null
-                : List<dynamic>.from(json["values"].map((x) => (x))),
+                : List<dynamic>.from(json["values"]
+                    .map((x) => (x).toString().capitalizeFirst())),
         operands: json["operands"] == null
             ? []
             : List<dynamic>.from(json["operands"]!.map((x) => x)),
@@ -59,7 +62,7 @@ class ValueClass {
 
   factory ValueClass.fromJson(Map<String, dynamic> json) => ValueClass(
         id: json["id"].toString(),
-        label: json["label"],
+        label: json["label"].toString().capitalizeFirst(),
       );
 
   Map<String, dynamic> toJson() => {

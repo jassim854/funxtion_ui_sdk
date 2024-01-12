@@ -10,8 +10,11 @@ class TrainingPlanDetailView extends StatefulWidget {
   final String workoutLength;
   final String id;
 
-  const TrainingPlanDetailView(
-      {super.key, required this.id, required this.workoutLength});
+  const TrainingPlanDetailView({
+    super.key,
+    required this.id,
+    required this.workoutLength,
+  });
 
   @override
   State<TrainingPlanDetailView> createState() => _WorkoutDetailViewState();
@@ -32,13 +35,14 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   ValueNotifier<int> weekIndex = ValueNotifier(0);
   ValueNotifier<bool> centerTitle = ValueNotifier(false);
   FitnessActivityTypeModel? workoutType;
-  List<WorkoutModel?> listSheduleWorkoutData = [];
+  List<WorkoutModel> listSheduleWorkoutData = [];
   ValueNotifier<bool> shedulePlanLoader = ValueNotifier(false);
   ValueNotifier<bool> fitnessTypeLoader = ValueNotifier(true);
   ValueNotifier<bool> goalLoader = ValueNotifier(true);
   FollowTrainingplanModel? followTrainingData;
-  Map<int, String> typeData = {};
+  // Map<int, String> typeData = {};
   ValueNotifier<bool> typeLoader = ValueNotifier(false);
+  Map<int, String> categoryFilterTypeData = {};
   List<Map<String, String>> workoutLocalData = [];
   // List<WeekName> weekName = [
   //   WeekName('Monday', false),
@@ -55,9 +59,9 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
     scrollController = ScrollController()
       ..addListener(() {
         print(scrollController.offset);
-        if (scrollController.offset > 155) {
+        if (scrollController.offset > 90) {
           centerTitle.value = true;
-        } else if (scrollController.offset < 160) {
+        } else if (scrollController.offset < 105) {
           centerTitle.value = false;
         }
       });
@@ -71,26 +75,26 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   fetchData() async {
     isLoadingNotifier = true;
     isNodData = false;
-    CategoryListController.getCategoryTypeDataFn(context, typeLoader);
+
     TrainingPlanDetailController.getTrainingPlanData(context, id: widget.id)
         .then((data) async {
       if (data != null && context.mounted) {
         isLoadingNotifier = false;
         trainingPlanData = data;
 
-        if (trainingPlanData?.types.isNotEmpty ?? false) {
-          TrainingPlanDetailController.getFitnessType(
-                  context, trainingPlanData?.types.first.toString() ?? "")
-              .then((value) {
-            if (value != null) {
-              fitnessActivityTypeData =
-                  FitnessActivityTypeModel.fromJson(value);
-              fitnessTypeLoader.value = false;
-            } else {
-              fitnessTypeLoader.value = false;
-            }
-          });
-        }
+        // if (trainingPlanData?.types.isNotEmpty ?? false) {
+        //   TrainingPlanDetailController.getFitnessType(
+        //           context, trainingPlanData?.types.first.toString() ?? "")
+        //       .then((value) {
+        //     if (value != null) {
+        //       fitnessActivityTypeData =
+        //           FitnessActivityTypeModel.fromJson(value);
+        //       fitnessTypeLoader.value = false;
+        //     } else {
+        //       fitnessTypeLoader.value = false;
+        //     }
+        //   });
+        // }
         await TrainingPlanDetailController.getGoal(context,
                 trainingPlanData: trainingPlanData)
             .then((value) {
@@ -117,34 +121,34 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
     });
   }
 
-  addDataCategories() {
-    List<ContentProvidersCategoryOnDemandModel> data = [];
-    if (data.isEmpty) {
-      for (var i = 0; i < listSheduleWorkoutData.length; i++) {
-        data = [];
-        for (var typeElement in listSheduleWorkoutData[i]!.types!) {
-          for (var j = 0;
-              j < CategoryListController.categoryTypeData.length;
-              j++) {
-            if (CategoryListController.categoryTypeData[j].id == typeElement) {
-              data.add(CategoryListController.categoryTypeData[j]);
-            }
-          }
-        }
+  // addDataCategories() {
+  //   List<ContentProvidersCategoryOnDemandModel> data = [];
+  //   if (data.isEmpty) {
+  //     for (var i = 0; i < listSheduleWorkoutData.length; i++) {
+  //       data = [];
+  //       for (var typeElement in listSheduleWorkoutData[i]!.types!) {
+  //         for (var j = 0;
+  //             j < CategoryListController.categoryTypeData.length;
+  //             j++) {
+  //           if (CategoryListController.categoryTypeData[j].id == typeElement) {
+  //             data.add(CategoryListController.categoryTypeData[j]);
+  //           }
+  //         }
+  //       }
 
-        typeData.addAll({i: data.map((e) => e.name).join(',')});
-      }
-    }
-  }
+  //       typeData.addAll({i: data.map((e) => e.name).join(',')});
+  //     }
+  //   }
+  // }
 
   addWorkoutData() {
     for (var i = 0; i < listSheduleWorkoutData.length; i++) {
       workoutLocalData.add({
-        "workoutTitle": listSheduleWorkoutData[i]!.title.toString(),
+        "workoutTitle": listSheduleWorkoutData[i].title.toString(),
         "workoutSubtitle":
-            "${listSheduleWorkoutData[0]!.duration} • ${typeData[i]} • ${listSheduleWorkoutData[0]!.level}",
-        "workoutId": listSheduleWorkoutData[i]!.id.toString(),
-        "workoutImg": listSheduleWorkoutData[i]!.mapImage!.url
+            "${listSheduleWorkoutData[i].duration} • ${categoryFilterTypeData[i]} • ${listSheduleWorkoutData[i].level.toString()}",
+        "workoutId": listSheduleWorkoutData[i].id.toString(),
+        "workoutImg": listSheduleWorkoutData[i].mapImage!.url
       });
     }
   }
@@ -213,7 +217,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                         flexibleTitle:
                                             "${trainingPlanData?.title}",
                                         flexibleSubtitleWidget: Text(
-                                          "${widget.workoutLength} workouts • ${fitnessGoalData?.name} • ${trainingPlanData?.level.toString() ?? ""}",
+                                          "${widget.workoutLength} workouts • ${fitnessGoalData?.name} • ${trainingPlanData?.level.toString()}",
                                           style: AppTypography.label16MD
                                               .copyWith(
                                                   color: AppColor
@@ -317,7 +321,9 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                         ],
                       ),
             bottomNavigationBar:
-                isLoadingNotifier == false&&isNodData==false ? bottomWidget(box) : null,
+                isLoadingNotifier == false && isNodData == false
+                    ? bottomWidget(box)
+                    : null,
           );
         });
   }
@@ -338,37 +344,40 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   Container bottomWidget(Box<FollowTrainingplanModel> box) {
     return Container(
       color: AppColor.surfaceBackgroundColor,
-      padding: const EdgeInsets.only(
-        left: 20,
-        right: 20,
-        bottom: 24,
-      ),
+      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24, top: 24),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
               child: box.values.any((element) =>
                       element.trainingplanId == trainingPlanData?.id)
                   ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          "Next up",
-                          style: AppTypography.paragraph12SM
-                              .copyWith(color: AppColor.textPrimaryColor),
-                        ),
-                        4.height(),
-                        Text(
-                            "${followTrainingData?.workoutData[followTrainingData!.workoutCount]['workoutTitle'].toString()}",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTypography.title14XS
-                                .copyWith(color: AppColor.textEmphasisColor))
+                        if (box.values.any((element) =>
+                            element.workoutCount <
+                            element.totalWorkoutLength)) ...[
+                          Text(
+                            "Next up",
+                            style: AppTypography.paragraph12SM
+                                .copyWith(color: AppColor.textPrimaryColor),
+                          ),
+                          2.height(),
+                          Text(
+                              "${followTrainingData?.workoutData[followTrainingData!.workoutCount]['workoutTitle'].toString()}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTypography.title14XS
+                                  .copyWith(color: AppColor.textEmphasisColor))
+                        ]
                       ],
                     )
                   : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -379,7 +388,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                           style: AppTypography.title14XS
                               .copyWith(color: AppColor.textEmphasisColor),
                         ),
-                        4.height(),
+                        2.height(),
                         Text("${widget.workoutLength} workouts",
                             style: AppTypography.paragraph12SM
                                 .copyWith(color: AppColor.textPrimaryColor))
@@ -392,47 +401,71 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                     return box.values.any((element) =>
                             element.trainingplanId == trainingPlanData?.id)
                         ? SheduletButtonWidget(
-                            text: 'Next Workout',
+                            text: box.values.any((element) =>
+                                    element.workoutCount ==
+                                    element.totalWorkoutLength)
+                                ? "Done"
+                                : 'Next Workout',
                             onPressed: value == true
                                 ? null
                                 : () {
-                                    int nextIndex =
-                                        followTrainingData!.workoutCount + 1;
-                                    // box.clear();
-                                    // followTrainingData?.outOfSequence = false;
-                                    // followTrainingData!.workoutCount =
-                                    //     followTrainingData!.workoutCount
-                                    //             .toInt() +
-                                    //         1;
-                                    // updateData();
-                                    context.navigateTo(WorkoutDetailView(
-                                        id: followTrainingData?.workoutData[
-                                                    followTrainingData!
-                                                        .workoutCount]
-                                                ['workoutId'] ??
-                                            '',
-                                        followTrainingplanModel:
-                                            FollowTrainingplanModel(
-                                          trainingplanId: followTrainingData!
-                                              .trainingplanId,
-                                          workoutData: workoutLocalData,
-                                          workoutCount: nextIndex,
-                                          totalWorkoutLength:
-                                              followTrainingData!
-                                                  .totalWorkoutLength,
-                                          outOfSequence: false,
-                                          trainingPlanImg: followTrainingData!
-                                              .trainingPlanImg,
-                                          trainingPlanTitle: followTrainingData!
-                                              .trainingPlanTitle,
-                                          daysPerWeek:
-                                              followTrainingData!.daysPerWeek,
-                                          goalsId: followTrainingData!.goalsId,
-                                          levelName:
-                                              followTrainingData!.levelName,
-                                          location:
-                                              followTrainingData!.location,
-                                        )));
+                                    if (box.values.any((element) =>
+                                        element.workoutCount ==
+                                        element.totalWorkoutLength)) {
+                                      for (var i = 0;
+                                          i < Boxes.getData().length;
+                                          i++) {
+                                        if (Boxes.getData()
+                                                .values
+                                                .toList()[i]
+                                                .trainingplanId ==
+                                            followTrainingData!
+                                                .trainingplanId) {
+                                          Boxes.getData().deleteAt(i);
+                                          context.popPage();
+                                        }
+                                      }
+                                    } else {
+                                      int nextIndex =
+                                          followTrainingData!.workoutCount + 1;
+                                      // box.clear();
+                                      // followTrainingData?.outOfSequence = false;
+                                      // followTrainingData!.workoutCount =
+                                      //     followTrainingData!.workoutCount
+                                      //             .toInt() +
+                                      //         1;
+                                      // updateData();
+                                      context.navigateTo(WorkoutDetailView(
+                                          id: followTrainingData?.workoutData[
+                                                      followTrainingData!
+                                                          .workoutCount]
+                                                  ['workoutId'] ??
+                                              '',
+                                          followTrainingplanModel:
+                                              FollowTrainingplanModel(
+                                            trainingplanId: followTrainingData!
+                                                .trainingplanId,
+                                            workoutData: workoutLocalData,
+                                            workoutCount: nextIndex,
+                                            totalWorkoutLength:
+                                                followTrainingData!
+                                                    .totalWorkoutLength,
+                                            outOfSequence: false,
+                                            trainingPlanImg: followTrainingData!
+                                                .trainingPlanImg,
+                                            trainingPlanTitle:
+                                                followTrainingData!
+                                                    .trainingPlanTitle,
+                                            daysPerWeek:
+                                                followTrainingData!.daysPerWeek,
+                                            goalsId:
+                                                followTrainingData!.goalsId,
+                                            levelName:
+                                                followTrainingData!.levelName,
+                                            location:
+                                                followTrainingData!.location,
+                                          )));
+                                    }
                                   },
                             child: value == true
                                 ? BaseHelper.loadingWidget()
@@ -529,19 +562,43 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                         return Column(
                                           children: [
                                             StepWidget(
-                                                isActive: box.values.any(
-                                                    (element) =>
-                                                        element.trainingplanId ==
-                                                            trainingPlanData
-                                                                ?.id &&
-                                                        index + 1 <=
-                                                            element.workoutCount
-                                                                .toInt())),
+                                                isCompleted: box.values.any((element) =>
+                                                            element.trainingplanId ==
+                                                                trainingPlanData
+                                                                    ?.id &&
+                                                            index <=
+                                                                element.workoutCount -
+                                                                    1
+                                                                        .toInt()) ==
+                                                        true
+                                                    ? true
+                                                    : false,
+                                                isActive: box.values.any((element) =>
+                                                            element.trainingplanId ==
+                                                                trainingPlanData
+                                                                    ?.id &&
+                                                            index ==
+                                                                element
+                                                                    .workoutCount
+                                                                    .toInt()) ==
+                                                        true
+                                                    ? true
+                                                    : false),
                                             if (index !=
                                                 listSheduleWorkoutData.length -
                                                     1)
-                                              const LineWidget(
+                                              LineWidget(
                                                 height: 75,
+                                                color: box.values.any((element) =>
+                                                        element.trainingplanId ==
+                                                            trainingPlanData
+                                                                ?.id &&
+                                                        index <=
+                                                            element.workoutCount -
+                                                                1.toInt())
+                                                    ? AppColor
+                                                        .surfaceBrandDarkColor
+                                                    : null,
                                               )
                                           ],
                                         );
@@ -555,8 +612,10 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: listSheduleWorkoutData.length,
                                   itemBuilder: (context, index) {
-                                    if (typeData.isEmpty) {
-                                      addDataCategories();
+                                    if (categoryFilterTypeData.isEmpty) {
+                                      CommonController.filterCategoryTypeData(
+                                          listSheduleWorkoutData,
+                                          categoryFilterTypeData);
                                     }
                                     if (workoutLocalData.isEmpty) {
                                       addWorkoutData();
@@ -567,10 +626,10 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                     return Padding(
                                       padding: const EdgeInsets.only(top: 16),
                                       child: CustomTileTrainingPlanWidget(
-                                          imageUrl: data?.mapImage?.url ?? "",
-                                          title: data?.title ?? "",
+                                          imageUrl: data.mapImage?.url ?? "",
+                                          title: data.title ?? "",
                                           subtitle:
-                                              " ${data?.duration} ${typeData[index]} • ${data?.level}",
+                                              " ${data.duration} • ${categoryFilterTypeData[index]} • ${data.level.toString()}",
                                           onTap: () {
                                             if (followTrainingData != null) {
                                               if (followTrainingData!
@@ -587,10 +646,9 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                                 context.navigateTo(
                                                     WorkoutDetailView(
                                                         id: listSheduleWorkoutData[
-                                                                    index]
-                                                                ?.id
-                                                                .toString() ??
-                                                            '',
+                                                                index]
+                                                            .id
+                                                            .toString(),
                                                         followTrainingplanModel:
                                                             FollowTrainingplanModel(
                                                           workoutData:
@@ -635,10 +693,9 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                                 context.navigateTo(
                                                     WorkoutDetailView(
                                                         id: listSheduleWorkoutData[
-                                                                    index]
-                                                                ?.id
-                                                                .toString() ??
-                                                            '',
+                                                                index]
+                                                            .id
+                                                            .toString(),
                                                         followTrainingplanModel:
                                                             FollowTrainingplanModel(
                                                           trainingplanId:
@@ -681,10 +738,9 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                                 context.navigateTo(
                                                     WorkoutDetailView(
                                                         id: listSheduleWorkoutData[
-                                                                    index]
-                                                                ?.id
-                                                                .toString() ??
-                                                            '',
+                                                                index]
+                                                            .id
+                                                            .toString(),
                                                         followTrainingplanModel:
                                                             FollowTrainingplanModel(
                                                           workoutData:
@@ -722,10 +778,9 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                               context
                                                   .navigateTo(WorkoutDetailView(
                                                 id: listSheduleWorkoutData[
-                                                            index]
-                                                        ?.id
-                                                        .toString() ??
-                                                    '',
+                                                        index]
+                                                    .id
+                                                    .toString(),
                                               ));
                                             }
                                           }),
@@ -742,7 +797,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   SliverToBoxAdapter cardBoxWidget() {
     return SliverToBoxAdapter(
       child: Card(
-        elevation: 0.2,
+        elevation: 0,
         margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
         color: AppColor.surfaceBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -751,33 +806,24 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
               const EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 16),
           child: Column(
             children: [
-              CustomRowTextChartIcon(
-                level: trainingPlanData?.level.toString() ?? "",
-                text1: 'Level',
-                text2: trainingPlanData?.level.toString() ?? "",
-                isChartIcon: true,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 16),
-                child: CustomDivider(),
-              ),
-              ValueListenableBuilder(
-                valueListenable: fitnessTypeLoader,
-                builder: (context, value, child) {
-                  return value == true
-                      ? Center(
-                          child: BaseHelper.loadingWidget(),
-                        )
-                      : CustomRowTextChartIcon(
-                          text1: 'Type',
-                          text2: fitnessActivityTypeData?.name ?? "No Data",
-                        );
-                },
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 16),
-                child: CustomDivider(),
-              ),
+              // const Padding(
+              //   padding: EdgeInsets.only(top: 16, bottom: 16),
+              //   child: CustomDivider(),
+              // ),
+              // ValueListenableBuilder(
+              //   valueListenable: fitnessTypeLoader,
+              //   builder: (context, value, child) {
+              //     return value == true
+              //         ? Center(
+              //             child: BaseHelper.loadingWidget(),
+              //           )
+              //         : CustomRowTextChartIcon(
+              //             text1: 'Type',
+              //             text2: fitnessActivityTypeData?.name ?? "No Data",
+              //           );
+              //   },
+              // ),
+
               ValueListenableBuilder(
                 valueListenable: goalLoader,
                 builder: (context, value, child) {
@@ -791,6 +837,16 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                         );
                 },
               ),
+              const Padding(
+                padding: EdgeInsets.only(top: 16, bottom: 16),
+                child: CustomDivider(),
+              ),
+              CustomRowTextChartIcon(
+                level: trainingPlanData?.level.toString() ?? "",
+                text1: 'Level',
+                text2: trainingPlanData?.level.toString() ?? "",
+                isChartIcon: true,
+              ),
             ],
           ),
         ),
@@ -800,34 +856,30 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
 }
 
 class FollowedBorderWidget extends StatelessWidget {
-  const FollowedBorderWidget({
-    super.key,
-    required this.followTrainingData,
-  });
+  const FollowedBorderWidget(
+      {super.key, required this.followTrainingData, this.color, this.color2});
 
   final FollowTrainingplanModel? followTrainingData;
-
+  final Color? color, color2;
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-        runSpacing: 4,
-        spacing: 4,
+    return Row(
         children: List.generate(
-          followTrainingData?.totalWorkoutLength.toInt() ?? 0,
-          (index) => Container(
-            height: 6,
-            width: 22,
-            // foregroundDecoration: BoxDecoration(
-            //   color:
-            // ),
-            decoration: BoxDecoration(
-                color: index + 1 <= followTrainingData!.workoutCount.toInt()
-                    ? AppColor.textInvertEmphasis
-                    : AppColor.surfaceBrandSecondaryColor,
-                borderRadius: BorderRadius.circular(16)),
-          ),
-        ));
+      followTrainingData?.totalWorkoutLength ?? 0,
+      (index) => Flexible(
+        child: Container(
+          height: 6,
+          margin: const EdgeInsets.only(left: 2, right: 2),
+          // foregroundDecoration: BoxDecoration(
+          //   color:
+          // ),
+          decoration: BoxDecoration(
+              color: index + 1 <= followTrainingData!.workoutCount.toInt()
+                  ? color ?? AppColor.textEmphasisColor
+                  : color2 ?? AppColor.surfaceBrandSecondaryColor,
+              borderRadius: BorderRadius.circular(16)),
+        ),
+      ),
+    ));
   }
 }
-
-

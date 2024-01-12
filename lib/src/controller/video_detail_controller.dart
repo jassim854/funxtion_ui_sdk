@@ -17,6 +17,21 @@ class CategoryDetailController {
     return null;
   }
 
+  static String getOnDemandCategoryData(
+    OnDemandModel data,
+  ) {
+    List<ContentProvidersCategoryOnDemandModel> onDemandCategoryData = [];
+    for (var i = 0; i < data.categories!.length; i++) {
+      for (var element in CommonController.onDemandCategoryData) {
+        if (element.id.toString() == data.categories![i]) {
+          onDemandCategoryData.add(element);
+        }
+      }
+    }
+
+    return onDemandCategoryData.map((e) => e.name).join(',');
+  }
+
   static Future<InstructorModel?> getInstructor(context,
       {required String id}) async {
     try {

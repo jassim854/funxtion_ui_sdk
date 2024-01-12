@@ -1,3 +1,5 @@
+import 'package:ui_tool_kit/ui_tool_kit.dart';
+
 import 'model_helper/model_helper.dart';
 
 class TrainingPlanModel {
@@ -42,11 +44,11 @@ class TrainingPlanModel {
           id: json["id"],
           title: json["title"] is Map ? json['title']['en'] : json['title'],
           description: json["description"] is Map
-              ? json["description"]['en']
-              : json["description"],
+              ? json["description"]['en'].toString().capitalizeFirst()
+              : json["description"].toString().capitalizeFirst(),
           goals: List<int>.from(json["goals"].map((x) => x)),
           types: List<int>.from(json["types"].map((x) => x)),
-          level: json["level"],
+          level: json["level"].toString().capitalizeFirst(),
           locations: List<String>.from(json["locations"].map((x) => x)),
           contentPackages:
               List<dynamic>.from(json["content_packages"].map((x) => x)),
