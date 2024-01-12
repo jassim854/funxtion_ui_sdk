@@ -9,8 +9,10 @@ import 'package:ui_tool_kit/ui_tool_kit.dart';
 import '../../model/follow_trainingplan_model.dart';
 
 class TrainingPlanListView extends StatefulWidget {
+  final int initialIndex;
   const TrainingPlanListView({
     super.key,
+    required this.initialIndex,
   });
 
   @override
@@ -27,10 +29,11 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
 
   late TabController _tabController;
   int pageNumber = 0;
-  Map<int, List<FitnessGoalModel>> fitnessGoalData = {};
+  // Map<int, List<FitnessGoalModel>> fitnessGoalData = {};
   List<FollowTrainingplanModel>? followTrainingData;
   List<TrainingPlanModel> listTrainingPLanData = [];
   List<TrainingPlanModel> localTrainingPlanData = [];
+  Map<int, String> fitnessGoalData = {};
   bool nextPage = true;
   bool showCloseIcon = false;
   bool followedShowCloseIcon = false;
@@ -43,7 +46,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
   ValueNotifier<List<TypeFilterModel>> confirmedFilter = ValueNotifier([]);
   ValueNotifier<List<TypeFilterModel>> followedConfirmedFilter =
       ValueNotifier([]);
-  ValueNotifier<bool> isSubtitleLoading = ValueNotifier(false);
+  // ValueNotifier<bool> isSubtitleLoading = ValueNotifier(false);
 
   bool isFollowed = false;
 
@@ -55,19 +58,21 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
     _searchControllerPage2 = TextEditingController();
     _scrollControllerPage1 = ScrollController();
     _scrollControllerPage2 = ScrollController();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+        length: 2, vsync: this, initialIndex: widget.initialIndex);
 
+    // _tabController.addListener(() {
+    //   if (_tabController.index == 0) {
     getData(isScroll: false);
     _scrollControllerPage1.addListener(
       () {
         print(_scrollControllerPage1.position.extentBefore);
         if (isLoadMore == false &&
             nextPage == true &&
-            isSubtitleLoading.value == false &&
             _scrollControllerPage1.position.extentAfter < 300.0) {
-          isSubtitleLoading.value = true;
+          // isSubtitleLoading.value = true;
           isLoadMore = true;
-          isSubtitleLoading.value = true;
+          // isSubtitleLoading.value = true;
           pageNumber += 1;
           getData(
               isScroll: true,
@@ -77,7 +82,8 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
         }
       },
     );
-
+    // }
+    // });
     super.initState();
   }
 
@@ -95,6 +101,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
     _searchControllerPage1.dispose();
     _searchControllerPage2.dispose();
     _scrollControllerPage2.dispose();
+    _tabController.dispose();
     CategoryListController.onDemandfiltersData.clear();
     super.dispose();
   }
@@ -151,7 +158,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                  padding: const EdgeInsets.all(4),
+                                  padding: const EdgeInsets.all(2),
                                   margin: const EdgeInsets.only(
                                     left: 20,
                                     right: 20,
@@ -159,7 +166,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
                                   decoration: BoxDecoration(
                                       color: AppColor
                                           .surfaceBackgroundSecondaryColor,
-                                      borderRadius: BorderRadius.circular(12)),
+                                      borderRadius: BorderRadius.circular(10)),
                                   child: TabBar(
                                       controller: _tabController,
                                       labelPadding: const EdgeInsets.symmetric(
@@ -169,7 +176,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
                                           color:
                                               AppColor.surfaceBackgroundColor,
                                           borderRadius:
-                                              BorderRadius.circular(12)),
+                                              BorderRadius.circular(10)),
                                       tabs: [
                                         Text(
                                           'All',
@@ -200,27 +207,28 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
                       controller: _tabController,
                       children: [
                         FirstTabWidget(
-                            followTrainingData: followTrainingData,
-                            key: const PageStorageKey("page1"),
-                            searchControllerPage1: _searchControllerPage1,
-                            confirmedFilter: confirmedFilter,
-                            requestCall: () {
-                              getData(isScroll: false);
-                            },
-                            fitnessGoalData: fitnessGoalData,
-                            isLoadMore: isLoadMore,
-                            isLoadingNotifier: isLoadingNotifier,
-                            isNodData: isNodData,
-                            isSubtitleLoading: isSubtitleLoading,
-                            listTrainingPLanData: listTrainingPLanData,
-                            nextPage: nextPage,
-                            scrollControllerPage1: _scrollControllerPage1,
-                            showCloseIcon: showCloseIcon,
-                            searchDelayFn: (value) {
-                              CategoryListController.delayedFunction(fn: () {
-                                getData(isScroll: false, mainSearch: value);
-                              });
-                            }),
+                          followTrainingData: followTrainingData,
+                          key: const PageStorageKey("page1"),
+                          searchControllerPage1: _searchControllerPage1,
+                          confirmedFilter: confirmedFilter,
+                          requestCall: () {
+                            getData(isScroll: false);
+                          },
+                          isLoadMore: isLoadMore,
+                          isLoadingNotifier: isLoadingNotifier,
+                          isNodData: isNodData,
+                          // isSubtitleLoading: isSubtitleLoading,
+                          listTrainingPLanData: listTrainingPLanData,
+                          nextPage: nextPage,
+                          scrollControllerPage1: _scrollControllerPage1,
+                          showCloseIcon: showCloseIcon,
+                          searchDelayFn: (value) {
+                            CategoryListController.delayedFunction(fn: () {
+                              getData(isScroll: false, mainSearch: value);
+                            });
+                          },
+                          fitnessGoalData: fitnessGoalData,
+                        ),
                         isFollowed == false
                             ? Container()
                             : SecondTabWidget(
@@ -597,7 +605,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
         fitnessGoalData.clear();
         pageNumber = 0;
       }
-      isSubtitleLoading.value = isScroll == true ? false : true;
+      // isSubtitleLoading.value = isScroll == true ? false : true;
       isLoadingNotifier = isScroll == true ? false : true;
     });
     try {
@@ -608,20 +616,21 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
         pageNumber: pageNumber.toString(),
       ).then((value) async {
         if (value != null && value.isNotEmpty) {
-          if (isScroll == true) await getGoalData(value);
+          await CommonController.getListGoalData(
+              context, value, shouldBreakLoop, fitnessGoalData);
+          listTrainingPLanData.addAll(value);
           setState(() {
             nextPage = true;
             isLoadMore = false;
-            listTrainingPLanData.addAll(value);
 
             isLoadingNotifier = isScroll == true ? false : false;
           });
-          if (isScroll == false) await getGoalData(value);
-          isSubtitleLoading.value = isScroll == true ? false : false;
+
+          // isSubtitleLoading.value = isScroll == true ? false : false;
         } else if (value?.isEmpty ?? false) {
           setState(() {
             nextPage = false;
-            isSubtitleLoading.value = isScroll == true ? false : false;
+            // isSubtitleLoading.value = isScroll == true ? false : false;
             isLoadingNotifier = isScroll == true ? false : false;
           });
         } else if (value == null) {
@@ -630,7 +639,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
             isNodData = true;
             nextPage = true;
 
-            isSubtitleLoading.value = isScroll == true ? false : false;
+            // isSubtitleLoading.value = isScroll == true ? false : false;
             isLoadingNotifier = isScroll == true ? false : false;
           });
         }
@@ -640,33 +649,33 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
     }
   }
 
-  getGoalData(List<TrainingPlanModel> listTrainingPLanData) async {
-    int count = fitnessGoalData.keys.length;
+  // getGoalData(List<TrainingPlanModel> listTrainingPLanData) async {
+  //   int count = fitnessGoalData.keys.length;
 
-    for (int j = count; j - count < listTrainingPLanData.length; j++) {
-      Set<FitnessGoalModel> listOfFitnessGoal = {};
-      for (var i = 0; i < listTrainingPLanData[j - count].goals.length; i++) {
-        await FitnessGoalRequest.fitnessGoalById(
-                id: listTrainingPLanData[j - count].goals[i].toString())
-            .then((value) {
-          if (value != null) {
-            FitnessGoalModel fetchData = FitnessGoalModel.fromJson(value);
-            listOfFitnessGoal.add(fetchData);
-          }
-        });
-        if (shouldBreakLoop == true) {
-          break;
-        }
-      }
-      if (shouldBreakLoop == true) {
-        break;
-      }
+  //   for (int j = count; j - count < listTrainingPLanData.length; j++) {
+  //     Set<FitnessGoalModel> listOfFitnessGoal = {};
+  //     for (var i = 0; i < listTrainingPLanData[j - count].goals.length; i++) {
+  //       await FitnessGoalRequest.fitnessGoalById(
+  //               id: listTrainingPLanData[j - count].goals[i].toString())
+  //           .then((value) {
+  //         if (value != null) {
+  //           FitnessGoalModel fetchData = FitnessGoalModel.fromJson(value);
+  //           listOfFitnessGoal.add(fetchData);
+  //         }
+  //       });
+  //       if (shouldBreakLoop == true) {
+  //         break;
+  //       }
+  //     }
+  //     if (shouldBreakLoop == true) {
+  //       break;
+  //     }
 
-      fitnessGoalData[j] = listOfFitnessGoal.toList();
-    }
+  //     fitnessGoalData[j] = listOfFitnessGoal.toList();
+  //   }
 
-    log("$fitnessGoalData");
-  }
+  //   log("$fitnessGoalData");
+  // }
 }
 
 class SecondTabWidget extends StatefulWidget {
@@ -811,7 +820,7 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
                                           ));
                                         },
                                         imageHeaderIcon:
-                                            AppAssets.videoPlayIcon,
+                                            AppAssets.calendarIcon,
                                         imageUrl: widget
                                             .followTrainingData[index]
                                             .trainingPlanImg
@@ -867,9 +876,10 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
                                             .toString());
                                   },
                                   separatorBuilder: (context, index) {
-                                    return CustomDivider(
-                                      endIndent: context.dynamicWidth * 0.02,
-                                      indent: context.dynamicWidth * 0.22,
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 12, bottom: 12),
+                                      child: CustomDivider(indent: 102),
                                     );
                                   },
                                   itemCount: widget.followTrainingData.length),
@@ -960,24 +970,23 @@ class FirstTabWidget extends StatefulWidget {
   final List<TrainingPlanModel> listTrainingPLanData;
   final ValueNotifier<List<TypeFilterModel>> confirmedFilter;
   final ScrollController scrollControllerPage1;
-  final ValueNotifier<bool> isSubtitleLoading;
-  final Map<int, List<FitnessGoalModel>> fitnessGoalData;
+  final Map<int, String> fitnessGoalData;
+
   const FirstTabWidget(
       {super.key,
       this.followTrainingData,
       required this.searchControllerPage1,
       required this.confirmedFilter,
       required this.requestCall,
-      required this.fitnessGoalData,
       required this.isLoadMore,
       required this.isLoadingNotifier,
       required this.isNodData,
-      required this.isSubtitleLoading,
       required this.listTrainingPLanData,
       required this.nextPage,
       required this.scrollControllerPage1,
       required this.showCloseIcon,
-      required this.searchDelayFn});
+      required this.searchDelayFn,
+      required this.fitnessGoalData});
 
   @override
   State<FirstTabWidget> createState() => _FirstTabWidgetState();
@@ -1067,7 +1076,7 @@ class _FirstTabWidgetState extends State<FirstTabWidget> {
                                                         .id));
                                           },
                                           imageHeaderIcon:
-                                              AppAssets.videoPlayIcon,
+                                              AppAssets.calendarIcon,
                                           imageUrl: widget
                                               .listTrainingPLanData[index].image
                                               .toString(),
@@ -1085,42 +1094,29 @@ class _FirstTabWidgetState extends State<FirstTabWidget> {
                                                       .elementAt(widget
                                                           .followTrainingData!
                                                           .indexWhere((element) =>
-                                                              element.trainingplanId ==
+                                                              element
+                                                                  .trainingplanId ==
                                                               widget
                                                                   .listTrainingPLanData[index]
                                                                   .id)))
-                                              : ValueListenableBuilder(
-                                                  valueListenable: widget.isSubtitleLoading,
-                                                  builder: (_, value, child) {
-                                                    return RichText(
-                                                        text: TextSpan(
-                                                            style: AppTypography
-                                                                .paragraph14MD
-                                                                .copyWith(
-                                                                    color: AppColor
-                                                                        .textPrimaryColor),
-                                                            children: [
-                                                          TextSpan(
-                                                              text:
-                                                                  "${widget.listTrainingPLanData[index].daysTotal} workouts"),
-                                                          value == true
-                                                              ? WidgetSpan(
-                                                                  child: BaseHelper
-                                                                      .loadingWidget())
-                                                              : TextSpan(
-                                                                  text:
-                                                                      " • ${widget.fitnessGoalData.entries.toList()[index].value.map((e) => e.name).join(',')}"),
-                                                          TextSpan(
-                                                              text:
-                                                                  " • ${widget.listTrainingPLanData[index].level}"),
-                                                        ]));
-                                                  }),
+                                              : Text(
+                                                  "${widget.listTrainingPLanData[index].daysTotal} workouts • ${widget.fitnessGoalData.entries.toList()[index].value} • ${widget.listTrainingPLanData[index].level}",
+                                                  style: AppTypography
+                                                      .paragraph14MD
+                                                      .copyWith(
+                                                          color: AppColor
+                                                              .textPrimaryColor),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                ),
                                           title: widget.listTrainingPLanData[index].title.toString());
                                     },
                                     separatorBuilder: (context, index) {
-                                      return CustomDivider(
-                                        endIndent: context.dynamicWidth * 0.02,
-                                        indent: context.dynamicWidth * 0.22,
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 12, bottom: 12),
+                                        child: CustomDivider(indent: 102),
                                       );
                                     },
                                     itemCount:

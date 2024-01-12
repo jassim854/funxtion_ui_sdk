@@ -87,6 +87,7 @@ class SliverAppBarWidget extends StatelessWidget {
   final Widget? bottomWidget;
   final String appBarTitle, flexibleTitle, backGroundImg;
   final Widget flexibleSubtitleWidget;
+  Widget? onStackChild;
   SliverAppBarWidget(
       {super.key,
       required this.value,
@@ -95,7 +96,8 @@ class SliverAppBarWidget extends StatelessWidget {
       required this.flexibleSubtitleWidget,
       required this.backGroundImg,
       this.isFollowingPlan = false,
-      this.bottomWidget});
+      this.bottomWidget,
+      this.onStackChild});
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +117,7 @@ class SliverAppBarWidget extends StatelessWidget {
         ),
       ),
       // leadingWidth: 50,
-      leading: InkWell(
+      leading: GestureDetector(
         onTap: () {
           context.maybePopPage();
         },
@@ -143,7 +145,7 @@ class SliverAppBarWidget extends StatelessWidget {
             StretchMode.fadeTitle,
           ],
           expandedTitleScale: 1,
-          titlePadding: const EdgeInsets.only(left: 30, bottom: 16),
+          titlePadding: const EdgeInsets.only(left: 20, bottom: 16, right: 20),
           title: Visibility(
             visible: value == false ? true : false,
             child: Align(
@@ -189,7 +191,7 @@ class SliverAppBarWidget extends StatelessWidget {
                         .copyWith(color: AppColor.textInvertEmphasis),
                   ),
                   isFollowingPlan == true
-                      ? bottomWidget ?? Container()
+                      ? bottomWidget ?? const SizedBox.shrink()
                       : flexibleSubtitleWidget
                 ],
               ),
@@ -199,14 +201,12 @@ class SliverAppBarWidget extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               Container(
-                child: cacheNetworkWidget(
-                    imageUrl: backGroundImg, fit: BoxFit.cover),
+                child: cacheNetworkWidget(context,
+                        height: 190,
+                                                      width: context.dynamicWidth.toInt(),
+                    imageUrl: backGroundImg, fit: BoxFit.fill),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
-                ),
-              ),
+              if (onStackChild != null) onStackChild!
             ],
           )),
     );
@@ -244,9 +244,9 @@ class HeaderTitleWIdget extends StatelessWidget {
           ? "Video Classes"
           : categoryName == CategoryName.workouts
               ? "Workouts"
-              :categoryName == CategoryName.audioClasses
-                      ? "Audio Classes"
-                      : '',
+              : categoryName == CategoryName.audioClasses
+                  ? "Audio Classes"
+                  : '',
       style:
           AppTypography.label18LG.copyWith(color: AppColor.textEmphasisColor),
     );

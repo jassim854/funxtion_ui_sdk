@@ -33,6 +33,36 @@ extension NavigationExtensions on BuildContext {
         Navigator.of(this).pop(result);
         Navigator.of(this).pop(result);
         break;
+      case 4:
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        break;
+      case 5:
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        break;
+      case 6:
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        break;
+      case 7:
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        Navigator.of(this).pop(result);
+        break;
       default:
         return;
     }
@@ -80,25 +110,31 @@ extension HideKeypad on BuildContext {
 }
 
 extension OmitSymbolText on String {
-  getTextAfterSymbol() {
-    int atIndex = indexOf('-');
-    int lastAtIndex = lastIndexOf('-');
+  // getTextAfterSymbol() {
+  //   int atIndex = indexOf('-');
+  //   int lastAtIndex = lastIndexOf('-');
 
-    if (atIndex != -1 && atIndex == lastAtIndex) {
-      return substring(atIndex + 1);
-    } else {
-      return "";
-    }
-  }
+  //   if (atIndex != -1 && atIndex == lastAtIndex) {
+  //     return substring(atIndex + 1);
+  //   } else {
+  //     return "";
+  //   }
+  // }
 
   String capitalizeFirst() {
     return "${this[0].toUpperCase()}${substring(1)}";
   }
 
-  removeSymbolGetText() {
-    int atIndex = indexOf('-');
+  // removeSymbolGetText() {
+  //   int atIndex = indexOf('-');
 
-    return "${substring(0, atIndex).capitalizeFirst()} ${substring(atIndex + 1).capitalizeFirst()}";
+  //   return "${substring(0, atIndex).capitalizeFirst()} ${substring(atIndex + 1).capitalizeFirst()}";
+  // }
+}
+
+extension ImageExtension on int {
+  int cacheSize(BuildContext context) {
+    return (this * MediaQuery.of(context).devicePixelRatio).round();
   }
 }
 
@@ -432,7 +468,7 @@ extension ExerciseSubTitle on ExerciseDetailModel {
         }
       }).join(" • ")}";
     } else {
-      return "No targets to show";
+      return "";
     }
   }
 }

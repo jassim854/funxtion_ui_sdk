@@ -17,24 +17,20 @@ class PlayButtonWidget extends StatelessWidget {
       height: 50,
       child: CustomElevatedButton(
           onPressed: onPressed,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            child: FittedBox(
-              child: Row(
-                children: [
-                  SvgPicture.asset(
-                    AppAssets.playArrowIcon,
-                    color: AppColor.textInvertEmphasis,
-                  ),
-                  5.width(),
-                  Text(
-                    'Play class',
-                    style: AppTypography.label18LG
-                        .copyWith(color: AppColor.textInvertEmphasis),
-                  )
-                ],
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset(
+                AppAssets.playArrowIcon,
+                color: AppColor.textInvertEmphasis,
               ),
-            ),
+              5.width(),
+              Text(
+                'Play class',
+                style: AppTypography.label18LG
+                    .copyWith(color: AppColor.textInvertEmphasis),
+              )
+            ],
           )),
     );
   }
@@ -58,9 +54,7 @@ class StartButtonWidget extends StatelessWidget {
           elevation: 0,
           btnColor: btnColor ?? AppColor.buttonTertiaryColor,
           onPressed: onPressed,
-          child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-              child: btnChild)),
+          child: btnChild),
     );
   }
 }
@@ -74,18 +68,18 @@ class SheduletButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomElevatedButton(
-        elevation: 0,
-        btnColor: AppColor.buttonPrimaryColor,
-        onPressed: onPressed,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+    return SizedBox(
+      height: 50,
+      child: CustomElevatedButton(
+          elevation: 0,
+          btnColor: AppColor.buttonPrimaryColor,
+          onPressed: onPressed,
           child: child ??
               Text(
                 text.toString(),
                 style: AppTypography.label16MD
                     .copyWith(color: AppColor.textInvertEmphasis),
-              ),
-        ));
+              )),
+    );
   }
 }

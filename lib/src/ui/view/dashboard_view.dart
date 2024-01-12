@@ -5,7 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ui_tool_kit/src/controller/dashBoard_controller.dart';
 import 'package:ui_tool_kit/src/helper/boxes.dart';
 import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
-import 'package:ui_tool_kit/src/ui/view/search_view.dart';
+
 import 'package:ui_tool_kit/src/ui/view/training_plan_detail_view.dart';
 import 'package:ui_tool_kit/src/ui/view/workout_detail_view.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
@@ -27,6 +27,7 @@ class _DashBoardViewState extends State<DashBoardView> {
   Map<int, String> workoutDataType = {};
   Map<int, String> videoDataType = {};
   Map<int, String> audioDataType = {};
+  Map<int, String> fitnessGoalData = {};
   ValueNotifier<bool> isLoading = ValueNotifier(false);
   @override
   void initState() {
@@ -36,7 +37,7 @@ class _DashBoardViewState extends State<DashBoardView> {
   }
 
   fetchData() async {
-    DashBoardController.getData(context,
+    await DashBoardController.getData(context,
         audioDataType: audioDataType,
         videoDataType: videoDataType,
         workoutDataType: workoutDataType,
@@ -44,7 +45,9 @@ class _DashBoardViewState extends State<DashBoardView> {
         onDemadDataVideo: onDemadDataVideo,
         audioData: onDemadDataAudio,
         workoutData: workoutData,
-        trainingPlanData: trainingPlanData);
+        trainingPlanData: trainingPlanData,
+        fitnessGoalData: fitnessGoalData);
+    isLoading.value = false;
   }
 
   @override
@@ -60,7 +63,7 @@ class _DashBoardViewState extends State<DashBoardView> {
           leading: const SizedBox.shrink(),
           title: CustomSearchTextFieldWidget(
             onFieldTap: () {
-              context.navigateTo(const SearchView());
+              // context.navigateTo(const SearchView());
               // print('object');
             },
             hintText: 'Workouts, trainers, exercises',
@@ -77,221 +80,195 @@ class _DashBoardViewState extends State<DashBoardView> {
                 : ListView(
                     padding: const EdgeInsets.only(top: 20, bottom: 20),
                     children: [
-                        if (Boxes.getData().isNotEmpty) ...[
-                          const RowEndToEndTextWidget(
-                            columnText1: 'Your Training Plans',
-                            rowText1: 'See all',
-                          ),
-                          20.height(),
-                          ValueListenableBuilder(
+                        ValueListenableBuilder(
                             valueListenable: Boxes.getData().listenable(),
                             builder: (_, value, child) {
-                              return Align(
-                                alignment: Alignment.centerLeft,
-                                child: Container(
-                                  // color: Colors.green,
-                                  alignment: Alignment.centerLeft,
-                                  child: Transform.scale(
-                                    scale: 1.2,
-                                    child: CarouselSlider(
-                                        items: value.values
-                                            .toList()
-                                            .sublist(
-                                                0,
-                                                value.values.length > 4
-                                                    ? 4
-                                                    : null)
-                                            .map((e) => Container(
-                                                  width: double.infinity,
-                                                  margin: EdgeInsets.only(
-                                                      left:
-                                                          value.values.first ==
-                                                                  e
-                                                              ? 10
-                                                              : 10,
-                                                      right: 10,
-                                                      top: 20),
-                                                  decoration: BoxDecoration(
-                                                      color: AppColor
-                                                          .surfaceBrandSecondaryColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              16)),
-                                                  child: Column(
-                                                    children: [
-                                                      GestureDetector(
-                                                        behavior:
-                                                            HitTestBehavior
-                                                                .deferToChild,
-                                                        onTap: () {
-                                                          context.navigateTo(
-                                                              TrainingPlanDetailView(
-                                                                  id: e
-                                                                      .trainingplanId,
-                                                                  workoutLength: e
-                                                                      .workoutCount
-                                                                      .toString()));
-                                                        },
-                                                        child: Stack(
-                                                          alignment: Alignment
-                                                              .bottomCenter,
-                                                          clipBehavior:
-                                                              Clip.antiAlias,
-                                                          children: [
-                                                            SizedBox(
-                                                              width: double
-                                                                  .infinity,
-                                                              height: 190,
-                                                              child: ClipRRect(
-                                                                borderRadius: const BorderRadius
-                                                                    .only(
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                            16),
-                                                                    topRight: Radius
+                              return value.isNotEmpty
+                                  ? Column(
+                                      children: [
+                                        RowEndToEndTextWidget(
+                                          columnText1: 'Your Training Plans',
+                                          rowText1: 'See all',
+                                          seeOnTap: () {
+                                            context.navigateTo(
+                                                TrainingPlanListView(
+                                              initialIndex: 1,
+                                            ));
+                                          },
+                                        ),
+                                        20.height(),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Container(
+                                            // color: Colors.green,
+                                            alignment: Alignment.centerLeft,
+                                            child: Transform.scale(
+                                              scale: 1.2,
+                                              child: CarouselSlider(
+                                                  items: value.values
+                                                      .toList()
+                                                      .sublist(
+                                                          0,
+                                                          value.values.length >
+                                                                  4
+                                                              ? 4
+                                                              : null)
+                                                      .map((e) => Container(
+                                                            width:
+                                                                double.infinity,
+                                                            margin: EdgeInsets.only(
+                                                                left: value.values
+                                                                            .first ==
+                                                                        e
+                                                                    ? 10
+                                                                    : 10,
+                                                                right: 10,
+                                                                top: 20),
+                                                            decoration: BoxDecoration(
+                                                                color: AppColor
+                                                                    .surfaceBrandSecondaryColor,
+                                                                borderRadius:
+                                                                    BorderRadius
                                                                         .circular(
                                                                             16)),
-                                                                child: cacheNetworkWidget(
-                                                                    fit: BoxFit
-                                                                        .fill,
-                                                                    imageUrl: e
-                                                                        .trainingPlanImg),
-                                                              ),
-                                                            ),
-                                                            Align(
-                                                              alignment: Alignment
-                                                                  .bottomLeft,
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            12,
-                                                                        right:
-                                                                            12,
-                                                                        bottom:
-                                                                            8),
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Text(e.trainingPlanTitle,
-                                                                        style: AppTypography
-                                                                            .title18LG
-                                                                            .copyWith(color: AppColor.textInvertEmphasis)),
-                                                                    4.height(),
-                                                                    FollowedBorderWidget(
-                                                                        followTrainingData:
-                                                                            e),
-                                                                  ],
+                                                            child: Column(
+                                                              children: [
+                                                                GestureDetector(
+                                                                  behavior:
+                                                                      HitTestBehavior
+                                                                          .deferToChild,
+                                                                  onTap: () {
+                                                                    context.navigateTo(
+                                                                        TrainingPlanDetailView(
+                                                                      id: e
+                                                                          .trainingplanId,
+                                                                      workoutLength: e
+                                                                          .totalWorkoutLength
+                                                                          .toString(),
+                                                                    ));
+                                                                  },
+                                                                  child: Stack(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .bottomCenter,
+                                                                    clipBehavior:
+                                                                        Clip.antiAlias,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: double
+                                                                            .infinity,
+                                                                        height:
+                                                                            190,
+                                                                        child:
+                                                                            ClipRRect(
+                                                                          borderRadius: const BorderRadius
+                                                                              .only(
+                                                                              topLeft: Radius.circular(16),
+                                                                              topRight: Radius.circular(16)),
+                                                                          child: cacheNetworkWidget(
+                                                                            height: 190,
+                                                                            width: context.dynamicWidth.toInt(),
+                                                                              context,
+                                                                              fit: BoxFit.fill,
+                                                                              imageUrl: e.trainingPlanImg),
+                                                                        ),
+                                                                      ),
+                                                                      Align(
+                                                                        alignment:
+                                                                            Alignment.bottomLeft,
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .only(
+                                                                              left: 12,
+                                                                              right: 12,
+                                                                              bottom: 8),
+                                                                          child:
+                                                                              Column(
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Text(e.trainingPlanTitle, style: AppTypography.title18LG.copyWith(color: AppColor.textInvertEmphasis)),
+                                                                              4.height(),
+                                                                              FollowedBorderWidget(followTrainingData: e),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                              ),
+                                                                Container(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              12,
+                                                                          right:
+                                                                              12,
+                                                                          top:
+                                                                              4),
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Text(
+                                                                        'Next up',
+                                                                        style: AppTypography
+                                                                            .label12XSM
+                                                                            .copyWith(color: AppColor.textInvertSubtitle),
+                                                                      ),
+                                                                      4.height(),
+                                                                      CustomListtileWidget(
+                                                                          titleColor: AppColor
+                                                                              .textInvertEmphasis,
+                                                                          subtitleColor: AppColor
+                                                                              .textInvertPrimaryColor,
+                                                                          imageUrl: e.workoutData[e.workoutCount == e.totalWorkoutLength ? e.workoutCount - 1 : e.workoutCount]['workoutImg']
+                                                                              .toString(),
+                                                                          title: e.workoutData[e.workoutCount == e.totalWorkoutLength ? e.workoutCount - 1 : e.workoutCount]['workoutTitle']
+                                                                              .toString(),
+                                                                          subtitle: e.workoutData[e.workoutCount == e.totalWorkoutLength ? e.workoutCount - 1 : e.workoutCount]['workoutSubtitle']
+                                                                              .toString(),
+                                                                          onTap:
+                                                                              () {
+                                                                            context.navigateTo(WorkoutDetailView(
+                                                                              id: e.workoutData[e.workoutCount == e.totalWorkoutLength ? e.workoutCount - 1 : e.workoutCount]["workoutId"].toString(),
+                                                                              followTrainingplanModel: FollowTrainingplanModel(trainingplanId: e.trainingplanId, workoutData: e.workoutData, workoutCount: e.workoutCount == e.totalWorkoutLength ? e.workoutCount : e.workoutCount + 1, totalWorkoutLength: e.totalWorkoutLength, outOfSequence: false, trainingPlanImg: e.trainingPlanImg, trainingPlanTitle: e.trainingPlanTitle, daysPerWeek: e.daysPerWeek, goalsId: e.goalsId, levelName: e.levelName, location: e.location),
+                                                                            ));
+                                                                          },
+                                                                          imageHeaderIcon:
+                                                                              AppAssets.workoutHeaderIcon)
+                                                                    ],
+                                                                  ),
+                                                                )
+                                                              ],
                                                             ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      InkWell(
-                                                        onTap: () {
-                                                          context.navigateTo(WorkoutDetailView(
-                                                              id: e.workoutData[e.workoutCount]["workoutId"]
-                                                                  .toString(),
-                                                              followTrainingplanModel: FollowTrainingplanModel(
-                                                                  trainingplanId: e
-                                                                      .trainingplanId,
-                                                                  workoutData: e
-                                                                      .workoutData,
-                                                                  workoutCount:
-                                                                      e.workoutCount +
-                                                                          1,
-                                                                  totalWorkoutLength: e
-                                                                      .totalWorkoutLength,
-                                                                  outOfSequence: e
-                                                                      .outOfSequence,
-                                                                  trainingPlanImg: e
-                                                                      .trainingPlanImg,
-                                                                  trainingPlanTitle: e
-                                                                      .trainingPlanTitle,
-                                                                  daysPerWeek: e
-                                                                      .daysPerWeek,
-                                                                  goalsId:
-                                                                      e.goalsId,
-                                                                  levelName:
-                                                                      e.levelName,
-                                                                  location: e.location)));
-                                                        },
-                                                        child: Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 12,
-                                                                  right: 12,
-                                                                  top: 4),
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                'Next up',
-                                                                style: AppTypography
-                                                                    .label12XSM
-                                                                    .copyWith(
-                                                                        color: AppColor
-                                                                            .textInvertSubtitle),
-                                                              ),
-                                                              4.height(),
-                                                              CustomListtileWidget(
-                                                                  titleColor: AppColor
-                                                                      .textInvertEmphasis,
-                                                                  subtitleColor:
-                                                                      AppColor
-                                                                          .textInvertPrimaryColor,
-                                                                  imageUrl: e
-                                                                      .workoutData[e.workoutCount][
-                                                                          'workoutImg']
-                                                                      .toString(),
-                                                                  title: e
-                                                                      .workoutData[e.workoutCount][
-                                                                          'workoutTitle']
-                                                                      .toString(),
-                                                                  subtitle: e
-                                                                      .workoutData[e.workoutCount][
-                                                                          'workoutSubtitle']
-                                                                      .toString(),
-                                                                  onTap: () {},
-                                                                  imageHeaderIcon:
-                                                                      AppAssets
-                                                                          .workoutHeaderIcon)
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ))
-                                            .toList(),
-                                        options: CarouselOptions(
-                                          // aspectRatio: 4 / 3,
-                                          height: 335,
-                                          pageSnapping: true,
-                                          // viewportFraction: 0.8,
-                                          autoPlay: false,
-                                          enableInfiniteScroll: false,
-                                          // enlargeCenterPage: true
-                                          // pauseAutoPlayInFiniteScroll: true,
-                                        )),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          50.height(),
-                          const CustomDivider(
-                            endIndent: 30,
-                            indent: 30,
-                          ),
-                        ],
+                                                          ))
+                                                      .toList(),
+                                                  options: CarouselOptions(
+                                                    // aspectRatio: 4 / 3,
+                                                    height: 330,
+                                                    pageSnapping: true,
+                                                    // viewportFraction: 0.8,
+                                                    autoPlay: false,
+                                                    enableInfiniteScroll: false,
+                                                    // enlargeCenterPage: true
+                                                    // pauseAutoPlayInFiniteScroll: true,
+                                                  )),
+                                            ),
+                                          ),
+                                        ),
+                                        50.height(),
+                                        const CustomDivider(
+                                          endIndent: 30,
+                                          indent: 30,
+                                        ),
+                                      ],
+                                    )
+                                  : const SizedBox.shrink();
+                            }),
                         Padding(
                           padding: const EdgeInsets.only(
                             top: 0,
@@ -348,6 +325,9 @@ class _DashBoardViewState extends State<DashBoardView> {
                                                             Radius.circular(
                                                                 16)),
                                                     child: cacheNetworkWidget(
+                                                      height: 190,
+                                                      width: context.dynamicWidth.toInt(),
+                                                        context,
                                                         fit: BoxFit.fill,
                                                         imageUrl:
                                                             e.value.image),
@@ -376,7 +356,7 @@ class _DashBoardViewState extends State<DashBoardView> {
                                                                     .textInvertEmphasis),
                                                       ),
                                                       Text(
-                                                        "${e.value.duration.toString().getTextAfterSymbol()} min • ${videoDataType[e.key].toString()} • ${e.value.level}",
+                                                        "${e.value.duration.toString()} min • ${videoDataType[e.key].toString()} • ${e.value.level}",
                                                         style: AppTypography
                                                             .paragraph14MD
                                                             .copyWith(
@@ -412,8 +392,9 @@ class _DashBoardViewState extends State<DashBoardView> {
                           child: RowEndToEndTextWidget(
                               columnText1: "Recent Training Plan",
                               seeOnTap: () {
-                                context
-                                    .navigateTo(const TrainingPlanListView());
+                                context.navigateTo(const TrainingPlanListView(
+                                  initialIndex: 0,
+                                ));
                               },
                               rowText1: "See all"),
                         ),
@@ -422,15 +403,12 @@ class _DashBoardViewState extends State<DashBoardView> {
                             scale: 1.2,
                             child: CarouselSlider(
                                 items: trainingPlanData
-                                    .toList()
+                                    .asMap()
+                                    .entries
                                     .map((e) => Container(
                                           width: double.infinity,
-                                          margin: EdgeInsets.only(
-                                              left: trainingPlanData.first == e
-                                                  ? 10
-                                                  : 10,
-                                              right: 10,
-                                              top: 20),
+                                          margin: const EdgeInsets.only(
+                                              left: 10, right: 10, top: 20),
                                           // decoration: BoxDecoration(
                                           //     // color: AppColor.surfaceBrandSecondaryColor,
                                           //     borderRadius: BorderRadius.circular(16)),
@@ -440,8 +418,9 @@ class _DashBoardViewState extends State<DashBoardView> {
                                             onTap: () {
                                               context.navigateTo(
                                                   TrainingPlanDetailView(
-                                                      id: e.id,
-                                                      workoutLength: e.daysTotal
+                                                      id: e.value.id,
+                                                      workoutLength: e
+                                                          .value.daysTotal
                                                           .toString()));
                                             },
                                             child: Stack(
@@ -457,9 +436,12 @@ class _DashBoardViewState extends State<DashBoardView> {
                                                             Radius.circular(
                                                                 16)),
                                                     child: cacheNetworkWidget(
+                                                              height: 190,
+                                                      width: context.dynamicWidth.toInt(),
+                                                        context,
                                                         fit: BoxFit.fill,
-                                                        imageUrl:
-                                                            e.image.toString()),
+                                                        imageUrl: e.value.image
+                                                            .toString()),
                                                   ),
                                                 ),
                                                 Container(
@@ -472,7 +454,7 @@ class _DashBoardViewState extends State<DashBoardView> {
                                                   child: Wrap(
                                                     children: [
                                                       Text(
-                                                        e.title,
+                                                        e.value.title,
                                                         style: AppTypography
                                                             .title18LG
                                                             .copyWith(
@@ -480,7 +462,7 @@ class _DashBoardViewState extends State<DashBoardView> {
                                                                     .textInvertEmphasis),
                                                       ),
                                                       Text(
-                                                        "${e.daysTotal} workouts • ${e.level}",
+                                                        "${e.value.daysTotal} workouts • ${fitnessGoalData.entries.toList()[e.key].value} • ${e.value.level}",
                                                         style: AppTypography
                                                             .paragraph14MD
                                                             .copyWith(
@@ -511,31 +493,31 @@ class _DashBoardViewState extends State<DashBoardView> {
                         ),
                         const Padding(
                           padding: EdgeInsets.only(
-                            top: 50,
+                            top: 40,
                           ),
                           child: RowEndToEndTextWidget(
                               columnText1: "What Are You Looking For?",
                               rowText1: "See all"),
                         ),
                         Container(
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
+                          margin: const EdgeInsets.only(
+                              top: 16, left: 20, right: 20),
                           child: Column(
                             children: [
                               Row(
                                 children: [
                                   const DashBoardButtonWidget(
                                       text: 'Video Classes'),
-                                  20.width(),
+                                  16.width(),
                                   const DashBoardButtonWidget(text: 'Workouts')
                                 ],
                               ),
-                              20.height(),
+                              16.height(),
                               Row(
                                 children: [
                                   const DashBoardButtonWidget(
                                       text: 'Training Plan'),
-                                  20.width(),
+                                  16.width(),
                                   const DashBoardButtonWidget(
                                       text: 'Audio Classes')
                                 ],
@@ -601,8 +583,6 @@ class _DashBoardViewState extends State<DashBoardView> {
                                           Container(
                                             margin: const EdgeInsets.symmetric(
                                                 horizontal: 12, vertical: 12),
-                                            color:
-                                                Colors.black.withOpacity(0.3),
                                             alignment: Alignment.bottomLeft,
                                             child: Wrap(
                                               // crossAxisAlignment:
@@ -619,10 +599,10 @@ class _DashBoardViewState extends State<DashBoardView> {
                                                           color: AppColor
                                                               .textInvertEmphasis),
                                                 ),
-                                                Row(
+                                                Wrap(
                                                   children: [
                                                     Text(
-                                                      "${workoutData[index].duration.toString().getTextAfterSymbol()} min",
+                                                      "${workoutData[index].duration.toString()} min",
                                                       style: AppTypography
                                                           .paragraph14MD
                                                           .copyWith(
@@ -720,7 +700,7 @@ class _DashBoardViewState extends State<DashBoardView> {
                                                 Wrap(
                                                   children: [
                                                     Text(
-                                                      "${onDemadDataAudio[index].duration.toString().getTextAfterSymbol()} min",
+                                                      "${onDemadDataAudio[index].duration.toString()} min",
                                                       style: AppTypography
                                                           .paragraph14MD
                                                           .copyWith(
@@ -772,12 +752,14 @@ class DashBoardButtonWidget extends StatelessWidget {
                     ? context.navigateTo(const VideoAudioWorkoutListView(
                         categoryName: CategoryName.workouts))
                     : text.contains('Training')
-                        ? context.navigateTo(const TrainingPlanListView())
+                        ? context.navigateTo(const TrainingPlanListView(
+                            initialIndex: 0,
+                          ))
                         : context.navigateTo(const VideoAudioWorkoutListView(
                             categoryName: CategoryName.audioClasses));
           },
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SvgPicture.asset(
                 text.contains('Video')
@@ -790,10 +772,14 @@ class DashBoardButtonWidget extends StatelessWidget {
                 color: AppColor.buttonSecondaryColor,
               ),
               4.width(),
-              Text(
-                text,
-                style: AppTypography.label14SM
-                    .copyWith(color: AppColor.buttonSecondaryColor),
+              Flexible(
+                child: FittedBox(
+                  child: Text(
+                    text,
+                    style: AppTypography.label14SM
+                        .copyWith(color: AppColor.buttonSecondaryColor),
+                  ),
+                ),
               ),
             ],
           )),

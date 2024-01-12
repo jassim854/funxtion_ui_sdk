@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
 import 'package:ui_tool_kit/src/ui/view/start_workout_view.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
@@ -21,8 +22,13 @@ class UpNextSheetWidget extends StatelessWidget {
       required this.currentListData,
       required this.sliderWarmUp,
       required this.sliderTraining,
-      required this.sliderCoolDown});
+      required this.sliderCoolDown,
+      required this.coolDownBody,
+      required this.trainingBody,
+      required this.warmupBody,
+      required this.followTrainingplanModel, });
   final WorkoutModel workoutModel;
+
   final Map<ExerciseDetailModel, ExerciseModel> warmUpData;
   final Map<ExerciseDetailModel, ExerciseModel> trainingData;
   final Map<ExerciseDetailModel, ExerciseModel> coolDownData;
@@ -32,12 +38,15 @@ class UpNextSheetWidget extends StatelessWidget {
   final ValueNotifier<double> sliderWarmUp;
   final ValueNotifier<double> sliderTraining;
   final ValueNotifier<double> sliderCoolDown;
+  final int coolDownBody;
+  final int trainingBody;
+  final int warmupBody;
   final bool? isFromNext;
   Timer? mainTimer;
   final String title;
   final Map<ExerciseDetailModel, ExerciseModel> currentListData;
   ValueNotifier<bool> expand = ValueNotifier(true);
-
+  final FollowTrainingplanModel? followTrainingplanModel;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,16 +69,13 @@ class UpNextSheetWidget extends StatelessWidget {
                 isScrollControlled: true,
                 context: context,
                 builder: (context) => OverviewBottomSheet(
-                  warmUpData:   warmUpData,
+                  warmUpData: warmUpData,
                   coolDownData: coolDownData,
                   trainingData: trainingData,
                   workoutModel: workoutModel,
-                  warmupHeader: warmUpData.isNotEmpty,
-                  coolDownHeader: false,
-                  trainingHeaer: warmUpData.isEmpty ? true : false,
-                  warmUpWorkoutComplete: false,
-                  trainingWorkoutComplete: false,
-                  coolDownWorkoutComplete: false,
+                  coolDownBody: coolDownBody,
+                  trainingBody: trainingBody,
+                  warmupBody: warmupBody,
                 ),
               );
             },
@@ -193,6 +199,7 @@ class UpNextSheetWidget extends StatelessWidget {
                             trainingData: trainingData,
                             coolDownData: coolDownData,
                             fitnessGoalModel: fitnessGoalModel,
+                            followTrainingplanModel: followTrainingplanModel,
                           ));
                   },
                   child: Text("Let's go",

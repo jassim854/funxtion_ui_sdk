@@ -696,33 +696,37 @@ class CategoryListController {
     confirmedFilter.value = selectedFilter;
   }
 
-  static List<ContentProvidersCategoryOnDemandModel> categoryTypeData = [];
-  static Map<int, String> filterCategoryTypeData = {};
-  static getCategoryTypeDataFn(
-    context,
-    ValueNotifier<bool> loader,
-  ) async {
-    if (CategoryListController.categoryTypeData.isEmpty) {
-      loader.value = true;
-      try {
-        await ContentProviderCategoryOnDemandRequest.contentCategory(
-            queryParameters: {
-              // "filter[where][id][in]": map((e) => e).join(','),
-            }).then((value) {
-          List<ContentProvidersCategoryOnDemandModel> fetchData = List.from(
-              value!.map(
-                  (e) => ContentProvidersCategoryOnDemandModel.fromJson(e)));
-          for (var i = 0; i <= 50; i++) {
-            CategoryListController.categoryTypeData.add(fetchData[i]);
-          }
-        });
-        loader.value = false;
-      } on RequestException catch (e) {
-        BaseHelper.showSnackBar(context, e.error);
-        loader.value = false;
-      }
-    }
-  }
+  static Map<int, String> workoutDataType = {};
+  static Map<int, String> videoDataType = {};
+  static Map<int, String> audioDataType = {};
+
+  // static List<ContentProvidersCategoryOnDemandModel> categoryTypeData = [];
+  // static Map<int, String> filterCategoryTypeData = {};
+  // static getCategoryTypeDataFn(
+  //   context,
+  //   ValueNotifier<bool> loader,
+  // ) async {
+  //   if (CategoryListController.categoryTypeData.isEmpty) {
+  //     loader.value = true;
+  //     try {
+  //       await ContentProviderCategoryOnDemandRequest.contentCategory(
+  //           queryParameters: {
+  //             // "filter[where][id][in]": map((e) => e).join(','),
+  //           }).then((value) {
+  //         List<ContentProvidersCategoryOnDemandModel> fetchData = List.from(
+  //             value!.map(
+  //                 (e) => ContentProvidersCategoryOnDemandModel.fromJson(e)));
+  //         for (var i = 0; i <= 50; i++) {
+  //           CategoryListController.categoryTypeData.add(fetchData[i]);
+  //         }
+  //       });
+  //       loader.value = false;
+  //     } on RequestException catch (e) {
+  //       BaseHelper.showSnackBar(context, e.error);
+  //       loader.value = false;
+  //     }
+  //   }
+  // }
 
   static Timer? timer;
   static void delayedFunction({
@@ -785,12 +789,15 @@ class CategoryListController {
     required CategoryName categoryName,
     required List<OnDemandModel> listOndemandData,
     required List<WorkoutModel> listWorkoutData,
+    required Map<int, String> categoryTypeData,
+    required Map<int, String> onDemandCategoryVideoData,
+    required Map<int, String> onDemandCategoryAudioData,
   }) {
     return categoryName == CategoryName.videoClasses
-        ? "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${listOndemandData[index].type.toString().removeSymbolGetText()} • ${listOndemandData[index].level.toString().capitalizeFirst()}"
+        ? "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${onDemandCategoryVideoData[index]} • ${listOndemandData[index].level.toString()}"
         : categoryName == CategoryName.workouts
-            ? "${listWorkoutData[index].duration!.substring(listWorkoutData[index].duration!.indexOf('-') + 1)} min • ${CategoryListController.filterCategoryTypeData[index]} • ${listWorkoutData[index].level.toString().capitalizeFirst()}"
-            : "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${listOndemandData[index].type.toString().removeSymbolGetText()} • ${listOndemandData[index].level.toString().capitalizeFirst()}";
+            ? "${listWorkoutData[index].duration!.substring(listWorkoutData[index].duration!.indexOf('-') + 1)} min • ${categoryTypeData[index]} • ${listWorkoutData[index].level.toString()}"
+            : "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${onDemandCategoryAudioData[index]} • ${listOndemandData[index].level}";
   }
 
   static String imageUrl({

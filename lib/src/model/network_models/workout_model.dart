@@ -43,7 +43,7 @@ class WorkoutModel {
         title: json["title"] is Map ? json['title']['en'] : json['title'],
         slug: json["slug"],
         gender: json["gender"],
-        level: json["level"],
+        level: json["level"].toString().capitalizeFirst(),
         types: json["types"] == null
             ? []
             : List<int>.from(json["types"]!.map((x) => x)),
@@ -66,8 +66,9 @@ class WorkoutModel {
         updatedAt: json["updated_at"] == null
             ? null
             : DateTime.parse(json["updated_at"]),
-        description:
-            json["description"] == null ? null : json["description"]['en'],
+        description: json["description"] == null
+            ? null
+            : json["description"]['en'].toString().capitalizeFirst(),
         image: json['image'] is Map ? null : json['image'],
         mapImage: json['image'] is Map ? Img.fromJson(json['image']) : null,
         phases: json["phases"] == null

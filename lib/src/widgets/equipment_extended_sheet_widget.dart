@@ -17,30 +17,31 @@ class EquipmentExtendedSheet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 25,
-          ),
+          padding:
+              const EdgeInsets.only(left: 16, right: 16, top: 18, bottom: 18),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     color: Colors.transparent, shape: BoxShape.circle),
-                child: Icon(
+                child: const Icon(
                   Icons.close,
-                  size: 19,
+                  size: 22,
                   color: Colors.transparent,
                   // size: 30,
                 ),
               ),
-              Text(
-                title,
-                style: AppTypography.title18LG
-                    .copyWith(color: AppColor.textEmphasisColor),
+              Flexible(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.title18LG
+                      .copyWith(color: AppColor.textEmphasisColor),
+                ),
               ),
               InkWell(
                   onTap: () {

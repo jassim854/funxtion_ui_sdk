@@ -1,8 +1,8 @@
 import 'model_helper/model_helper.dart';
 
 class InstructorModel {
-  String? id;
-  String? userId;
+  String id;
+  String userId;
   String name;
   String gender;
   Img? photo;
@@ -18,9 +18,9 @@ class InstructorModel {
   factory InstructorModel.fromJson(Map<String, dynamic> json) =>
       InstructorModel(
         id: json["id"],
-        userId: json["user_id"],
+        userId: json["user_id"] ?? "",
         name: json["name"],
-        gender: json["gender"],
+        gender: json["gender"] ?? "",
         photo: json["photo"] == null ? null : Img.fromJson(json["photo"]),
       );
 }
