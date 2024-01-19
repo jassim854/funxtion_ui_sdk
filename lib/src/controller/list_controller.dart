@@ -297,7 +297,7 @@ class CategoryListController {
         } on RequestException catch (e) {
           BaseHelper.showSnackBar(context, e.message);
         }
-      } else if (name == CategoryName.trainingPLans) {
+      } else if (name == CategoryName.trainingPlans) {
         try {
           await TrainingPlanRequest.trainingPlanFilters().then((value) {
             for (var element in value!) {

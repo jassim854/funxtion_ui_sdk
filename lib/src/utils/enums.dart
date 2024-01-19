@@ -1,7 +1,7 @@
 enum CategoryName{
 videoClasses,
 workouts,
-trainingPLans,
+trainingPlans,
 audioClasses
 }
 

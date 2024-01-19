@@ -11,18 +11,18 @@ class CommonController {
   static Future getListGoalData(
       context,
       int count,
-      List<TrainingPlanModel> trainingPLanData,
+      List<TrainingPlanModel> trainingPlanData,
       bool shouldBreakLoop,
       Map<int, String> fitnessGoalData) async {
 
 
     List<FitnessGoalModel> listOfFitnessGoal = [];
-    for (var j = 0; j < trainingPLanData.length; j++) {
+    for (var j = 0; j < trainingPlanData.length; j++) {
       listOfFitnessGoal.clear();
-      for (var i = 0; i < trainingPLanData[j].goals.length; i++) {
+      for (var i = 0; i < trainingPlanData[j].goals.length; i++) {
         try {
           await FitnessGoalRequest.fitnessGoalById(
-                  id: trainingPLanData[j].goals[i].toString())
+                  id: trainingPlanData[j].goals[i].toString())
               .then((value) {
             if (value != null) {
               FitnessGoalModel fetchData = FitnessGoalModel.fromJson(value);
