@@ -8,9 +8,13 @@ class CommonController {
   static List<ContentProvidersCategoryOnDemandModel> categoryTypeData = [];
   static List<ContentProvidersCategoryOnDemandModel> onDemandCategoryData = [];
 
-  static getListGoalData(context, List<TrainingPlanModel> trainingPLanData,
-      bool shouldBreakLoop, Map<int, String> fitnessGoalData) async {
-    int count = fitnessGoalData.keys.length;
+  static Future getListGoalData(
+      context,
+      int count,
+      List<TrainingPlanModel> trainingPLanData,
+      bool shouldBreakLoop,
+      Map<int, String> fitnessGoalData) async {
+
 
     List<FitnessGoalModel> listOfFitnessGoal = [];
     for (var j = 0; j < trainingPLanData.length; j++) {
@@ -32,11 +36,12 @@ class CommonController {
           break;
         }
       }
-      fitnessGoalData
-          .addAll({count + j: listOfFitnessGoal.map((e) => e.name).join(',')});
+
       if (shouldBreakLoop == true) {
         break;
       }
+      fitnessGoalData
+          .addAll({count + j: listOfFitnessGoal.map((e) => e.name).join(',')});
     }
   }
 
@@ -91,7 +96,10 @@ class CommonController {
   }
 
   static getListFilterOnDemandCategoryTypeFn(
+    int count,
       List<OnDemandModel> value, Map<int, String> onDemandCategoryFilterData) {
+
+
     for (var i = 0; i < value.length; i++) {
       List<ContentProvidersCategoryOnDemandModel> data = [];
       for (var typeElement in value[i].categories!) {
@@ -105,9 +113,9 @@ class CommonController {
             data.add(onDemandCategoryData[j]);
           }
         }
-      }
+      } 
 
-      onDemandCategoryFilterData.addAll({i: data.map((e) => e.name).join(',')});
-    }
+      onDemandCategoryFilterData.addAll({count+ i: data.map((e) => e.name).join(',')});
+    } 
   }
 }

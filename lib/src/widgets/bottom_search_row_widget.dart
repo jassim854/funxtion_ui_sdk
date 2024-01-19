@@ -77,7 +77,7 @@ class BottomSearchWIdget extends StatelessWidget {
           backgroundColor: AppColor.surfaceBackgroundBaseColor,
           isScrollControlled: true,
           context: context,
-          builder: (context) {
+          builder: (_) {
             return WillPopScope(
               child: FilterSheetWidget(
                 confirmedFilter: confirmedFilter,

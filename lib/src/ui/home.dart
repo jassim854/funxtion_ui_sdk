@@ -16,11 +16,9 @@ class UiToolKitSDK extends StatefulWidget {
 class _UiToolKitSDKState extends State<UiToolKitSDK> {
   @override
   void initState() {
-    // if (widget.categoryName == CategoryName.trainingPLans) {
+   
     getPath();
-    // }
-    // AuthController.login(context);
-    // TODO: implement initState
+  
     super.initState();
   }
 

@@ -157,7 +157,6 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                 .exerciseCategoryName ==
                                             ItemType.singleExercise
                                         ? Column(
-                                            mainAxisSize: MainAxisSize.min,
                                             children: [
                                               header2CheckWidget(
                                                   index: index,
@@ -472,8 +471,8 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
   }
 
   cutomDiviDerWidget(int i) {
-    return i == 0
-        ? const Padding(
+    return i == 0 && widget.currentListData.length > 1
+        ? Padding(
             padding: EdgeInsets.only(top: 12, bottom: 12),
             child: CustomDivider(
               indent: 145,
@@ -647,112 +646,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                     color: AppColor.surfaceBrandDarkColor,
                   ))
               : const SizedBox.shrink(),
-          // ListTile(
-          //     minLeadingWidth: 0,
-          //     horizontalTitleGap: 0,
-          //     minVerticalPadding: 0,
-          //     contentPadding: EdgeInsets.zero,
-          //     leading: Card(
-          //       shape:
-          //           RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          //       color: AppColor.surfaceBackgroundBaseColor,
-          //       clipBehavior: Clip.antiAlias,
-          //       child: Container(
-          //         width: 80,
-          //         height: 80,
-          //         // width: context.dynamicWidth * 0.12,
-          //         margin: const EdgeInsets.all(0.5),
-          //         decoration: BoxDecoration(
-          //             color: AppColor.surfaceBackgroundColor,
-          //             borderRadius: BorderRadius.circular(12)),
-          //         child: cacheNetworkWidget(
-          //             imageUrl:
-          //                 dataList.values.toList()[index].mapImage?.url ?? ""),
-          //       ),
-          //     ),
-          //     title: Text(
-          //       dataList.values.toList()[index].name,
-          //       style: AppTypography.label16MD
-          //           .copyWith(color: AppColor.textEmphasisColor),
-          //     ),
-          //     subtitle: Text(
-          //         widget.currentListData.keys
-          //                         .toList()[index]
-          //                         .exerciseCategoryName ==
-          //                     ItemType.singleExercise ||
-          //                 widget.currentListData.keys
-          //                         .toList()[index]
-          //                         .exerciseCategoryName ==
-          //                     ItemType.rft
-          //             ? "${widget.currentListData.keys.toList()[index].getGoalAndResistantTargets} • ${widget.currentListData.keys.toList()[index].setsCount} sets"
-          //             : widget.currentListData.keys
-          //                 .toList()[index]
-          //                 .getGoalAndResistantTargets,
-          //         style: AppTypography.paragraph14MD.copyWith(
-          //           color: AppColor.textPrimaryColor,
-          //         )),
-          //     trailing: widget.showTrailing == true
-          //         ? PopupMenuButton(
-          //             onSelected: (value) {
-          //               if (value == 1) {
-          //                 showModalBottomSheet(
-          //                     isDismissible: false,
-          //                     isScrollControlled: true,
-          //                     useSafeArea: true,
-          //                     backgroundColor: AppColor.surfaceBackgroundBaseColor,
-          //                     context: context,
-          //                     builder: (context) => DetailWorkoutBottomSheet(
-          //                         exerciseModel: dataList.values.toList()[index]));
-          //                 // context.navigateTo(DetailExerciseBottomSheet(
-          //                 //     exerciseModel: warmupListData[index]));
-          //               } else if (value == 2) {
-          //                 if (widget.goHereTap != null) {
-          //                   widget.goHereTap!(index);
-          //                 }
-          //               }
-          //             },
-          //             padding: const EdgeInsets.all(16),
-          //             constraints: const BoxConstraints(minWidth: 250),
-          //             elevation: 15,
-          //             offset: const Offset(-10, 15),
-          //             shape: RoundedRectangleBorder(
-          //                 borderRadius: BorderRadius.circular(12)),
-          //             color: AppColor.surfaceBackgroundBaseColor,
-          //             itemBuilder: (context) {
-          //               return [
-          //                 PopupMenuItem(
-          //                   value: 1,
-          //                   child: Row(
-          //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                     children: [
-          //                       Text('Show info',
-          //                           style: AppTypography.label16MD.copyWith(
-          //                             color: AppColor.textEmphasisColor,
-          //                           )),
-          //                       SvgPicture.asset(AppAssets.infoIcon),
-          //                     ],
-          //                   ),
-          //                 ),
-          //                 PopupMenuItem(
-          //                   value: 2,
-          //                   child: Row(
-          //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                     children: [
-          //                       Text('Go here',
-          //                           style: AppTypography.label16MD.copyWith(
-          //                             color: AppColor.textEmphasisColor,
-          //                           )),
-          //                       SvgPicture.asset(AppAssets.returnIcon),
-          //                     ],
-          //                   ),
-          //                 )
-          //               ];
-          //             },
-          //             child: SvgPicture.asset(
-          //               AppAssets.horizontalVertIcon,
-          //               color: AppColor.surfaceBrandDarkColor,
-          //             ))
-          //         : null),
+       
         ],
       ),
     );

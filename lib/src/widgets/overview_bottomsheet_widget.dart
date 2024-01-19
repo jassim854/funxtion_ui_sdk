@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../ui_tool_kit.dart';
 
@@ -122,6 +123,7 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
                   ),
                 ),
                 Container(
+                  margin: const EdgeInsets.only(bottom: 30),
                   decoration: BoxDecoration(
                       color: AppColor.surfaceBackgroundColor,
                       borderRadius: const BorderRadius.only(
@@ -157,7 +159,7 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
                             if (widget.warmUpData.isNotEmpty &&
                                 widget.trainingData.isNotEmpty)
                               LineWidget(
-                                  height: 55,
+                                  height: 75,
                                   color: widget.trainingBody! >= 0
                                       ? AppColor.surfaceBrandDarkColor
                                       : null),
@@ -182,7 +184,7 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
                             if (widget.trainingData.isNotEmpty &&
                                 widget.coolDownData.isNotEmpty)
                               LineWidget(
-                                height: 55,
+                                height: 75,
                                 color: widget.coolDownBody! >= 0
                                     ? AppColor.borderBrandDarkColor
                                     : null,
@@ -210,111 +212,68 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
                       Expanded(
                         child: Column(children: [
                           if (widget.warmUpData.isNotEmpty)
-                            Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: Column(
-                                  children: [
-                                    BuildHeader(
-                                      loaderListenAble: ValueNotifier(false),
-                                      dataLIst: widget.warmUpData,
-                                      title: "Warmup",
-                                      expandHeaderValueListenable: warmUpExpand,
-                                      onTap: () {
-                                        warmUpExpand.value =
-                                            !warmUpExpand.value;
-                                      },
-                                    ),
-                                    //       BuildBodyWidgetInOverview(
-                                    //   goHereTap: widget.goHereTapWarmUp,
-                                    //   showTrailing:
-                                    //       widget.goHereTapWarmUp != null
-                                    //           ? true
-                                    //           : false,
-                                    //   amrapExpand: amrapExpandWarmup,
-                                    //   crExpand: crExpandWarmup,
-                                    //   ctExpand: ctExpandWarmup,
-                                    //   currentListData: widget.warmUpData,
-                                    //   emomExpand: enomExpandWarmup,
-                                    //   expandHeaderValueListenable: warmUpExpand,
-                                    //   rftExpand: rftExpandWarmup,
-                                    //   seExpand: seExpandWarmup,
-                                    //   ssExpand: ssExpandWarmup,
-                                    // ),
-                                    BuildBodyWidget(
-                                      goHereTap: widget.goHereTapWarmUp,
-                                      showTrailing:
-                                          widget.goHereTapWarmUp != null
-                                              ? true
-                                              : false,
-                                      currentListData: widget.warmUpData,
-                                      expandHeaderValueListenable: warmUpExpand,
-                                      loaderValueListenable:
-                                          ValueNotifier(false),
-                                      amrapExpandNew: amrapExpandWarmup,
-                                      crExpandNew: crExpandWarmup,
-                                      ctExpandNew: ctExpandWarmup,
-                                      enomExpandNew: enomExpandWarmup,
-                                      rftExpandNew: rftExpandWarmup,
-                                      seExpandNew: seExpandWarmup,
-                                      ssExpandNew: ssExpandWarmup,
-                                    )
-                                  ],
-                                )),
+                            Column(
+                              children: [
+                                BuildHeader(
+                                  loaderListenAble: ValueNotifier(false),
+                                  dataLIst: widget.warmUpData,
+                                  title: "Warmup",
+                                  expandHeaderValueListenable: warmUpExpand,
+                                  onTap: () {
+                                    warmUpExpand.value = !warmUpExpand.value;
+                                  },
+                                ),
+                                BuildBodyWidget(
+                                  goHereTap: widget.goHereTapWarmUp,
+                                  showTrailing: widget.goHereTapWarmUp != null
+                                      ? true
+                                      : false,
+                                  currentListData: widget.warmUpData,
+                                  expandHeaderValueListenable: warmUpExpand,
+                                  loaderValueListenable: ValueNotifier(false),
+                                  amrapExpandNew: amrapExpandWarmup,
+                                  crExpandNew: crExpandWarmup,
+                                  ctExpandNew: ctExpandWarmup,
+                                  enomExpandNew: enomExpandWarmup,
+                                  rftExpandNew: rftExpandWarmup,
+                                  seExpandNew: seExpandWarmup,
+                                  ssExpandNew: ssExpandWarmup,
+                                ),
+                                8.height(),
+                              ],
+                            ),
                           if (widget.trainingData.isNotEmpty)
-                            Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: Column(
-                                  children: [
-                                    BuildHeader(
-                                      loaderListenAble: ValueNotifier(false),
-                                      dataLIst: widget.trainingData,
-                                      title: "Training",
-                                      expandHeaderValueListenable:
-                                          trainingExpand,
-                                      onTap: () {
-                                        trainingExpand.value =
-                                            !trainingExpand.value;
-                                      },
-                                    ),
-                                    // BuildBodyWidgetInOverview(
-                                    //   goHereTap: widget.goHereTapTraining,
-                                    //   showTrailing:
-                                    //       widget.goHereTapTraining != null
-                                    //           ? true
-                                    //           : false,
-                                    //   amrapExpand: amrapExpandTraining,
-                                    //   crExpand: crExpandTraining,
-                                    //   ctExpand: ctExpandTraining,
-                                    //   currentListData: widget.trainingData,
-                                    //   emomExpand: enomExpandTraining,
-                                    //   expandHeaderValueListenable:
-                                    //       trainingExpand,
-                                    //   rftExpand: rftExpandTraining,
-                                    //   seExpand: seExpandTraining,
-                                    //   ssExpand: ssExpandTraining,
-                                    // ),
-
-                                    BuildBodyWidget(
-                                      goHereTap: widget.goHereTapTraining,
-                                      showTrailing:
-                                          widget.goHereTapTraining != null
-                                              ? true
-                                              : false,
-                                      currentListData: widget.trainingData,
-                                      expandHeaderValueListenable:
-                                          trainingExpand,
-                                      loaderValueListenable:
-                                          ValueNotifier(false),
-                                      amrapExpandNew: amrapExpandTraining,
-                                      crExpandNew: crExpandTraining,
-                                      ctExpandNew: ctExpandTraining,
-                                      enomExpandNew: enomExpandTraining,
-                                      rftExpandNew: rftExpandTraining,
-                                      seExpandNew: seExpandTraining,
-                                      ssExpandNew: ssExpandTraining,
-                                    )
-                                  ],
-                                )),
+                            Column(
+                              children: [
+                                BuildHeader(
+                                  loaderListenAble: ValueNotifier(false),
+                                  dataLIst: widget.trainingData,
+                                  title: "Training",
+                                  expandHeaderValueListenable: trainingExpand,
+                                  onTap: () {
+                                    trainingExpand.value =
+                                        !trainingExpand.value;
+                                  },
+                                ),
+                                BuildBodyWidget(
+                                  goHereTap: widget.goHereTapTraining,
+                                  showTrailing: widget.goHereTapTraining != null
+                                      ? true
+                                      : false,
+                                  currentListData: widget.trainingData,
+                                  expandHeaderValueListenable: trainingExpand,
+                                  loaderValueListenable: ValueNotifier(false),
+                                  amrapExpandNew: amrapExpandTraining,
+                                  crExpandNew: crExpandTraining,
+                                  ctExpandNew: ctExpandTraining,
+                                  enomExpandNew: enomExpandTraining,
+                                  rftExpandNew: rftExpandTraining,
+                                  seExpandNew: seExpandTraining,
+                                  ssExpandNew: ssExpandTraining,
+                                ),
+                                8.height(),
+                              ],
+                            ),
                           if (widget.coolDownData.isNotEmpty)
                             Column(
                               children: [
@@ -328,21 +287,6 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
                                         !coolDownExpand.value;
                                   },
                                 ),
-                                // BuildBodyWidgetInOverview(
-                                //   showTrailing: widget.goHereTapCoolDown != null
-                                //       ? true
-                                //       : false,
-                                //   goHereTap: widget.goHereTapCoolDown,
-                                //   amrapExpand: amrapExpandCoolDown,
-                                //   crExpand: crExpandCoolDown,
-                                //   ctExpand: ctExpandCoolDown,
-                                //   currentListData: widget.coolDownData,
-                                //   emomExpand: enomExpandCoolDown,
-                                //   expandHeaderValueListenable: coolDownExpand,
-                                //   rftExpand: rftExpandCoolDown,
-                                //   seExpand: seExpandCoolDown,
-                                //   ssExpand: ssExpandCoolDown,
-                                // ),
                                 BuildBodyWidget(
                                   showTrailing: widget.goHereTapCoolDown != null
                                       ? true
@@ -417,7 +361,7 @@ class ProgressBarWidget extends StatelessWidget {
               child: Column(
                 children: [
                   LineWidget(
-                      height: 65,
+                      height: 60,
                       color: workoutCompleted
                           ? AppColor.borderBrandDarkColor
                           : isActive == true
@@ -448,7 +392,7 @@ class ProgressBarWidget extends StatelessWidget {
                                             children: [
                                               if (i == 0)
                                                 LineWidget(
-                                                  height: 75,
+                                                  height: 77,
                                                   color: workoutCompleted
                                                       ? AppColor
                                                           .surfaceBrandDarkColor
@@ -507,7 +451,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                 children: [
                                                   if (i == 0)
                                                     LineWidget(
-                                                      height: 90,
+                                                      height: 105,
                                                       color: workoutCompleted
                                                           ? AppColor
                                                               .surfaceBrandDarkColor
@@ -540,7 +484,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                               .key
                                                               .exerciseCategoryName)
                                                     LineWidget(
-                                                      height: 95,
+                                                      height: 96,
                                                       color: workoutCompleted
                                                           ? AppColor
                                                               .surfaceBrandDarkColor
@@ -574,7 +518,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                     children: [
                                                       if (i == 0)
                                                         LineWidget(
-                                                          height: 90,
+                                                          height: 105,
                                                           color:
                                                               workoutCompleted
                                                                   ? AppColor
@@ -612,7 +556,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                                   .key
                                                                   .exerciseCategoryName)
                                                         LineWidget(
-                                                          height: 95,
+                                                          height: 96,
                                                           color:
                                                               workoutCompleted
                                                                   ? AppColor
@@ -647,7 +591,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                         children: [
                                                           if (i == 0)
                                                             LineWidget(
-                                                              height: 65,
+                                                              height: 105,
                                                               color: workoutCompleted
                                                                   ? AppColor.surfaceBrandDarkColor
                                                                   : current >= i
@@ -686,7 +630,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                                       .key
                                                                       .exerciseCategoryName)
                                                             LineWidget(
-                                                              height: 95,
+                                                              height: 96,
                                                               color:
                                                                   workoutCompleted
                                                                       ? AppColor
@@ -723,7 +667,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                             children: [
                                                               if (i == 0)
                                                                 LineWidget(
-                                                                  height: 90,
+                                                                  height: 105,
                                                                   color: workoutCompleted
                                                                       ? AppColor.surfaceBrandDarkColor
                                                                       : current >= i
@@ -762,7 +706,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                                           .key
                                                                           .exerciseCategoryName)
                                                                 LineWidget(
-                                                                  height: 95,
+                                                                  height: 96,
                                                                   color: workoutCompleted
                                                                       ? AppColor.surfaceBrandDarkColor
                                                                       : current > i
@@ -799,7 +743,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                                   if (i == 0)
                                                                     const LineWidget(
                                                                         height:
-                                                                            90),
+                                                                            105),
                                                                   StepWidget(
                                                                     isActive: i ==
                                                                         current,
@@ -823,7 +767,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                                               .exerciseCategoryName)
                                                                     LineWidget(
                                                                       height:
-                                                                          95,
+                                                                          96,
                                                                       color: workoutCompleted
                                                                           ? AppColor.surfaceBrandDarkColor
                                                                           : current > i
@@ -862,7 +806,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                                           0)
                                                                         const LineWidget(
                                                                             height:
-                                                                                90),
+                                                                                105),
                                                                       StepWidget(
                                                                         isActive:
                                                                             i ==
@@ -876,7 +820,7 @@ class ProgressBarWidget extends StatelessWidget {
                                                                               currentList.entries.toList()[i + 1].key.exerciseCategoryName)
                                                                         LineWidget(
                                                                           height:
-                                                                              95,
+                                                                              96,
                                                                           color: workoutCompleted
                                                                               ? AppColor.surfaceBrandDarkColor
                                                                               : current > i
@@ -915,13 +859,12 @@ class ProgressBarWidget extends StatelessWidget {
                             .key
                             .exerciseCategoryName
                 ? LineWidget(
-                    height: 10,
+                    height: 19,
                     color: workoutCompleted
                         ? AppColor.surfaceBrandDarkColor
                         : current >= i
                             ? AppColor.borderBrandDarkColor
-                            : null,
-                  )
+                            : null)
                 : Container();
   }
 
@@ -939,7 +882,7 @@ class ProgressBarWidget extends StatelessWidget {
                 ? Column(
                     children: [
                       LineWidget(
-                        height: 90,
+                        height: 96,
                         color: workoutCompleted
                             ? AppColor.surfaceBrandDarkColor
                             : current >= i
@@ -967,7 +910,7 @@ class ProgressBarWidget extends StatelessWidget {
                                             .exerciseCategoryName ==
                                         ItemType.singleExercise
                                     ? 90
-                                    : 105,
+                                    : 107,
                                 color: workoutCompleted
                                     ? AppColor.surfaceBrandDarkColor
                                     : current >= i
@@ -1011,8 +954,8 @@ class StepWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-            width: 20,
-            height: 20,
+            width: 18,
+            height: 18,
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isActive
@@ -1026,22 +969,10 @@ class StepWidget extends StatelessWidget {
                         : isCompleted
                             ? AppColor.borderBrandDarkColor
                             : AppColor.borderSecondaryColor,
-                    width: 3.5)),
+                    width: 2)),
             child: isCompleted
-                ? Transform.scale(
-                    scale: 1.5,
-                    child: Icon(
-                      Icons.check,
-                      size: 12,
-                      color: AppColor.textInvertEmphasis,
-                      weight: 2,
-                      shadows: [
-                        Shadow(
-                            color: AppColor.textInvertEmphasis,
-                            offset: const Offset(0, 0.1),
-                            blurRadius: 30)
-                      ],
-                    ),
+                ? SvgPicture.asset(
+                    AppAssets.checkMarkIcon,
                   )
                 : null),
       ],

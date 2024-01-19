@@ -67,49 +67,14 @@ class DashBoardController {
       BaseHelper.showSnackBar(context, e.message);
     }
     await CommonController.getListGoalData(
-        context, trainingPlanData, false, fitnessGoalData);
-    await CommonController.getListFilterOnDemandCategoryTypeFn(
+        context, 0,trainingPlanData, false, fitnessGoalData);
+    await CommonController.getListFilterOnDemandCategoryTypeFn(0,
         audioData, audioDataType);
-    await CommonController.getListFilterOnDemandCategoryTypeFn(
+    await CommonController.getListFilterOnDemandCategoryTypeFn(0,
         onDemadDataVideo, videoDataType);
     await CommonController.filterCategoryTypeData(workoutData, workoutDataType);
 
-    // addDataCategories(
-    //   workoutData,
-    //   workoutDataType,
-    // );
   }
 
-  // static addDataCategories(
-  //   List<WorkoutModel> workoutData,
-  //   Map<int, String> typeData,
-  // ) async{
-  //       await ContentProviderCategoryOnDemandRequest.contentCategory(
-  //        ).then((value) {
-  //                List<ContentProvidersCategoryOnDemandModel> fetchData = List.from(
-  //             value!.map(
-  //                 (e) => ContentProvidersCategoryOnDemandModel.fromJson(e)));
-  //         for (var i = 0; i <= 50; i++) {
-  //           CategoryListController.categoryTypeData.add(fetchData[i]);
-  //         }
-  // List<ContentProvidersCategoryOnDemandModel> data = ;
-  //   if (data.isEmpty) {
-  //     for (var i = 0; i < workoutData.length; i++) {
-  //       data = [];
-  //       for (var typeElement in workoutData[i].types!) {
-  //         for (var j = 0;
-  //             j < CategoryListController.categoryTypeData.length;
-  //             j++) {
-  //           if (CategoryListController.categoryTypeData[j].id == typeElement) {
-  //             data.add(CategoryListController.categoryTypeData[j]);
-  //           }
-  //         }
-  //       }
-
-  //       typeData.addAll({i: data.map((e) => e.name).join(',')});
-  //     }
-  //   }
-  //           });
-
-  // }
+  
 }

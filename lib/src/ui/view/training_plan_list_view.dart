@@ -32,8 +32,10 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
   // Map<int, List<FitnessGoalModel>> fitnessGoalData = {};
   List<FollowTrainingplanModel>? followTrainingData;
   List<TrainingPlanModel> listTrainingPLanData = [];
+  List<TrainingPlanModel> tempListTrainingPLanData = [];
   List<TrainingPlanModel> localTrainingPlanData = [];
   Map<int, String> fitnessGoalData = {};
+  bool alreadyCalled = false;
   bool nextPage = true;
   bool showCloseIcon = false;
   bool followedShowCloseIcon = false;
@@ -69,11 +71,10 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
         print(_scrollControllerPage1.position.extentBefore);
         if (isLoadMore == false &&
             nextPage == true &&
-            _scrollControllerPage1.position.extentAfter < 300.0) {
-          // isSubtitleLoading.value = true;
+            _scrollControllerPage1.position.extentAfter < 300.0 &&
+            _scrollControllerPage1.position.extentAfter != 0.0) {
           isLoadMore = true;
-          // isSubtitleLoading.value = true;
-          pageNumber += 1;
+          pageNumber += 10;
           getData(
               isScroll: true,
               mainSearch: _searchControllerPage1.text == ""
@@ -82,8 +83,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
         }
       },
     );
-    // }
-    // });
+
     super.initState();
   }
 
@@ -248,346 +248,6 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
         });
   }
 
-  // Column SecondTabWidget(Box<FollowTrainingplanModel> box) {
-  //   return Column(
-  //     children: [
-  //       ColoredBox(
-  //           color: AppColor.surfaceBackgroundColor,
-  //           child: BottomSearchWIdget(
-  //               searchController: _searchControllerPage2,
-  //               searchDelayFn: (value) {},
-  //               requestCall: () {},
-  //               confirmedFilter: confirmedFilter,
-  //               categoryName: widget.categoryName)),
-  //       4.height(),
-  //       Expanded(
-  //         child: Stack(
-  //           children: [
-  //             Column(
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   ValueListenableBuilder(
-  //                     valueListenable: followedConfirmedFilter,
-  //                     builder: (context, value, child) {
-  //                       return FilterRowWidget(
-  //                         confirmedFilter: followedConfirmedFilter,
-  //                         deleteAFilterOnTap: (e) {
-  //                           CategoryListController.deleteAFilter(
-  //                               context, e.filter.toString(), confirmedFilter);
-  //                           getData(isScroll: false);
-  //                         },
-  //                         hideOnTap: () {
-  //                           CategoryListController.hideAllFilter();
-  //                           setState(() {});
-  //                         },
-  //                         showOnTap: () {
-  //                           CategoryListController.showAllFiltter();
-  //                           setState(() {});
-  //                         },
-  //                         clearOnTap: () {
-  //                           CategoryListController.clearAppliedFilter(
-  //                               confirmedFilter);
-  //                           getData(isScroll: false);
-  //                         },
-  //                       );
-  //                     },
-  //                   ),
-
-  //                   isNodData == true
-  //                       ? const NoResultFOundWIdget()
-  //                       : Expanded(
-  //                           child: Container(
-  //                             decoration: BoxDecoration(
-  //                               color: AppColor.textInvertEmphasis,
-  //                             ),
-  //                             child: ListView.separated(
-  //                                 key: const PageStorageKey("page2"),
-  //                                 controller: _scrollControllerPage2,
-  //                                 keyboardDismissBehavior:
-  //                                     ScrollViewKeyboardDismissBehavior.onDrag,
-  //                                 padding: const EdgeInsets.only(
-  //                                     top: 20, left: 20, right: 20, bottom: 20),
-  //                                 itemBuilder: (context, index) {
-  //                                   return CustomListtileWidget(
-  //                                       onTap: () {
-  //                                         context.hideKeypad();
-  //                                         context.navigateTo(
-  //                                             TrainingPlanDetailView(
-  //                                                 id: box.values
-  //                                                     .toList()[index]
-  //                                                     .trainingplanId));
-  //                                       },
-  //                                       imageHeaderIcon:
-  //                                           AppAssets.videoPlayIcon,
-  //                                       imageUrl: box.values
-  //                                           .toList()[index]
-  //                                           .trainingPlanImg
-  //                                           .toString(),
-  //                                       subtitle: Row(
-  //                                         children: [
-  //                                           Container(
-  //                                             padding: const EdgeInsets.all(2),
-  //                                             decoration: BoxDecoration(
-  //                                                 color: AppColor
-  //                                                     .buttonPrimaryColor,
-  //                                                 shape: BoxShape.circle),
-  //                                             child: Icon(Icons.check,
-  //                                                 size: 14,
-  //                                                 color: AppColor
-  //                                                     .buttonLabelColor),
-  //                                           ),
-  //                                           4.width(),
-  //                                           Text('Following',
-  //                                               style: AppTypography.label14SM
-  //                                                   .copyWith(
-  //                                                       color: AppColor
-  //                                                           .buttonPrimaryColor)),
-  //                                           Text(
-  //                                             " • ",
-  //                                             style: AppTypography.label16MD
-  //                                                 .copyWith(
-  //                                                     color: AppColor
-  //                                                         .textPrimaryColor),
-  //                                           ),
-  //                                           Text(
-  //                                             calculatePercentage(
-  //                                                 box.values
-  //                                                         .toList()[index]
-  //                                                         .workoutCount
-  //                                                         ?.toInt() ??
-  //                                                     0,
-  //                                                 box.values
-  //                                                         .toList()[index]
-  //                                                         .totalWorkoutLength
-  //                                                         ?.toInt() ??
-  //                                                     0),
-  //                                             style: AppTypography.paragraph14MD
-  //                                                 .copyWith(
-  //                                                     color: AppColor
-  //                                                         .textPrimaryColor),
-  //                                           )
-  //                                         ],
-  //                                       ),
-  //                                       title: box.values
-  //                                           .toList()[index]
-  //                                           .trainingPlanTitle
-  //                                           .toString());
-  //                                 },
-  //                                 separatorBuilder: (context, index) {
-  //                                   return CustomDivider(
-  //                                     endIndent: context.dynamicWidth * 0.02,
-  //                                     indent: context.dynamicWidth * 0.22,
-  //                                   );
-  //                                 },
-  //                                 itemCount: box.values.toList().length),
-  //                           ),
-  //                         ),
-  //                   // if (isLoadMore == true)
-  //                   //   Padding(
-  //                   //     padding:
-  //                   //         const EdgeInsets.all(
-  //                   //             8.0),
-  //                   //     child: Center(
-  //                   //       child: BaseHelper
-  //                   //           .loadingWidget(),
-  //                   //     ),
-  //                   //   ),
-  //                   // if (nextPage == false &&
-  //                   //     isLoadingNotifier == false)
-  //                   //   noResultFoundWidget(),
-  //                 ]),
-  //             // if (isLoadingNotifier)
-  //             //   ModalBarrier(
-  //             //       dismissible: false,
-  //             //       color: AppColor
-  //             //           .surfaceBackgroundColor),
-  //             // if (isLoadingNotifier)
-  //             //   Center(
-  //             //       child:
-  //             //           BaseHelper.loadingWidget()),
-  //           ],
-  //         ),
-  //       ),
-  //     ],
-  //   );
-
-  // }
-
-  // Column firstTabWidget() {
-  //   return Column(
-  //     children: [
-  //       ColoredBox(
-  //           color: AppColor.surfaceBackgroundColor,
-  //           child: BottomSearchWIdget(
-  //               searchController: _searchControllerPage1,
-  //               searchDelayFn: (value) {
-  //                 CategoryListController.delayedFunction(fn: () {
-  //                   getData(isScroll: false, mainSearch: value);
-  //                 });
-  //               },
-  //               requestCall: () => getData(isScroll: false),
-  //               confirmedFilter: confirmedFilter,
-  //               categoryName: widget.categoryName)),
-  //       4.height(),
-  //       Expanded(
-  //         child: Stack(
-  //           children: [
-  //             Column(
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   ValueListenableBuilder(
-  //                     valueListenable: confirmedFilter,
-  //                     builder: (context, value, child) {
-  //                       return FilterRowWidget(
-  //                         confirmedFilter: confirmedFilter,
-  //                         deleteAFilterOnTap: (e) {
-  //                           CategoryListController.deleteAFilter(
-  //                               context, e.filter.toString(), confirmedFilter);
-  //                           getData(isScroll: false);
-  //                         },
-  //                         hideOnTap: () {
-  //                           CategoryListController.hideAllFilter();
-  //                           setState(() {});
-  //                         },
-  //                         showOnTap: () {
-  //                           CategoryListController.showAllFiltter();
-  //                           setState(() {});
-  //                         },
-  //                         clearOnTap: () {
-  //                           CategoryListController.clearAppliedFilter(
-  //                               confirmedFilter);
-  //                           getData(isScroll: false);
-  //                         },
-  //                       );
-  //                     },
-  //                   ),
-  //                   if (nextPage == true && isLoadingNotifier == false)
-  //                     isNodData == true
-  //                         ? const CustomErrorWidget()
-  //                         : Expanded(
-  //                             child: Container(
-  //                               decoration: BoxDecoration(
-  //                                 color: AppColor.textInvertEmphasis,
-  //                               ),
-  //                               child: ListView.separated(
-  //                                   key: const PageStorageKey("page1"),
-  //                                   controller: _scrollControllerPage1,
-  //                                   keyboardDismissBehavior:
-  //                                       ScrollViewKeyboardDismissBehavior
-  //                                           .onDrag,
-  //                                   padding: const EdgeInsets.only(
-  //                                       top: 20,
-  //                                       left: 20,
-  //                                       right: 20,
-  //                                       bottom: 20),
-  //                                   itemBuilder: (context, index) {
-  //                                     return CustomListtileWidget(
-  //                                         onTap: () {
-  //                                           context.hideKeypad();
-  //                                           context.navigateTo(
-  //                                               TrainingPlanDetailView(
-  //                                                   id: listTrainingPLanData[
-  //                                                           index]
-  //                                                       .id));
-  //                                         },
-  //                                         imageHeaderIcon:
-  //                                             AppAssets.videoPlayIcon,
-  //                                         imageUrl: listTrainingPLanData[index]
-  //                                             .image
-  //                                             .toString(),
-  //                                         subtitle: ValueListenableBuilder(
-  //                                             valueListenable:
-  //                                                 isSubtitleLoading,
-  //                                             builder: (_, value, child) {
-  //                                               return RichText(
-  //                                                   text: TextSpan(
-  //                                                       style: AppTypography
-  //                                                           .paragraph14MD
-  //                                                           .copyWith(
-  //                                                               color: AppColor
-  //                                                                   .textPrimaryColor),
-  //                                                       children: [
-  //                                                     TextSpan(
-  //                                                         text:
-  //                                                             "${listTrainingPLanData[index].daysTotal} workouts"),
-  //                                                     value == true
-  //                                                         ? WidgetSpan(
-  //                                                             child: BaseHelper
-  //                                                                 .loadingWidget())
-  //                                                         : TextSpan(
-  //                                                             text:
-  //                                                                 " • ${fitnessGoalData.entries.toList()[index].value.map((e) => e.name).join(',')}"),
-  //                                                     TextSpan(
-  //                                                         text:
-  //                                                             " • ${listTrainingPLanData[index].level}"),
-  //                                                   ]));
-  //                                             }),
-  //                                         title: listTrainingPLanData[index]
-  //                                             .title
-  //                                             .toString());
-  //                                   },
-  //                                   separatorBuilder: (context, index) {
-  //                                     return CustomDivider(
-  //                                       endIndent: context.dynamicWidth * 0.02,
-  //                                       indent: context.dynamicWidth * 0.22,
-  //                                     );
-  //                                   },
-  //                                   itemCount: listTrainingPLanData.length),
-  //                             ),
-  //                           ),
-  //                   if (isLoadMore == true)
-  //                     Padding(
-  //                       padding: const EdgeInsets.all(8.0),
-  //                       child: Center(
-  //                         child: BaseHelper.loadingWidget(),
-  //                       ),
-  //                     ),
-  //                   if (nextPage == false && isLoadingNotifier == false)
-  //                     noResultFoundWidget(),
-  //                 ]),
-  //             if (isLoadingNotifier)
-  //               ModalBarrier(
-  //                   dismissible: false, color: AppColor.surfaceBackgroundColor),
-  //             if (isLoadingNotifier) Center(child: BaseHelper.loadingWidget()),
-  //           ],
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // Container bottomTitleWidget(BuildContext context) {
-  //   return Container(
-  //     margin: const EdgeInsets.only(top: 10, left: 24, right: 10, bottom: 10),
-  //     width: double.infinity,
-  //     height: 40,
-  //     decoration: BoxDecoration(
-  //         color: AppColor.surfaceBackgroundSecondaryColor,
-  //         // color: Colors.red,
-  //         borderRadius: BorderRadius.circular(12)),
-  //     child: CustomSearchTextFieldWidget(
-  //         showCloseIcon: showCloseIcon,
-  //         onChange: (value) {
-  //           showCloseIcon = value.isEmpty ? false : true;
-
-  //           CategoryListController.delayedFunction(fn: () {
-  //             log("value is $value");
-  //             getData(
-  //                 isScroll: false, mainSearch: value.isEmpty ? null : value);
-  //           });
-  //         },
-  //         onIconTap: () {
-  //           context.hideKeypad();
-  //           _searchControllerPage1.clear();
-  //           showCloseIcon = false;
-  //           getData(isScroll: false);
-  //         },
-  //         searchController: _searchControllerPage1),
-  //   );
-  // }
-
   Text titleWidget() {
     return Text(
       "Training Plans",
@@ -602,6 +262,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
 
       if (isScroll == false) {
         listTrainingPLanData.clear();
+        tempListTrainingPLanData.clear();
         fitnessGoalData.clear();
         pageNumber = 0;
       }
@@ -616,22 +277,50 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
         pageNumber: pageNumber.toString(),
       ).then((value) async {
         if (value != null && value.isNotEmpty) {
-          await CommonController.getListGoalData(
-              context, value, shouldBreakLoop, fitnessGoalData);
-          listTrainingPLanData.addAll(value);
-          setState(() {
-            nextPage = true;
-            isLoadMore = false;
+          nextPage = true;
+          isLoadMore = false;
 
-            isLoadingNotifier = isScroll == true ? false : false;
-          });
+          tempListTrainingPLanData.addAll(value);
+          List<FitnessGoalModel> listOfFitnessGoal = [];
+
+          for (var j = 0; j < tempListTrainingPLanData.length; j++) {
+            listOfFitnessGoal.clear();
+            for (var i = 0; i < tempListTrainingPLanData[j].goals.length; i++) {
+              try {
+                await FitnessGoalRequest.fitnessGoalById(
+                        id: tempListTrainingPLanData[j].goals[i].toString())
+                    .then((fitnessValue) {
+                  if (fitnessValue != null) {
+                    FitnessGoalModel fetchData =
+                        FitnessGoalModel.fromJson(fitnessValue);
+                    listOfFitnessGoal.add(fetchData);
+                  }
+                });
+              } on RequestException catch (e) {
+                BaseHelper.showSnackBar(context, e.message);
+              }
+              if (shouldBreakLoop == true) {
+                break;
+              }
+            }
+
+            if (shouldBreakLoop == true) {
+              break;
+            }
+            fitnessGoalData
+                .addAll({j: listOfFitnessGoal.map((e) => e.name).join(',')});
+          }
+          listTrainingPLanData.addAll(value);
+          isLoadingNotifier = isScroll == true ? false : false;
+          setState(() {});
 
           // isSubtitleLoading.value = isScroll == true ? false : false;
         } else if (value?.isEmpty ?? false) {
+          nextPage = false;
+          isLoadMore = false;
+          isLoadingNotifier = isScroll == true ? false : false;
           setState(() {
-            nextPage = false;
             // isSubtitleLoading.value = isScroll == true ? false : false;
-            isLoadingNotifier = isScroll == true ? false : false;
           });
         } else if (value == null) {
           setState(() {
@@ -649,33 +338,6 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
     }
   }
 
-  // getGoalData(List<TrainingPlanModel> listTrainingPLanData) async {
-  //   int count = fitnessGoalData.keys.length;
-
-  //   for (int j = count; j - count < listTrainingPLanData.length; j++) {
-  //     Set<FitnessGoalModel> listOfFitnessGoal = {};
-  //     for (var i = 0; i < listTrainingPLanData[j - count].goals.length; i++) {
-  //       await FitnessGoalRequest.fitnessGoalById(
-  //               id: listTrainingPLanData[j - count].goals[i].toString())
-  //           .then((value) {
-  //         if (value != null) {
-  //           FitnessGoalModel fetchData = FitnessGoalModel.fromJson(value);
-  //           listOfFitnessGoal.add(fetchData);
-  //         }
-  //       });
-  //       if (shouldBreakLoop == true) {
-  //         break;
-  //       }
-  //     }
-  //     if (shouldBreakLoop == true) {
-  //       break;
-  //     }
-
-  //     fitnessGoalData[j] = listOfFitnessGoal.toList();
-  //   }
-
-  //   log("$fitnessGoalData");
-  // }
 }
 
 class SecondTabWidget extends StatefulWidget {
@@ -712,6 +374,7 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         ColoredBox(
             color: AppColor.surfaceBackgroundColor,
@@ -740,8 +403,7 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
                       widget.followedConfirmedFilter,
                       widget.box,
                     ));
-                    // CategoryListController.checkMultipleFilter(
-                    //     widget.followedConfirmedFilter.value, widget.box);
+                   
                     setState(() {});
                   } else {
                     widget.followTrainingData.clear();
@@ -769,6 +431,9 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
                                 context,
                                 e.filter.toString(),
                                 widget.followedConfirmedFilter);
+                            widget.followTrainingData.clear();
+                            widget.followTrainingData =
+                                widget.box.values.toList();
                             setState(() {});
                           },
                           hideOnTap: () {
@@ -793,121 +458,70 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
 
                     widget.isNodData == true
                         ? const NoResultFOundWIdget()
-                        : Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: AppColor.textInvertEmphasis,
-                              ),
-                              child: ListView.separated(
-                                  key: const PageStorageKey("page2"),
-                                  controller: widget.scrollControllerPage2,
-                                  keyboardDismissBehavior:
-                                      ScrollViewKeyboardDismissBehavior.onDrag,
-                                  padding: const EdgeInsets.only(
-                                      top: 20, left: 20, right: 20, bottom: 20),
-                                  itemBuilder: (context, index) {
-                                    return CustomListtileWidget(
-                                        onTap: () {
-                                          context.hideKeypad();
-                                          context.navigateTo(
-                                              TrainingPlanDetailView(
-                                            id: widget.followTrainingData[index]
-                                                .trainingplanId,
-                                            workoutLength: widget
-                                                .followTrainingData[index]
-                                                .workoutCount
-                                                .toString(),
-                                          ));
-                                        },
-                                        imageHeaderIcon:
-                                            AppAssets.calendarIcon,
-                                        imageUrl: widget
-                                            .followTrainingData[index]
-                                            .trainingPlanImg
-                                            .toString(),
-                                        onSubtitleWidget: FollowSubtitleWidget(
-                                            followTrainingData: widget
-                                                .followTrainingData[index]),
-                                        // Row(
-                                        //   children: [
-                                        //     Container(
-                                        //       padding: const EdgeInsets.all(2),
-                                        //       decoration: BoxDecoration(
-                                        //           color: AppColor
-                                        //               .buttonPrimaryColor,
-                                        //           shape: BoxShape.circle),
-                                        //       child: Icon(Icons.check,
-                                        //           size: 14,
-                                        //           color: AppColor
-                                        //               .buttonLabelColor),
-                                        //     ),
-                                        //     4.width(),
-                                        //     Text('Following',
-                                        //         style: AppTypography.label14SM
-                                        //             .copyWith(
-                                        //                 color: AppColor
-                                        //                     .buttonPrimaryColor)),
-                                        //     Text(
-                                        //       " • ",
-                                        //       style: AppTypography.label16MD
-                                        //           .copyWith(
-                                        //               color: AppColor
-                                        //                   .textPrimaryColor),
-                                        //     ),
-                                        //     Text(
-                                        //       calculatePercentage(
-                                        //           widget
-                                        //               .followTrainingData[index]
-                                        //               .workoutCount
-                                        //               .toInt(),
-                                        //           widget
-                                        //               .followTrainingData[index]
-                                        //               .totalWorkoutLength
-                                        //               .toInt()),
-                                        //       style: AppTypography.paragraph14MD
-                                        //           .copyWith(
-                                        //               color: AppColor
-                                        //                   .textPrimaryColor),
-                                        //     )
-                                        //   ],
-                                        // ),
-                                        title: widget.followTrainingData[index]
-                                            .trainingPlanTitle
-                                            .toString());
-                                  },
-                                  separatorBuilder: (context, index) {
-                                    return Padding(
+                        : widget.followTrainingData.isEmpty
+                            ? const NoResultFOundWIdget()
+                            : Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColor.textInvertEmphasis,
+                                  ),
+                                  child: ListView.separated(
+                                      key: const PageStorageKey("page2"),
+                                      controller: widget.scrollControllerPage2,
+                                      keyboardDismissBehavior:
+                                          ScrollViewKeyboardDismissBehavior
+                                              .onDrag,
                                       padding: const EdgeInsets.only(
-                                          top: 12, bottom: 12),
-                                      child: CustomDivider(indent: 102),
-                                    );
-                                  },
-                                  itemCount: widget.followTrainingData.length),
-                            ),
-                          ),
-                    // if (isLoadMore == true)
-                    //   Padding(
-                    //     padding:
-                    //         const EdgeInsets.all(
-                    //             8.0),
-                    //     child: Center(
-                    //       child: BaseHelper
-                    //           .loadingWidget(),
-                    //     ),
-                    //   ),
-                    // if (nextPage == false &&
-                    //     isLoadingNotifier == false)
-                    //   noResultFoundWidget(),
+                                          top: 20,
+                                          left: 20,
+                                          right: 20,
+                                          bottom: 20),
+                                      itemBuilder: (context, index) {
+                                        return CustomListtileWidget(
+                                            onTap: () {
+                                              context.hideKeypad();
+                                              context.navigateTo(
+                                                  TrainingPlanDetailView(
+                                                id: widget
+                                                    .followTrainingData[index]
+                                                    .trainingplanId,
+                                                workoutLength: widget
+                                                    .followTrainingData[index]
+                                                    .workoutCount
+                                                    .toString(),
+                                              ));
+                                            },
+                                            imageHeaderIcon:
+                                                AppAssets.calendarIcon,
+                                            imageUrl: widget
+                                                .followTrainingData[index]
+                                                .trainingPlanImg
+                                                .toString(),
+                                            onSubtitleWidget:
+                                                FollowSubtitleWidget(
+                                                    followTrainingData: widget
+                                                            .followTrainingData[
+                                                        index]),
+                                         
+                                            title: widget
+                                                .followTrainingData[index]
+                                                .trainingPlanTitle
+                                                .toString());
+                                      },
+                                      separatorBuilder: (context, index) {
+                                        return const Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 12, bottom: 12),
+                                          child: CustomDivider(indent: 102),
+                                        );
+                                      },
+                                      itemCount:
+                                          widget.followTrainingData.length),
+                                ),
+                              ),
+     
                   ]),
-              // if (isLoadingNotifier)
-              //   ModalBarrier(
-              //       dismissible: false,
-              //       color: AppColor
-              //           .surfaceBackgroundColor),
-              // if (isLoadingNotifier)
-              //   Center(
-              //       child:
-              //           BaseHelper.loadingWidget()),
+            
             ],
           ),
         ),
@@ -1039,90 +653,109 @@ class _FirstTabWidgetState extends State<FirstTabWidget> {
                         );
                       },
                     ),
-                    if (widget.nextPage == true &&
-                        widget.isLoadingNotifier == false)
+                    if (widget.isLoadingNotifier == false)
                       widget.isNodData == true
                           ? const CustomErrorWidget()
-                          : Expanded(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: AppColor.textInvertEmphasis,
-                                ),
-                                child: ListView.separated(
-                                    key: widget.key,
-                                    controller: widget.scrollControllerPage1,
-                                    keyboardDismissBehavior:
-                                        ScrollViewKeyboardDismissBehavior
-                                            .onDrag,
-                                    padding: const EdgeInsets.only(
-                                        top: 20,
-                                        left: 20,
-                                        right: 50,
-                                        bottom: 20),
-                                    itemBuilder: (context, index) {
-                                      return CustomListtileWidget(
-                                          onTap: () {
-                                            context.hideKeypad();
-                                            context.navigateTo(
-                                                TrainingPlanDetailView(
-                                                    workoutLength: widget
-                                                        .listTrainingPLanData[
-                                                            index]
-                                                        .daysTotal
-                                                        .toString(),
-                                                    id: widget
-                                                        .listTrainingPLanData[
-                                                            index]
-                                                        .id));
-                                          },
-                                          imageHeaderIcon:
-                                              AppAssets.calendarIcon,
-                                          imageUrl: widget
-                                              .listTrainingPLanData[index].image
-                                              .toString(),
-                                          onSubtitleWidget: widget
-                                                  .followTrainingData!
-                                                  .any((element) =>
-                                                      element.trainingplanId ==
-                                                      widget
-                                                          .listTrainingPLanData[
-                                                              index]
-                                                          .id)
-                                              ? FollowSubtitleWidget(
-                                                  followTrainingData: widget
-                                                      .followTrainingData!
-                                                      .elementAt(widget
-                                                          .followTrainingData!
-                                                          .indexWhere((element) =>
-                                                              element
-                                                                  .trainingplanId ==
-                                                              widget
-                                                                  .listTrainingPLanData[index]
-                                                                  .id)))
-                                              : Text(
-                                                  "${widget.listTrainingPLanData[index].daysTotal} workouts • ${widget.fitnessGoalData.entries.toList()[index].value} • ${widget.listTrainingPLanData[index].level}",
-                                                  style: AppTypography
-                                                      .paragraph14MD
-                                                      .copyWith(
-                                                          color: AppColor
-                                                              .textPrimaryColor),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                ),
-                                          title: widget.listTrainingPLanData[index].title.toString());
-                                    },
-                                    separatorBuilder: (context, index) {
-                                      return Padding(
+                          : widget.listTrainingPLanData.isEmpty
+                              ? const NoResultFOundWIdget()
+                              : Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColor.textInvertEmphasis,
+                                    ),
+                                    child: ListView.separated(
+                                        key: widget.key,
+                                        controller:
+                                            widget.scrollControllerPage1,
+                                        keyboardDismissBehavior:
+                                            ScrollViewKeyboardDismissBehavior
+                                                .onDrag,
                                         padding: const EdgeInsets.only(
-                                            top: 12, bottom: 12),
-                                        child: CustomDivider(indent: 102),
-                                      );
-                                    },
-                                    itemCount:
-                                        widget.listTrainingPLanData.length),
-                              ),
-                            ),
+                                            top: 20,
+                                            left: 20,
+                                            right: 20,
+                                            bottom: 20),
+                                        itemBuilder: (context, index) {
+                                          return Column(
+                                            children: [
+                                              CustomListtileWidget(
+                                                  onTap: () {
+                                                    context.hideKeypad();
+                                                    context.navigateTo(
+                                                        TrainingPlanDetailView(
+                                                            workoutLength: widget
+                                                                .listTrainingPLanData[
+                                                                    index]
+                                                                .daysTotal
+                                                                .toString(),
+                                                            id: widget
+                                                                .listTrainingPLanData[
+                                                                    index]
+                                                                .id));
+                                                  },
+                                                  imageHeaderIcon:
+                                                      AppAssets.calendarIcon,
+                                                  imageUrl: widget.listTrainingPLanData[index].image
+                                                      .toString(),
+                                                  onSubtitleWidget: widget
+                                                          .followTrainingData!
+                                                          .any((element) =>
+                                                              element.trainingplanId ==
+                                                              widget
+                                                                  .listTrainingPLanData[
+                                                                      index]
+                                                                  .id)
+                                                      ? FollowSubtitleWidget(
+                                                          followTrainingData: widget
+                                                              .followTrainingData!
+                                                              .elementAt(widget
+                                                                  .followTrainingData!
+                                                                  .indexWhere((element) =>
+                                                                      element.trainingplanId ==
+                                                                      widget
+                                                                          .listTrainingPLanData[index]
+                                                                          .id)))
+                                                      : Text(
+                                                          "${widget.listTrainingPLanData[index].daysTotal} workouts • ${widget.fitnessGoalData.entries.toList()[index].value} • ${widget.listTrainingPLanData[index].level}",
+                                                          style: AppTypography
+                                                              .paragraph14MD
+                                                              .copyWith(
+                                                                  color: AppColor
+                                                                      .textPrimaryColor),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                        ),
+                                                  title: widget.listTrainingPLanData[index].title.toString()),
+                                              if (index ==
+                                                      widget.listTrainingPLanData
+                                                              .length -
+                                                          1 &&
+                                                  widget.nextPage == false)
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0)
+                                                          .copyWith(top: 12),
+                                                  child: Text(
+                                                    "Nothing to load",
+                                                    style:
+                                                        AppTypography.label14SM,
+                                                  ),
+                                                )
+                                            ],
+                                          );
+                                        },
+                                        separatorBuilder: (context, index) {
+                                          return const Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 12, bottom: 12),
+                                            child: CustomDivider(indent: 102),
+                                          );
+                                        },
+                                        itemCount:
+                                            widget.listTrainingPLanData.length),
+                                  ),
+                                ),
                     if (widget.isLoadMore == true)
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -1130,15 +763,12 @@ class _FirstTabWidgetState extends State<FirstTabWidget> {
                           child: BaseHelper.loadingWidget(),
                         ),
                       ),
-                    if (widget.nextPage == false &&
-                        widget.isLoadingNotifier == false)
-                      const NoResultFOundWIdget(),
                   ]),
-              if (widget.isLoadingNotifier)
+              if (widget.isLoadingNotifier) ...[
                 ModalBarrier(
                     dismissible: false, color: AppColor.surfaceBackgroundColor),
-              if (widget.isLoadingNotifier)
                 Center(child: BaseHelper.loadingWidget()),
+              ]
             ],
           ),
         ),

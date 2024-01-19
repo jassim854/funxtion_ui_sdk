@@ -122,25 +122,7 @@ class WorkoutDetailController {
 
     trainingData.clear();
     await phasesFn(1, workoutData, context, trainingData, equipmentData);
-    // for (var element in trainingData.entries) {
-    //   if (element.key.exerciseCategoryName == ItemType.circuitTime) {
-    //     circuitTimeTrainingData.addEntries({element});
-    //     print(circuitTimeTrainingData);
-    //   }
-    //   if (element.key.exerciseCategoryName == ItemType.rft) {
-    //     rftExerciseTrainingData.addEntries({element});
-    //     print(rftExerciseTrainingData);
-    //   }
-    //   if (element.key.exerciseCategoryName == ItemType.singleExercise) {
-    //     seExerciseTrainingData.addEntries({element});
-
-    //     print(seExerciseTrainingData);
-    //   }
-    //   if (element.key.exerciseCategoryName == ItemType.superSet) {
-    //     ssExerciseTrainingData.addEntries({element});
-    //     print(ssExerciseTrainingData);
-    //   }
-    // }
+  
     trainingLoader.value = false;
   }
 
@@ -392,14 +374,7 @@ class WorkoutDetailController {
                               .rftExercises![i]
                               .resistanceTargets ??
                           []),
-                      // goalTargetMetric: workoutData.phases![phaseIndex]
-                      //     .items![j].rftExercises![i].goalTargets.first.metric,
-                      // goalTargetMax: workoutData.phases![phaseIndex].items![j]
-                      //     .rftExercises![i].goalTargets.first.max,
-                      // goalTargetMin: workoutData.phases![phaseIndex].items![j]
-                      //     .rftExercises![i].goalTargets.first.min,
-                      // goalTargetValue: workoutData.phases![phaseIndex].items![j]
-                      //     .rftExercises![i].goalTargets.first.value,
+                     
 
                       rftRounds: workoutData
                           .phases![phaseIndex].items![j].rftRounds): data
@@ -461,21 +436,7 @@ class WorkoutDetailController {
                               ?.first
                               .resistanceTargets ??
                           []),
-                      // goalTargetMax: workoutData.phases![phaseIndex].items![j]
-                      //     .seExercises![i].sets?.first.goalTargets?.first.max,
-                      // goalTargetMetric: workoutData
-                      //     .phases![phaseIndex]
-                      //     .items![j]
-                      //     .seExercises![i]
-                      //     .sets
-                      //     ?.first
-                      //     .goalTargets
-                      //     ?.first
-                      //     .metric,
-                      // goalTargetMin: workoutData.phases![phaseIndex].items![j]
-                      //     .seExercises![i].sets?.first.goalTargets?.first.min,
-                      // goalTargetValue: workoutData.phases![phaseIndex].items![j]
-                      //     .seExercises![i].sets?.first.goalTargets?.first.value,
+           
                       exerciseNotes: workoutData.phases![phaseIndex].items![j]
                               .seExercises![i].notes ??
                           "",
@@ -528,14 +489,7 @@ class WorkoutDetailController {
                     resistanceTargets: List.from(workoutData.phases![phaseIndex]
                             .items![j].ssExercises![i].resistanceTargets ??
                         []),
-                    // goalTargetMax: workoutData.phases![phaseIndex].items![j]
-                    //     .ssExercises![i].goalTargets?.first.max,
-                    // goalTargetMetric: workoutData.phases![phaseIndex]
-                    //     .items![j].ssExercises![i].goalTargets?.first.metric,
-                    // goalTargetMin: workoutData.phases![phaseIndex].items![j]
-                    //     .ssExercises![i].goalTargets?.first.min,
-                    // goalTargetValue: workoutData.phases![phaseIndex].items![j]
-                    //     .ssExercises![i].goalTargets?.first.value,
+               
                     exerciseNotes: workoutData
                         .phases![phaseIndex].items![j].ssExercises![i].notes,
                     mainNotes: workoutData.phases![phaseIndex].items![j].notes,
@@ -562,34 +516,6 @@ class WorkoutDetailController {
     }
   }
 
-  // static getCoolDownData(context,
-  //     {required ValueNotifier<bool> trainingLoader2,
-  //     required WorkoutModel? workoutData,
-  //     required Map<ExerciseDetailModel,ExerciseModel>coolDownData}) async {
-  //   trainingLoader2.value = true;
-
-  //   coolDownData.clear();
-  //   for (var i = 0;
-  //       i < workoutData!.phases![1].items!.first.rftExercises!.length;
-  //       i++) {
-  //     //   try {
-  //     //     await ExerciseRequest.exerciseById(
-  //     //             id: workoutData
-  //     //                     .phases?[1].items!.first.rftExercises?[i].exerciseId ??
-  //     //                 "")
-  //     //         .then((value) async {
-  //     //       if (value != null) {
-  //     //         ExerciseModel data = ExerciseModel.fromJson(value);
-  //     //         getEquipmentDataFn(data.equipment.first.toString());
-  //     //         coolDownData.add(data);
-  //     //       }
-  //     //     });
-  //     //   } on RequestException catch (e) {
-  //     //     BaseHelper.showSnackBar(context, e.message);
-  //     //   }
-  //   }
-  //   trainingLoader2.value = false;
-  // }
   static getCoolDownData(context,
       {required ValueNotifier<bool> coolDownLoader,
       required WorkoutModel? workoutData,
@@ -600,26 +526,7 @@ class WorkoutDetailController {
     coolDownData.clear();
     await phasesFn(2, workoutData, context, coolDownData, equipmentData);
 
-    // for (var element in coolDownData.entries) {
-    //   if (element.key.exerciseCategoryName == ItemType.circuitTime) {
-    //     circuitTimeCoolDownData.addEntries({element});
-    //     print(circuitTimeCoolDownData);
-    //   }
-    //   if (element.key.exerciseCategoryName == ItemType.rft) {
-    //     rftExerciseCoolDownData.addEntries({element});
-    //     print(rftExerciseCoolDownData);
-    //   }
-    //   if (element.key.exerciseCategoryName == ItemType.singleExercise) {
-    //     seExerciseCoolDownData.addEntries({element});
-
-    //     print(seExerciseCoolDownData);
-    //   }
-    //   if (element.key.exerciseCategoryName == ItemType.superSet) {
-    //     ssExerciseCoolDOwnData.addEntries({element});
-    //     print(ssExerciseCoolDOwnData);
-    //   }
-    // }
-
+    
     coolDownLoader.value = false;
   }
 

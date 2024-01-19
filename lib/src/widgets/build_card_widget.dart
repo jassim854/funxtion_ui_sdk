@@ -14,8 +14,7 @@ class BuildCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        // height: context.dynamicHeight * 0.12,
-        // width: context.dynamicHeight * 0.13,
+    
         alignment: Alignment.centerLeft,
         padding:
             const EdgeInsets.only(left: 16, top: 20, bottom: 20, right: 16),
@@ -47,23 +46,7 @@ class BuildCardWidget extends StatelessWidget {
                         .copyWith(color: AppColor.textSubTitleColor),
                   )
               ])),
-              // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.end,
-              //   children: [
-              //     Text(
-              //       subtitle,
-              //       style: AppTypography.title24XL,
-              //     ),
-              //     if (checkNum == true
-              //         ? subtitle.contains(RegExp(r'[0-9]'))
-              //         : false)
-              //       Text(
-              //         ' min',
-              //         style: AppTypography.label14SM
-              //             .copyWith(color: AppColor.textSubTitleColor),
-              //       )
-              //   ],
-              // )
+           
             ]));
   }
 }

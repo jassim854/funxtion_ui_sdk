@@ -37,6 +37,8 @@ class AppAssets {
       'packages/ui_tool_kit/assets/icons_svg/calender_icon.svg';
   static const String exploreIcon =
       'packages/ui_tool_kit/assets/icons_svg/explore_icon.svg';
-        static const String backArrowIcon =
+  static const String backArrowIcon =
       'packages/ui_tool_kit/assets/icons_svg/back_arrow_icon.svg';
+  static const String checkMarkIcon =
+      'packages/ui_tool_kit/assets/icons_svg/check_mark_icon.svg';
 }

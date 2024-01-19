@@ -104,9 +104,7 @@ class CategoryListController {
       String? pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
     print(pageNumber);
-    // if (checkfilter('level', confirmedFilter.value)) {
-    //   log("${searchFilter('level', confirmedFilter.value)}");
-    // }
+   
 
     try {
       final fetcheddata = await WorkoutRequest.listOfWorkout(
@@ -217,27 +215,10 @@ class CategoryListController {
     return result;
   }
 
-  // static checkMultipleFilter(
-  //   List<TypeFilterModel>? confirmedFilter,
-  //   Box<FollowTrainingplanModel> box,
-  // ) {
-  //   if (confirmedFilter != null) {
-  //     List<FollowTrainingplanModel> data = [];
-  //     for (var ele in confirmedFilter) {
-  //       data.addAll(box.values.toList().where((element) =>
-  //           element.goalsId.contains(
-  //               searchFilter(ele.id.toString(), confirmedFilter) ?? "") &&
-  //           element.levelName.contains(
-  //               searchFilter(ele.filter.toString(), confirmedFilter) ?? "") &&
-  //           element.location.contains(
-  //               searchFilter(ele.filter.toString(), confirmedFilter) ?? "") &&
-  //           element.daysPerWeek.contains(
-  //               searchFilter(ele.filter.toString(), confirmedFilter) ?? "")));
-  //     }
-  //   }
-  // }
 
-  // static void getFiltrationData(List<dynamic> args) {}
+  
+
+
   static bool checkfilter(String type, List<TypeFilterModel>? confirmedFilter) {
     if (confirmedFilter != null) {
       for (var element in confirmedFilter) {
@@ -272,50 +253,6 @@ class CategoryListController {
     return null;
   }
 
-  // static List<IconTextModel> level = [
-  //   IconTextModel(text: 'Beginner', imageName: AppAssets.chartLowIcon),
-  //   IconTextModel(text: 'Medium', imageName: AppAssets.chatMidIcon),
-  //   IconTextModel(text: 'Advanced', imageName: AppAssets.chartFullIcon),
-  // ];
-  // static List<IconTextModel> duration = [
-  //   IconTextModel(
-  //     text: '0-15',
-  //   ),
-  //   IconTextModel(
-  //     text: '16-30',
-  //   ),
-  //   IconTextModel(
-  //     text: '31-45',
-  //   ),
-  //   IconTextModel(
-  //     text: '46-60',
-  //   )
-  // ];
-  // static List<IconTextModel> durationWeek = [
-  //   IconTextModel(
-  //     text: '3 weeks',
-  //   ),
-  //   IconTextModel(
-  //     text: '4 weeks',
-  //   ),
-  //   IconTextModel(
-  //     text: '5 weeks',
-  //   ),
-  //   IconTextModel(
-  //     text: '6 weeks',
-  //   )
-  // ];
-  // static List<IconTextModel> location = [
-  //   IconTextModel(text: 'Home', imageName: AppAssets.homeIcon),
-  //   IconTextModel(text: 'Gym', imageName: AppAssets.gymIcon),
-  //   IconTextModel(text: 'Outdoor', imageName: AppAssets.outdoorIcon),
-  // ];
-  // static Set<IconTextModel> categoryTypeFilters = {};
-  // static Set<IconTextModel> typesFilters = {};
-  // static Set<IconTextModel> goalsFilters = {};
-  // static Set<IconTextModel> equipmentFilter = {};
-  // static Set<IconTextModel> instructorFilter = {};
-  // static Set<IconTextModel> bodyPartFilter = {};
 
   static List<OnDemandFiltersModel> onDemandfiltersData = [];
   static Future<List<OnDemandFiltersModel>> runComplexTask(
@@ -335,9 +272,7 @@ class CategoryListController {
                   element['key'] == "type" ||
                   element['key'] == "content_package") {
                 print('got it');
-              } else if (element['values'].length < 2) {
-                print('only one content provider');
-              } else {
+              } else if (element['values'].length > 2) {
                 onDemandfiltersData.add(OnDemandFiltersModel.fromJson(element));
               }
             }
@@ -347,80 +282,6 @@ class CategoryListController {
         } on RequestException catch (e) {
           BaseHelper.showSnackBar(context, e.message);
         }
-        // if (categoryTypeFilters.isEmpty) {
-        //   try {
-        //     ContentProviderCategoryOnDemandRequest.onDemandCategory()
-        //         .then((value) async {
-        //       if (value != null) {
-        //         List<ContentProvidersCategoryOnDemandModel> data = List.from(
-        //             value.map((e) =>
-        //                 ContentProvidersCategoryOnDemandModel.fromJson(e)));
-        //         ReceivePort receivePort = ReceivePort();
-        //         categoryTypeFilters.clear();
-        //         await Isolate.spawn(
-        //           onDemandCategoryFn,
-        //           [
-        //             receivePort.sendPort,
-        //             data,
-        //           ],
-        //         );
-        //         final done = await receivePort.first;
-        //         categoryTypeFilters.addAll(done);
-        //         print('done $categoryTypeFilters');
-        //       }
-        //     });
-        //   } on RequestException catch (e) {
-        //     print(e.message);
-        //   }
-        // }
-        // if (equipmentFilter.isEmpty) {
-        //   try {
-        //     EquipmentRequest.listOfEquipment().then((value) async {
-        //       if (value != null) {
-        //         List<EquipmentModel> data =
-        //             List.from(value.map((e) => EquipmentModel.fromJson(e)));
-        //         ReceivePort receivePort = ReceivePort();
-        //         equipmentFilter.clear();
-        //         await Isolate.spawn(
-        //           equipmentFilterFn,
-        //           [
-        //             receivePort.sendPort,
-        //             data,
-        //           ],
-        //         );
-        //         final done = await receivePort.first;
-        //         equipmentFilter.addAll(done);
-        //         print('done $equipmentFilter');
-        //       }
-        //     });
-        //   } on RequestException catch (e) {
-        //     print(e.message);
-        //   }
-        // }
-        // if (instructorFilter.isEmpty) {
-        //   try {
-        //     InstructorRequest.listOfInstructors().then((value) async {
-        //       if (value != null) {
-        //         List<InstructorModel> data =
-        //             List.from(value.map((e) => InstructorModel.fromJson(e)));
-        //         ReceivePort receivePort = ReceivePort();
-        //         instructorFilter.clear();
-        //         await Isolate.spawn(
-        //           instructorFilterFn,
-        //           [
-        //             receivePort.sendPort,
-        //             data,
-        //           ],
-        //         );
-        //         final done = await receivePort.first;
-        //         instructorFilter.addAll(done);
-        //         print('done $instructorFilter');
-        //       }
-        //     });
-        //   } on RequestException catch (e) {
-        //     print(e.message);
-        //   }
-        // }
       } else if (name == CategoryName.workouts) {
         try {
           await WorkoutRequest.workoutFilters().then((value) {
@@ -428,80 +289,24 @@ class CategoryListController {
               if (element['key'] == "q" ||
                   element['key'] == "content_package") {
                 print('got it');
-              } else if (element['values'].length < 2) {
-                print('only one content provider');
-              } else {
+              } else if (element['values'].length > 2) {
                 onDemandfiltersData.add(OnDemandFiltersModel.fromJson(element));
               }
             }
-
-            //  Map<String, dynamic> jsoon={};
           });
         } on RequestException catch (e) {
           BaseHelper.showSnackBar(context, e.message);
         }
-        // if (typesFilters.isEmpty) {
-        //   try {
-        //     ContentProviderCategoryOnDemandRequest.contentCategory()
-        //         .then((value) async {
-        //       if (value != null) {
-        //         List<ContentProvidersCategoryOnDemandModel> data = List.from(
-        //             value.map((e) =>
-        //                 ContentProvidersCategoryOnDemandModel.fromJson(e)));
-        //         ReceivePort receivePort = ReceivePort();
-        //         typesFilters.clear();
-        //         await Isolate.spawn(
-        //           categoryListDataFn,
-        //           [
-        //             receivePort.sendPort,
-        //             data,
-        //           ],
-        //         );
-        //         final done = await receivePort.first;
-        //         typesFilters.addAll(done);
-        //         print('done $typesFilters');
-        //       }
-        //     });
-        //   } on RequestException catch (e) {
-        //     print(e.message);
-        //   }
-        // }
-
-        //   if (bodyPartFilter.isEmpty) {
-        //     try {
-        //       BodyPartsRequest.bodyParts().then((value) async {
-        //         if (value != null) {
-        //           List<BodyPartModel> data =
-        //               List.from(value.map((e) => BodyPartModel.fromJson(e)));
-        //           ReceivePort receivePort = ReceivePort();
-        //           bodyPartFilter.clear();
-        //           await Isolate.spawn(
-        //             bodyPartListFn,
-        //             [
-        //               receivePort.sendPort,
-        //               data,
-        //             ],
-        //           );
-        //           final done = await receivePort.first;
-        //           bodyPartFilter.addAll(done);
-        //           print('done $bodyPartFilter');
-        //         }
-        //       });
-        //     } on RequestException catch (e) {
-        //       print(e.message);
-        //     }
-        //   }
       } else if (name == CategoryName.trainingPLans) {
         try {
           await TrainingPlanRequest.trainingPlanFilters().then((value) {
             for (var element in value!) {
               if (element['key'] == "q" ||
                   element['key'] == "type" ||
-                  element['key'] == "content_package") {
+                  element['key'] == "content_package" ||
+                  element['key'] == "max_days_per_week") {
                 print('got it');
-              } else if (element['values'].length < 2) {
-                print('only one content provider');
-              } else {
+              } else if (element['values'].length > 2) {
                 onDemandfiltersData.add(OnDemandFiltersModel.fromJson(element));
               }
             }
@@ -511,116 +316,16 @@ class CategoryListController {
         } on RequestException catch (e) {
           BaseHelper.showSnackBar(context, e.message);
         }
-        // if (goalsFilters.isEmpty) {
-        //   try {
-        //     FitnessGoalRequest.listOfFitnessGoal().then((value) async {
-        //       if (value != null) {
-        //         List<FitnessGoalModel> data =
-        //             List.from(value.map((e) => FitnessGoalModel.fromJson(e)));
-        //         ReceivePort receivePort = ReceivePort();
-        //         goalsFilters.clear();
-        //         await Isolate.spawn(
-        //           goalListFn,
-        //           [
-        //             receivePort.sendPort,
-        //             data,
-        //           ],
-        //         );
-        //         final done = await receivePort.first;
-        //         goalsFilters.addAll(done);
-        //         print('done $goalsFilters');
-        //       }
-        //     });
-        //   } on RequestException catch (e) {
-        //     print(e.message);
-        //   }
-        // }
+    
       }
-      // List<OnDemandFiltersModel> toRemove = [];
-      // for (var element in onDemandfiltersData) {
-      //   if (element.key == 'q' || element.key == "type") {
-      //     toRemove.add(element);
-      //   }
-      // }
-      // for (var element in toRemove) {
-      //   onDemandfiltersData.remove(element);
-      // }
+   
     }
     filterLoader.value = false;
     return onDemandfiltersData;
   }
 
-  // static void instructorFilterFn(List<dynamic> args) {
-  //   SendPort sendPort = args[0] as SendPort;
-  //   Set<IconTextModel> instructorFilterData = {};
-  //   for (var element in args[1]) {
-  //     instructorFilterData.add(
-  //       IconTextModel(text: element.name, id: element.id.toString()),
-  //     );
-  //   }
-  //   Isolate.exit(sendPort, instructorFilterData);
-  // }
 
-  // static void equipmentFilterFn(List<dynamic> args) {
-  //   SendPort sendPort = args[0] as SendPort;
-  //   Set<IconTextModel> equipmentFilterData = {};
-  //   for (var element in args[1]) {
-  //     equipmentFilterData.add(
-  //       IconTextModel(text: element.name, id: element.id.toString()),
-  //     );
-  //   }
-  //   Isolate.exit(sendPort, equipmentFilterData);
-  // }
-
-  // static void onDemandCategoryFn(List<dynamic> args) {
-  //   SendPort sendPort = args[0] as SendPort;
-  //   Set<IconTextModel> onDemandCategoryData = {};
-  //   for (var element in args[1]) {
-  //     onDemandCategoryData.add(
-  //       IconTextModel(text: element.name, id: element.id.toString()),
-  //     );
-  //   }
-  //   Isolate.exit(sendPort, onDemandCategoryData);
-  // }
-
-  // static void goalListFn(List<dynamic> args) {
-  //   SendPort sendPort = args[0] as SendPort;
-  //   Set<IconTextModel> goalListData = {};
-  //   for (var element in args[1]) {
-  //     goalListData.add(
-  //       IconTextModel(text: element.name, id: element.id.toString()),
-  //     );
-  //   }
-  //   Isolate.exit(sendPort, goalListData);
-  // }
-
-  // static void bodyPartListFn(List<dynamic> args) {
-  //   SendPort sendPort = args[0] as SendPort;
-  //   Set<IconTextModel> bodyPartsData = {};
-  //   for (var element in args[1]) {
-  //     bodyPartsData.add(
-  //       IconTextModel(text: element.name, id: element.id.toString()),
-  //     );
-  //   }
-  //   Isolate.exit(sendPort, bodyPartsData);
-  // }
-
-  // static void categoryListDataFn(List<dynamic> args) async {
-  //   SendPort sendPort = args[0] as SendPort;
-  //   Set<IconTextModel> listType = {};
-  //   for (var e in args[1]) {
-  //     if (listType.every((element) => element.text != e.name)) {
-  //       listType.add(
-  //         IconTextModel(text: e.name, id: e.id.toString()),
-  //       );
-  //     } else if (listType.isEmpty) {
-  //       listType.add(
-  //         IconTextModel(text: e.name, id: e.id.toString()),
-  //       );
-  //     }
-  //   }
-  //   Isolate.exit(sendPort, listType);
-  // }
+ 
 
   static void deleteAFilter(
       context, String e, ValueNotifier<List<TypeFilterModel>> confirmedFilter) {
@@ -646,21 +351,6 @@ class CategoryListController {
       return;
     }
   }
-
-  // static double slderValue = 1;
-  // static void addAFilter(
-  //     TypeFilterModel value, List<TypeFilterModel> selectedFilter) {
-  //   if (selectedFilter.any((element) => element.type == value.type)) {
-  //     selectedFilter.removeWhere((element) => element.type == value.type);
-  //     selectedFilter.add(value);
-
-  //     return;
-  //   } else {
-  //     selectedFilter.add(value);
-
-  //     return;
-  //   }
-  // }
 
   static bool isShowFilter = false;
   static void showAllFiltter() {
@@ -700,43 +390,16 @@ class CategoryListController {
   static Map<int, String> videoDataType = {};
   static Map<int, String> audioDataType = {};
 
-  // static List<ContentProvidersCategoryOnDemandModel> categoryTypeData = [];
-  // static Map<int, String> filterCategoryTypeData = {};
-  // static getCategoryTypeDataFn(
-  //   context,
-  //   ValueNotifier<bool> loader,
-  // ) async {
-  //   if (CategoryListController.categoryTypeData.isEmpty) {
-  //     loader.value = true;
-  //     try {
-  //       await ContentProviderCategoryOnDemandRequest.contentCategory(
-  //           queryParameters: {
-  //             // "filter[where][id][in]": map((e) => e).join(','),
-  //           }).then((value) {
-  //         List<ContentProvidersCategoryOnDemandModel> fetchData = List.from(
-  //             value!.map(
-  //                 (e) => ContentProvidersCategoryOnDemandModel.fromJson(e)));
-  //         for (var i = 0; i <= 50; i++) {
-  //           CategoryListController.categoryTypeData.add(fetchData[i]);
-  //         }
-  //       });
-  //       loader.value = false;
-  //     } on RequestException catch (e) {
-  //       BaseHelper.showSnackBar(context, e.error);
-  //       loader.value = false;
-  //     }
-  //   }
-  // }
-
+  
   static Timer? timer;
   static void delayedFunction({
     required VoidCallback fn,
   }) async {
-    if (timer != null && timer!.isActive) {
+    if (timer != null) {
       timer!.cancel();
     }
 
-    timer = Timer(const Duration(milliseconds: 425), fn);
+    timer = Timer(const Duration(milliseconds: 750), fn);
   }
 
   static int itemCount({
@@ -816,66 +479,3 @@ class CategoryListController {
 
 
 
-
-
-/* SendPort sendPort = args[0] as SendPort;
-  try {
-    if (args[2] == CategoryName.videoClasses ||
-        args[2] == CategoryName.audioClasses) {
-      ContentProviderCategoryOnDemandRequest.onDemandCategory().then((value) {
-        if (value != null) {
-          CategoryListController.categoryType.clear();
-          for (var element in value) {
-            CategoryListController.categoryType.add(
-              IconTextModel(text: element.name, id: element.id),
-            );
-          }
-        }
-      });
-      EquipmentRequest.listOfEquipment().then((value) {
-        if (value != null) {
-          CategoryListController.equipmentFilter.clear();
-          for (var element in value) {
-            CategoryListController.equipmentFilter.add(
-              IconTextModel(text: element.name, id: element.id.toString()),
-            );
-          }
-        }
-      });
-      InstructorRequest.listOfInstructors().then((value) {
-        if (value != null) {
-          CategoryListController.instructorFilter.clear();
-          for (var element in value) {
-            CategoryListController.instructorFilter.add(
-              IconTextModel(text: element.name, id: element.id.toString()),
-            );
-          }
-        }
-      });
-    } else if (args[2] == CategoryName.workouts) {
-      ContentProviderCategoryOnDemandRequest.contentCategory().then((value) {
-        if (value != null) {
-          CategoryListController.type.clear();
-          for (var element in value) {
-            CategoryListController.type.add(
-              IconTextModel(text: element.name, id: element.id.toString()),
-            );
-          }
-        }
-      });
-      BodyPartsRequest.bodyParts().then((value) {
-        if (value != null) {
-          CategoryListController.bodyPartFilter.clear();
-          for (var element in value) {
-            CategoryListController.bodyPartFilter.add(
-              IconTextModel(text: element.name, id: element.id.toString()),
-            );
-          }
-        }
-      });
-    }
-    Isolate.exit(sendPort, 'completed');
-  } on RequestException catch (e) {
-    BaseHelper.showSnackBar(args[1], e.message);
-    Isolate.exit(sendPort);
-  } */

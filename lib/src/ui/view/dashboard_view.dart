@@ -166,10 +166,10 @@ class _DashBoardViewState extends State<DashBoardView> {
                                                                               topLeft: Radius.circular(16),
                                                                               topRight: Radius.circular(16)),
                                                                           child: cacheNetworkWidget(
-                                                                            height: 190,
-                                                                            width: context.dynamicWidth.toInt(),
+                                                                              height: 190,
+                                                                              width: context.dynamicWidth.toInt(),
                                                                               context,
-                                                                              fit: BoxFit.fill,
+                                                                              // fit: BoxFit.fill,
                                                                               imageUrl: e.trainingPlanImg),
                                                                         ),
                                                                       ),
@@ -325,10 +325,12 @@ class _DashBoardViewState extends State<DashBoardView> {
                                                             Radius.circular(
                                                                 16)),
                                                     child: cacheNetworkWidget(
-                                                      height: 190,
-                                                      width: context.dynamicWidth.toInt(),
+                                                        height: 190,
+                                                        width: context
+                                                            .dynamicWidth
+                                                            .toInt(),
                                                         context,
-                                                        fit: BoxFit.fill,
+                                                        // fit: BoxFit.fill,
                                                         imageUrl:
                                                             e.value.image),
                                                   ),
@@ -436,10 +438,12 @@ class _DashBoardViewState extends State<DashBoardView> {
                                                             Radius.circular(
                                                                 16)),
                                                     child: cacheNetworkWidget(
-                                                              height: 190,
-                                                      width: context.dynamicWidth.toInt(),
+                                                        height: 190,
+                                                        width: context
+                                                            .dynamicWidth
+                                                            .toInt(),
                                                         context,
-                                                        fit: BoxFit.fill,
+                                                        // fit: BoxFit.fill,
                                                         imageUrl: e.value.image
                                                             .toString()),
                                                   ),
@@ -516,7 +520,7 @@ class _DashBoardViewState extends State<DashBoardView> {
                               Row(
                                 children: [
                                   const DashBoardButtonWidget(
-                                      text: 'Training Plan'),
+                                      text: 'Training Plans'),
                                   16.width(),
                                   const DashBoardButtonWidget(
                                       text: 'Audio Classes')

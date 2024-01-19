@@ -1267,12 +1267,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
     });
   }
 
-  // mordernDurationHMSTextWidget({required Duration clockTimer}) {
-  //   return Text(
-  //     "${clockTimer.inHours.remainder(60).toString()}:${clockTimer.inMinutes.remainder(60).toString().padLeft(2, '0')}:${clockTimer.inSeconds.remainder(60).toString().padLeft(2, '0')}",
-  //     style: AppTypography.label14SM.copyWith(color: AppColor.textPrimaryColor),
-  //   );
-  // }
+
 
   Text mordernDurationMSTextWidget(
       {required Duration clockTimer, Color? color}) {

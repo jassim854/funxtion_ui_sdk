@@ -51,7 +51,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
             _scrollController.position.extentAfter != 0.0) {
           isLoadMore = true;
 
-          pageNumber += 1;
+          pageNumber += 10;
           getData(
               categoryName: widget.categoryName,
               isScroll: true,
@@ -179,7 +179,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                                           color: AppColor.textInvertEmphasis,
                                         ),
                                         child: ListView.separated(
-                                            key: const PageStorageKey("page"),
+                                            // key: const PageStorageKey("page"),
                                             controller: _scrollController,
                                             keyboardDismissBehavior:
                                                 ScrollViewKeyboardDismissBehavior
@@ -355,14 +355,11 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
               isLoadMore = false;
 
               listOndemandData.addAll(value);
+              int count = onDemandCategoryVideoData.length;
               CommonController.getListFilterOnDemandCategoryTypeFn(
-                  value, onDemandCategoryVideoData);
+                  count, value, onDemandCategoryVideoData);
               isLoadingNotifier = isScroll == true ? false : false;
-              // if (isScroll == false) {
-              //   _scrollController.animateTo(0.0,
-              //       duration: const Duration(milliseconds: 100),
-              //       curve: Curves.bounceInOut);
-              // }
+           
               setState(() {});
             } else if (value?.isEmpty ?? false) {
               nextPage = false;
@@ -418,8 +415,9 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                 pageNumber: pageNumber.toString(),
               ).then((value) {
                 if (value != null && value.isNotEmpty) {
+                  int count = onDemandCategoryAudioData.length;
                   CommonController.getListFilterOnDemandCategoryTypeFn(
-                      value, onDemandCategoryAudioData);
+                      count, value, onDemandCategoryAudioData);
                   setState(() {
                     nextPage = true;
                     isLoadMore = false;

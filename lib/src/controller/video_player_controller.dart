@@ -7,7 +7,7 @@ class VideoController {
 
   static void onTap(videoPlayerController) {
     print(showControls);
-    print("object1");
+    
   }
 
   static String getPosition(videoPlayerController) {

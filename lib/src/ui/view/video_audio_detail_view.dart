@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:funxtion/funxtion_sdk.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -92,84 +92,7 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // SizedBox(
-                      //   height: context.dynamicHeight * 0.32,
-                      //   child: Stack(fit: StackFit.expand, children: [
-                      //     Container(
-                      //       child: cacheNetworkWidget(
-                      //           imageUrl: onDemamdModelData?.mapImage?.url
-                      //                   .toString() ??
-                      //               "",
-                      //           fit: BoxFit.cover),
-                      //     ),
-                      //     Container(
-                      //       decoration: BoxDecoration(
-                      //         color: Colors.black.withOpacity(0.3),
-                      //       ),
-                      //     ),
-                      //     Positioned(
-                      //       bottom: 17,
-                      //       left: 20,
-                      //       right: 20,
-                      //       child: Column(
-                      //         crossAxisAlignment: CrossAxisAlignment.start,
-                      //         children: [
-                      //           Text(
-                      //             "${onDemamdModelData?.title}",
-                      //             maxLines: 1,
-                      //             overflow: TextOverflow.ellipsis,
-                      //             style: AppTypography.title24XL.copyWith(
-                      //                 color: AppColor.textInvertEmphasis),
-                      //           ),
-                      //           5.height(),
-                      //           Text(
-                      //             "${onDemamdModelData?.duration.getTextAfterSymbol()} min • ${onDemamdModelData?.type.toString().removeSymbolGetText()}",
-                      //             style: AppTypography.label16MD.copyWith(
-                      //                 color: AppColor.textInvertPrimaryColor),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //     Align(
-                      //       alignment: Alignment.center,
-                      //       child: GestureDetector(
-                      //         onTap: () {
-                      //           playOnTap(context);
-                      //         },
-                      //         child: SvgPicture.asset(
-                      //           AppAssets.playArrowIcon,
-                      //           height: 38,
-                      //           color: AppColor.textInvertEmphasis,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     Positioned(
-                      //       left: 19,
-                      //       top: 23,
-                      //       child: Transform.scale(
-                      //         scale: 0.85,
-                      //         child: InkWell(
-                      //           onTap: () {
-                      //             context.maybePopPage();
-                      //           },
-                      //           child: Container(
-                      //             alignment: Alignment.center,
-                      //             padding: const EdgeInsets.all(2),
-                      //             decoration: BoxDecoration(
-                      //                 color: AppColor.surfaceBrandDarkColor,
-                      //                 shape: BoxShape.circle),
-                      //             child: SvgPicture.asset(
-                      //               AppAssets.backArrowIcon,
-                      //               color: AppColor.textInvertEmphasis,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     )
-                      //   ]),
-                      // ),
-                      // descriptionWidget(),
-                      // cardWidget(),
+                
                       Expanded(
                         child: ValueListenableBuilder(
                             valueListenable: centerTitle,
