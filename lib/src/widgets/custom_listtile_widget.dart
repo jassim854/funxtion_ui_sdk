@@ -44,21 +44,23 @@ class CustomListtileWidget extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: cacheNetworkWidget(context,
-                  height: 80,
-                width: 80,
-                      imageUrl: imageUrl, fit: BoxFit.fill),
+                      height: 80,
+                      width: 80,
+                      imageUrl: imageUrl,
+                      // fit: BoxFit.fill
+                      ),
                 ),
               ),
-              Container(
-                height: 80,
-                width: 80,
-                // height: context.dynamicHeight * 0.09,
-                // width: context.dynamicWidth * 0.2,
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+              // Container(
+              //   height: 80,
+              //   width: 80,
+              //   // height: context.dynamicHeight * 0.09,
+              //   // width: context.dynamicWidth * 0.2,
+              //   decoration: BoxDecoration(
+              //     color: Colors.black.withOpacity(0.3),
+              //     borderRadius: BorderRadius.circular(12),
+              //   ),
+              // ),
               Container(
                 margin: const EdgeInsets.all(4),
                 child: SvgPicture.asset(
@@ -124,26 +126,18 @@ class CustomTileTrainingPlanWidget extends StatelessWidget {
               SizedBox(
                 height: 80,
                 width: 80,
-                // height: context.dynamicHeight * 0.09,
-                // width: context.dynamicWidth * 0.2,
+       
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: cacheNetworkWidget(context,
-                     height: 80,
-                width: 80,
-                      imageUrl: imageUrl, fit: BoxFit.fill),
+                      height: 80,
+                      width: 80,
+                      imageUrl: imageUrl,
+                      // fit: BoxFit.fill
+                      ),
                 ),
               ),
-              // Container(
-              //   height: 80,
-              //   width: 80,
-              //   // height: context.dynamicHeight * 0.09,
-              //   // width: context.dynamicWidth * 0.2,
-              //   decoration: BoxDecoration(
-              //     color: Colors.black.withOpacity(0.3),
-              //     borderRadius: BorderRadius.circular(12),
-              //   ),
-              // ),
+           
               Container(
                 margin: const EdgeInsets.all(4),
                 child: SvgPicture.asset(

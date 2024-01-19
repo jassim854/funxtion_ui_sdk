@@ -34,6 +34,7 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
@@ -85,409 +86,118 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                     )
                   : Expanded(
                       child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 20, right: 20, bottom: 20),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children:
-                                  CategoryListController.onDemandfiltersData
-                                      .map((data) => Padding(
-                                            padding: EdgeInsets.only(
-                                                top: CategoryListController
-                                                            .onDemandfiltersData
-                                                            .first ==
-                                                        data
-                                                    ? 20
-                                                    : 35,
-                                                bottom: 12),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(data.label.toString(),
-                                                    style: AppTypography
-                                                        .title18LG
-                                                        .copyWith(
-                                                            color: AppColor
-                                                                .textEmphasisColor)),
-                                                12.height(),
-                                                data.values != null
-                                                    ? Wrap(
-                                                        spacing: 8,
-                                                        runSpacing: 8,
-                                                        children: data.values!
-                                                            .map((e) =>
-                                                                GestureDetector(
-                                                                    onTap: () {
-                                                                      CategoryListController.addFilter(
-                                                                          TypeFilterModel(
-                                                                              id: e.id,
-                                                                              type: data.key.toString(),
-                                                                              filter: e.label.toString()),
-                                                                          selectedFilter,
-                                                                          widget.confirmedFilter);
-                                                                      setState(
-                                                                          () {});
-                                                                      // print(ref.read(videoProvider).selectedFilter);
-                                                                    },
-                                                                    child:
-                                                                        levelContainer(
-                                                                      context,
-                                                                      e: IconTextModel(
-                                                                          text: e
-                                                                              .label
-                                                                              .toString(),
-                                                                          id: e
-                                                                              .id),
-                                                                      selectedFilter:
-                                                                          selectedFilter,
-                                                                      type: data
-                                                                          .key
-                                                                          .toString(),
-                                                                    )))
-                                                            .toList(),
-                                                      )
-                                                    : Wrap(
-                                                        spacing: 8,
-                                                        runSpacing: 8,
-                                                        children: data
-                                                            .dynamicValues!
-                                                            .map((e) =>
-                                                                GestureDetector(
-                                                                    onTap: () {
-                                                                      CategoryListController.addFilter(
-                                                                          TypeFilterModel(
-                                                                              type: data.key.toString(),
-                                                                              filter: data.key!.contains("max_days_per_week") ? e[1].toString() : e.toString()),
-                                                                          selectedFilter,
-                                                                          widget.confirmedFilter);
-                                                                      setState(
-                                                                          () {});
-                                                                      // print(ref.read(videoProvider).selectedFilter);
-                                                                    },
-                                                                    child:
-                                                                        levelContainer(
-                                                                      context,
-                                                                      e: IconTextModel(
-                                                                          text: data.key!.contains("max_days_per_week") ? e[1].toString() : e.toString(),
-                                                                          imageName: e.toString().contains(RegExp('beginner', caseSensitive: false))
-                                                                              ? AppAssets.chartLowIcon
-                                                                              : e.toString().contains(RegExp("intermediate", caseSensitive: false))
-                                                                                  ? AppAssets.chatMidIcon
-                                                                                  : e.toString().contains(RegExp("advanced", caseSensitive: false))
-                                                                                      ? AppAssets.chartFullIcon
-                                                                                      : null),
-                                                                      selectedFilter:
-                                                                          selectedFilter,
-                                                                      type: data
-                                                                          .key
-                                                                          .toString(),
-                                                                    )))
-                                                            .toList(),
-                                                      )
+                        padding: const EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20),
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: CategoryListController.onDemandfiltersData
+                                .map((data) => Padding(
+                                      padding: EdgeInsets.only(
+                                          top: CategoryListController
+                                                      .onDemandfiltersData
+                                                      .first ==
+                                                  data
+                                              ? 20
+                                              : 35,
+                                          bottom: 12),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                              data.label.toString() == "Goal"
+                                                  ? "Goals"
+                                                  : data.label.toString(),
+                                              style: AppTypography.title18LG
+                                                  .copyWith(
+                                                      color: AppColor
+                                                          .textEmphasisColor)),
+                                          12.height(),
+                                          data.values != null
+                                              ? Wrap(
+                                                  spacing: 8,
+                                                  runSpacing: 8,
+                                                  children: data.values!
+                                                      .map((e) =>
+                                                          GestureDetector(
+                                                              onTap: () {
+                                                                CategoryListController.addFilter(
+                                                                    TypeFilterModel(
+                                                                        id: e
+                                                                            .id,
+                                                                        type: data
+                                                                            .key
+                                                                            .toString(),
+                                                                        filter: e
+                                                                            .label
+                                                                            .toString()),
+                                                                    selectedFilter,
+                                                                    widget
+                                                                        .confirmedFilter);
+                                                                setState(() {});
+                                                                // print(ref.read(videoProvider).selectedFilter);
+                                                              },
+                                                              child:
+                                                                  levelContainer(
+                                                                context,
+                                                                e: IconTextModel(
+                                                                    text: e
+                                                                        .label
+                                                                        .toString(),
+                                                                    id: e.id),
+                                                                selectedFilter:
+                                                                    selectedFilter,
+                                                                type: data.key
+                                                                    .toString(),
+                                                              )))
+                                                      .toList(),
+                                                )
+                                              : Wrap(
+                                                  spacing: 8,
+                                                  runSpacing: 8,
+                                                  children: data.dynamicValues!
+                                                      .map((e) =>
+                                                          GestureDetector(
+                                                              onTap: () {
+                                                                CategoryListController.addFilter(
+                                                                    TypeFilterModel(
+                                                                        type: data
+                                                                            .key
+                                                                            .toString(),
+                                                                        filter: e
+                                                                            .toString()),
+                                                                    selectedFilter,
+                                                                    widget
+                                                                        .confirmedFilter);
+                                                                setState(() {});
+                                                                // print(ref.read(videoProvider).selectedFilter);
+                                                              },
+                                                              child:
+                                                                  levelContainer(
+                                                                context,
+                                                                e: IconTextModel(
+                                                                    text: e.toString(),
+                                                                    imageName: e.toString().contains(RegExp('beginner', caseSensitive: false))
+                                                                        ? AppAssets.chartLowIcon
+                                                                        : e.toString().contains(RegExp("intermediate", caseSensitive: false))
+                                                                            ? AppAssets.chatMidIcon
+                                                                            : e.toString().contains(RegExp("advanced", caseSensitive: false))
+                                                                                ? AppAssets.chartFullIcon
+                                                                                : null),
+                                                                selectedFilter:
+                                                                    selectedFilter,
+                                                                type: data.key
+                                                                    .toString(),
+                                                              )))
+                                                      .toList(),
+                                                )
 
-                                                // Row(
-                                                //     mainAxisAlignment:
-                                                //         MainAxisAlignment.spaceBetween,
-                                                //     children: CategoryListController.level
-                                                //         .map((e) => InkWell(
-                                                //             onTap: () {
-                                                //               CategoryListController.addFilter(
-                                                //                   TypeFilterModel(
-                                                //                       type: data.key.toString(),
-                                                //                       filter: e.text),
-                                                //                   selectedFilter,
-                                                //                   widget.confirmedFilter);
-                                                //               setState(() {});
-                                                //               // print(ref.read(videoProvider).selectedFilter);
-                                                //             },
-                                                //             child: levelContainer(context,
-                                                //                 e: e,
-                                                //                 selectedFilter: selectedFilter,
-                                                //                 type: 'level')))
-                                                //         .toList()),
-                                              ],
-                                            ),
-                                          ))
-                                      .toList()
-
-                              // if (widget.categoryName != CategoryName.trainingPLans) ...[
-                              //   Padding(
-                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
-                              //     child: Text('Duration',
-                              //         style: AppTypography.title18LG
-                              //             .copyWith(color: AppColor.textEmphasisColor)),
-                              //   ),
-                              //   Row(
-                              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              //       children: CategoryListController.duration
-                              //           .map((e) => InkWell(
-                              //               onTap: () {
-                              //                 CategoryListController.addFilter(
-                              //                     TypeFilterModel(
-                              //                         type: "duration", filter: e.text),
-                              //                     selectedFilter,
-                              //                     widget.confirmedFilter);
-
-                              //                 setState(() {});
-                              //                 // print(ref.read(videoProvider).selectedFilter);
-                              //               },
-                              //               child: levelContainer(context,
-                              //                   e: e,
-                              //                   selectedFilter: selectedFilter,
-                              //                   type: 'duration')))
-                              //           .toList()),
-                              // ],
-
-                              // //  CategoryListController.durationWeek
-                              // //     .map((e) => InkWell(
-                              // //         onTap: () {
-                              // //           CategoryListController.addFilter(
-                              // //               TypeFilterModel(
-                              // //                   type: "duration", filter: e.text),
-                              // //               selectedFilter,
-                              // //               widget.confirmedFilter);
-
-                              // //           setState(() {});
-                              // //           // print(ref.read(videoProvider).selectedFilter);
-                              // //         },
-                              // //         child: levelContainer(context,
-                              // //             e: e,
-                              // //             selectedFilter: selectedFilter,
-                              // //             type: 'duration')))
-                              // //     .toList()),
-
-                              // if (widget.categoryName == CategoryName.workouts) ...[
-                              //   Padding(
-                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
-                              //     child: Text('Type',
-                              //         style: AppTypography.title18LG
-                              //             .copyWith(color: AppColor.textEmphasisColor)),
-                              //   ),
-                              //   Wrap(
-                              //       spacing: 8,
-                              //       runSpacing: 8,
-                              //       children: CategoryListController.typesFilters
-                              //           .map((e) => InkWell(
-                              //               onTap: () {
-                              //                 CategoryListController.addFilter(
-                              //                     TypeFilterModel(
-                              //                         type: "type", filter: e.text, id: e.id),
-                              //                     selectedFilter,
-                              //                     widget.confirmedFilter);
-                              //                 setState(() {});
-                              //                 // print(ref.read(videoProvider).selectedFilter);
-                              //               },
-                              //               child: levelContainer(context,
-                              //                   e: e,
-                              //                   selectedFilter: selectedFilter,
-                              //                   type: 'type')))
-                              //           .toList()),
-                              // ],
-                              // if (widget.categoryName == CategoryName.workouts ||
-                              //     widget.categoryName == CategoryName.trainingPLans) ...[
-                              //   Padding(
-                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
-                              //     child: Text('Location',
-                              //         style: AppTypography.title18LG
-                              //             .copyWith(color: AppColor.textEmphasisColor)),
-                              //   ),
-                              //   Row(
-                              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              //       children: CategoryListController.location
-                              //           .map((e) => InkWell(
-                              //               onTap: () {
-                              //                 CategoryListController.addFilter(
-                              //                     TypeFilterModel(
-                              //                         type: "location", filter: e.text),
-                              //                     selectedFilter,
-                              //                     widget.confirmedFilter);
-                              //                 setState(() {});
-                              //                 // print(ref.read(videoProvider).selectedFilter);
-                              //               },
-                              //               child: levelContainer(context,
-                              //                   e: e,
-                              //                   selectedFilter: selectedFilter,
-                              //                   type: 'location')))
-                              //           .toList()),
-                              // ],
-                              // if (widget.categoryName == CategoryName.videoClasses ||
-                              //     widget.categoryName == CategoryName.audioClasses) ...[
-                              //   Padding(
-                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
-                              //     child: Text('Category',
-                              //         style: AppTypography.title18LG
-                              //             .copyWith(color: AppColor.textEmphasisColor)),
-                              //   ),
-                              //   Wrap(
-                              //       spacing: 8,
-                              //       runSpacing: 8,
-                              //       children: CategoryListController.categoryTypeFilters
-                              //           .map((e) => InkWell(
-                              //               onTap: () {
-                              //                 CategoryListController.addFilter(
-                              //                     TypeFilterModel(
-                              //                         type: "category",
-                              //                         filter: e.text,
-                              //                         id: e.id),
-                              //                     selectedFilter,
-                              //                     widget.confirmedFilter);
-
-                              //                 setState(() {});
-                              //                 // print(ref.read(videoProvider).selectedFilter);
-                              //               },
-                              //               child: levelContainer(context,
-                              //                   e: e,
-                              //                   selectedFilter: selectedFilter,
-                              //                   type: 'category')))
-                              //           .toList())
-                              // ],
-                              // if (widget.categoryName == CategoryName.videoClasses ||
-                              //     widget.categoryName == CategoryName.audioClasses) ...[
-                              //   Padding(
-                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
-                              //     child: Text('Equipment',
-                              //         style: AppTypography.title18LG
-                              //             .copyWith(color: AppColor.textEmphasisColor)),
-                              //   ),
-                              //   Wrap(
-                              //       spacing: 8,
-                              //       runSpacing: 8,
-                              //       children: CategoryListController.equipmentFilter
-                              //           .map((e) => InkWell(
-                              //               onTap: () {
-                              //                 CategoryListController.addFilter(
-                              //                     TypeFilterModel(
-                              //                         type: "equipment",
-                              //                         filter: e.text,
-                              //                         id: e.id),
-                              //                     selectedFilter,
-                              //                     widget.confirmedFilter);
-                              //                 setState(() {});
-                              //                 // print(ref.read(videoProvider).selectedFilter);
-                              //               },
-                              //               child: levelContainer(context,
-                              //                   e: e,
-                              //                   selectedFilter: selectedFilter,
-                              //                   type: 'equipment')))
-                              //           .toList()),
-                              // ],
-                              // if (widget.categoryName == CategoryName.videoClasses ||
-                              //     widget.categoryName == CategoryName.audioClasses) ...[
-                              //   Padding(
-                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
-                              //     child: Text('Instructor',
-                              //         style: AppTypography.title18LG
-                              //             .copyWith(color: AppColor.textEmphasisColor)),
-                              //   ),
-                              //   Wrap(
-                              //       spacing: 8,
-                              //       runSpacing: 8,
-                              //       children: CategoryListController.instructorFilter
-                              //           .map((e) => InkWell(
-                              //               onTap: () {
-                              //                 CategoryListController.addFilter(
-                              //                     TypeFilterModel(
-                              //                         type: "instructor",
-                              //                         filter: e.text,
-                              //                         id: e.id),
-                              //                     selectedFilter,
-                              //                     widget.confirmedFilter);
-                              //                 setState(() {});
-                              //                 // print(ref.read(videoProvider).selectedFilter);
-                              //               },
-                              //               child: levelContainer(context,
-                              //                   e: e,
-                              //                   selectedFilter: selectedFilter,
-                              //                   type: 'instructor')))
-                              //           .toList()),
-                              // ],
-                              // // if (widget.categoryName != CategoryName.trainingPLans) ...[
-                              // //   Padding(
-                              // //     padding: const EdgeInsets.only(top: 40, bottom: 12),
-                              // //     child: Text('Type',
-                              // //         style: AppTypography.title18LG
-                              // //             .copyWith(color: AppColor.textEmphasisColor)),
-                              // //   ),
-                              // //   Wrap(
-                              // //       spacing: 8,
-                              // //       runSpacing: 8,
-                              // //       children: CategoryListController.categoryType
-                              // //           .map((e) => InkWell(
-                              // //               onTap: () {
-                              // //                 CategoryListController.addFilter(
-                              // //                     TypeFilterModel(type: "type", filter: e.text),
-                              // //                     selectedFilter,
-                              // //                     widget.confirmedFilter);
-                              // //                 setState(() {});
-                              // //                 // print(ref.read(videoProvider).selectedFilter);
-                              // //               },
-                              // //               child: levelContainer(context,
-                              // //                   e: e,
-                              // //                   selectedFilter: selectedFilter,
-                              // //                   type: 'type')))
-                              // //           .toList()),
-                              // // ],
-                              // if (widget.categoryName == CategoryName.workouts ||
-                              //     widget.categoryName == CategoryName.trainingPLans) ...[
-                              //   Padding(
-                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
-                              //     child: Text('Goals',
-                              //         style: AppTypography.title18LG
-                              //             .copyWith(color: AppColor.textEmphasisColor)),
-                              //   ),
-                              //   Wrap(
-                              //       spacing: 8,
-                              //       runSpacing: 8,
-                              //       children: CategoryListController.goalsFilters
-                              //           .map((e) => InkWell(
-                              //               onTap: () {
-                              //                 CategoryListController.addFilter(
-                              //                     TypeFilterModel(
-                              //                         type: "goal", filter: e.text, id: e.id),
-                              //                     selectedFilter,
-                              //                     widget.confirmedFilter);
-                              //                 setState(() {});
-                              //                 // print(ref.read(videoProvider).selectedFilter);
-                              //               },
-                              //               child: levelContainer(context,
-                              //                   e: e,
-                              //                   selectedFilter: selectedFilter,
-                              //                   type: 'goal')))
-                              //           .toList()),
-                              // ],
-                              // if (widget.categoryName == CategoryName.workouts) ...[
-                              //   Padding(
-                              //     padding: const EdgeInsets.only(top: 40, bottom: 12),
-                              //     child: Text('Bodypart',
-                              //         style: AppTypography.title18LG
-                              //             .copyWith(color: AppColor.textEmphasisColor)),
-                              //   ),
-                              //   Wrap(
-                              //       spacing: 8,
-                              //       runSpacing: 8,
-                              //       children: CategoryListController.bodyPartFilter
-                              //           .map((e) => InkWell(
-                              //               onTap: () {
-                              //                 CategoryListController.addFilter(
-                              //                     TypeFilterModel(
-                              //                         type: "bodyPart",
-                              //                         filter: e.text,
-                              //                         id: e.id),
-                              //                     selectedFilter,
-                              //                     widget.confirmedFilter);
-                              //                 setState(() {});
-                              //               },
-                              //               child: levelContainer(context,
-                              //                   e: e,
-                              //                   selectedFilter: selectedFilter,
-                              //                   type: 'bodyPart')))
-                              //           .toList()),
-                              // ]
-
-                              ),
-                        ),
+                                        
+                                        ],
+                                      ),
+                                    ))
+                                .toList()),
                       ),
                     );
             })

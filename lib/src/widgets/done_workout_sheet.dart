@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ui_tool_kit/src/helper/boxes.dart';
 import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
-import 'package:ui_tool_kit/src/ui/view/dashboard_view.dart';
+
 import 'package:ui_tool_kit/src/ui/view/training_plan_detail_view.dart';
 
 import '../../ui_tool_kit.dart';

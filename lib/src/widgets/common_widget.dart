@@ -200,12 +200,13 @@ class SliverAppBarWidget extends StatelessWidget {
           background: Stack(
             fit: StackFit.expand,
             children: [
-              Container(
-                child: cacheNetworkWidget(context,
-                        height: 190,
-                                                      width: context.dynamicWidth.toInt(),
-                    imageUrl: backGroundImg, fit: BoxFit.fill),
-              ),
+              cacheNetworkWidget(context,
+                  height: 250,
+                  width: context.dynamicWidth.toInt(),
+                  imageUrl: backGroundImg,
+                  // fit: BoxFit.fill
+                  
+                  ),
               if (onStackChild != null) onStackChild!
             ],
           )),

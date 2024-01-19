@@ -8,16 +8,18 @@ import 'package:ui_tool_kit/src/ui/view/start_workout_view.dart';
 import '../../ui_tool_kit.dart';
 
 class GetReadySheetWidget extends StatelessWidget {
-  GetReadySheetWidget(
-      {super.key,
-      required this.workoutModel,
-      required this.warmUpData,
-      required this.trainingData,
-      required this.coolDownData,
-      required this.fitnessGoalModel,
-      required this.equipmentData, required this.followTrainingplanModel, });
+  GetReadySheetWidget({
+    super.key,
+    required this.workoutModel,
+    required this.warmUpData,
+    required this.trainingData,
+    required this.coolDownData,
+    required this.fitnessGoalModel,
+    required this.equipmentData,
+    required this.followTrainingplanModel,
+  });
   final WorkoutModel workoutModel;
-  
+
   final Map<ExerciseDetailModel, ExerciseModel> warmUpData;
   final Map<ExerciseDetailModel, ExerciseModel> trainingData;
   final Map<ExerciseDetailModel, ExerciseModel> coolDownData;
@@ -28,7 +30,7 @@ class GetReadySheetWidget extends StatelessWidget {
   Timer? mainTimer;
   String? getReadytitle;
   Map<ExerciseDetailModel, ExerciseModel> currentListData = {};
-    final FollowTrainingplanModel? followTrainingplanModel;
+  final FollowTrainingplanModel? followTrainingplanModel;
   initFn() {
     if (warmUpData.isEmpty && trainingData.isNotEmpty) {
       getReadytitle = 'Training';
@@ -183,7 +185,7 @@ class GetReadySheetWidget extends StatelessWidget {
         margin: const EdgeInsets.only(
           left: 20,
           right: 20,
-          bottom: 15,
+          bottom: 30,
         ),
         child: CustomElevatedButton(
             radius: 16,
@@ -200,13 +202,13 @@ class GetReadySheetWidget extends StatelessWidget {
                   warmUpData: warmUpData,
                   trainingData: trainingData,
                   coolDownData: coolDownData,
-                  fitnessGoalModel: fitnessGoalModel, followTrainingplanModel: followTrainingplanModel,
+                  fitnessGoalModel: fitnessGoalModel,
+                  followTrainingplanModel: followTrainingplanModel,
                 ));
               } else if (warmUpData.isNotEmpty &&
                   trainingData.isEmpty &&
                   coolDownData.isEmpty) {
                 context.navigateTo(StartWorkoutView(
-
                   equipmentData: equipmentData,
                   durationNotifier: durationNotifier,
                   workoutModel: workoutModel,
@@ -214,7 +216,8 @@ class GetReadySheetWidget extends StatelessWidget {
                   trainingData: trainingData,
                   coolDownData: coolDownData,
                   fitnessGoalModel: fitnessGoalModel,
-                  mainTimer: mainTimer, followTrainingplanModel: followTrainingplanModel,
+                  mainTimer: mainTimer,
+                  followTrainingplanModel: followTrainingplanModel,
                 ));
               } else {
                 initFn();
@@ -240,7 +243,8 @@ class GetReadySheetWidget extends StatelessWidget {
                       sliderCoolDown: ValueNotifier(0),
                       coolDownBody: -1,
                       trainingBody: -1,
-                      warmupBody: -1, followTrainingplanModel: followTrainingplanModel,
+                      warmupBody: -1,
+                      followTrainingplanModel: followTrainingplanModel,
                     );
                   },
                 );

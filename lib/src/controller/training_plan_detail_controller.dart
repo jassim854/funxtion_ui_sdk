@@ -86,12 +86,5 @@ class TrainingPlanDetailController {
     return fetchData;
   }
 
-  // static String fitnessType(context, String id) {
-  //   FitnessActivityTypeModel? data;
 
-  //   getFitnessType(context, id).then((value) {
-  //     data = value as FitnessActivityTypeModel;
-  //   });
-  //   return data?.name ?? "";
-  // }
 }
