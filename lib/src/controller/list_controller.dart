@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:funxtion/funxtion_sdk.dart';
+import 'package:hive/hive.dart';
+import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
 
 import '../../ui_tool_kit.dart';
 
@@ -13,43 +16,35 @@ class CategoryListController {
       String? pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
     print(pageNumber);
+
     try {
-      // log(" level query ${searchFilter('level', confirmedFilter.value)}");
-      List<OnDemandModel> fetcheddata = await OnDemandRequest.listOnDemand(
-        whereDurationIncludes: searchFilter('duration', confirmedFilter.value),
-
-        whereLimitContentPerPageIsEqualTo: limitContentPerPage ?? '20',
-
-        whereNameIsEqualTo: mainSearch,
-
-        whereLevelFieldEqualTo: searchFilter('level', confirmedFilter.value),
-
-        wherePageNumberIsEqualTo: pageNumber ?? '1',
-        //   whereCategoriesIdInclude: ,
-        //   whereCategoriesIdIsEqualTo: ,
-        //   whereCategoriesIdsAnd: ,
-        //   whereContentProviderIdIsEqualTo: ,
-        //   whereContentProviderIdsAnd: ,
-        //   whereContentProviderIdsIncludes: ,
-        //   whereDurationAnd: ,
-        //   whereDurationEqualTo: ,
-        //   whereEquipmentIdsAnd: ,
-        //   whereEquipmentIdsIncludes: ,
-        //   whereInstructorsIdIsEqualTo: ,
-        //  whereInstructorsIdsAnd: ,
-        //  whereInstructorsIdsInclude: ,
-        //  whereLevelFieldAnd: ,
-        //  whereLevelFieldIncludes: ,
-        //  whereOrderingAccordingToNameEqualTo: ,
-        //  whereTypeAnd: ,
-        //  whereTypeInclude: ,
-        whereTypeIsEqualTo: 'virtual-class',
-      ) as List<OnDemandModel>;
-
-      if (fetcheddata.isEmpty) {
-        return fetcheddata;
-      } else {
-        return fetcheddata;
+      final fetcheddata = await OnDemandRequest.listOnDemand(
+        queryParameters: {
+          if (checkfilter('duration', confirmedFilter.value))
+            "filter[where][duration][in]":
+                searchFilter('duration', confirmedFilter.value),
+          "filter[limit]": limitContentPerPage ?? '10',
+          if (mainSearch != null) "filter[where][q][contains]": mainSearch,
+          if (checkfilter('level', confirmedFilter.value))
+            "filter[where][level][in]":
+                searchFilter('level', confirmedFilter.value),
+          "filter[offset]": pageNumber ?? 0,
+          "filter[where][type][eq]": 'virtual-class',
+          if (checkfilter('categories', confirmedFilter.value))
+            "filter[where][categories][in]":
+                searchFilter('categories', confirmedFilter.value),
+          if (checkfilter('equipment', confirmedFilter.value))
+            "filter[where][equipment][in]":
+                searchFilter('equipment', confirmedFilter.value),
+          if (checkfilter('instructor', confirmedFilter.value))
+            "filter[where][instructor][in]":
+                searchFilter('instructor', confirmedFilter.value),
+        },
+      );
+      if (fetcheddata != null) {
+        final List<OnDemandModel> data =
+            List.from(fetcheddata.map((e) => OnDemandModel.fromJson(e)));
+        return data;
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
@@ -67,42 +62,33 @@ class CategoryListController {
     print(pageNumber);
     try {
       // log(" level query ${searchFilter('level', confirmedFilter.value)}");
-      List<OnDemandModel> fetcheddata = await OnDemandRequest.listOnDemand(
-        whereDurationIncludes: searchFilter('duration', confirmedFilter.value),
-
-        whereLimitContentPerPageIsEqualTo: limitContentPerPage ?? '20',
-
-        // whereTypeInclude: searchFilter('type', confirmedFilter.value),
-        whereNameIsEqualTo: mainSearch,
-
-        whereLevelFieldEqualTo: searchFilter('level', confirmedFilter.value),
-
-        wherePageNumberIsEqualTo: pageNumber ?? '1',
-        //   whereCategoriesIdInclude: ,
-        //   whereCategoriesIdIsEqualTo: ,
-        //   whereCategoriesIdsAnd: ,
-        //   whereContentProviderIdIsEqualTo: ,
-        //   whereContentProviderIdsAnd: ,
-        //   whereContentProviderIdsIncludes: ,
-        //   whereDurationAnd: ,
-        //   whereDurationEqualTo: ,
-        //   whereEquipmentIdsAnd: ,
-        //   whereEquipmentIdsIncludes: ,
-        //   whereInstructorsIdIsEqualTo: ,
-        //  whereInstructorsIdsAnd: ,
-        //  whereInstructorsIdsInclude: ,
-        //  whereLevelFieldAnd: ,
-        //  whereLevelFieldIncludes: ,
-        //  whereOrderingAccordingToNameEqualTo: ,
-        //  whereTypeAnd: ,
-        //  whereTypeInclude: ,
-        whereTypeIsEqualTo: 'audio-workout',
-      ) as List<OnDemandModel>;
-
-      if (fetcheddata.isEmpty) {
-        return fetcheddata;
-      } else {
-        return fetcheddata;
+      final fetcheddata = await OnDemandRequest.listOnDemand(
+        queryParameters: {
+          if (checkfilter('duration', confirmedFilter.value))
+            "filter[where][duration][in]":
+                searchFilter('duration', confirmedFilter.value),
+          "filter[limit]": limitContentPerPage ?? '10',
+          if (mainSearch != null) "filter[where][q][contains]": mainSearch,
+          if (checkfilter('level', confirmedFilter.value))
+            "filter[where][level][in]":
+                searchFilter('level', confirmedFilter.value),
+          "filter[offset]": pageNumber ?? 0,
+          "filter[where][type][eq]": 'audio-workout',
+          if (checkfilter('categories', confirmedFilter.value))
+            "filter[where][categories][in]":
+                searchFilter('categories', confirmedFilter.value),
+          if (checkfilter('equipment', confirmedFilter.value))
+            "filter[where][equipment][in]":
+                searchFilter('equipment', confirmedFilter.value),
+          if (checkfilter('instructor', confirmedFilter.value))
+            "filter[where][instructor][in]":
+                searchFilter('instructor', confirmedFilter.value),
+        },
+      );
+      if (fetcheddata != null) {
+        final List<OnDemandModel> data =
+            List.from(fetcheddata.map((e) => OnDemandModel.fromJson(e)));
+        return data;
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
@@ -118,38 +104,38 @@ class CategoryListController {
       String? pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
     print(pageNumber);
+   
+
     try {
-      List<WorkoutModel> fetcheddata = await WorkoutRequest.listOfWorkout(
-        // whereOrderingAccordingToNameEqualTo: 'asc',
-        whereWorkoutNameContains: mainSearch,
-        whereDurationIncludes: searchFilter('duration', confirmedFilter.value),
-
-        whereLimitContentPerPageIsEqualTo: limitContentPerPage ?? '20',
-        whereLocationInclude: searchFilter('location', confirmedFilter.value),
-        whereLevelFieldInclude: searchFilter('level', confirmedFilter.value),
-
-        wherePageNumberIsEqualTo: pageNumber ?? '1',
-        // whereBodyPartIdIsEqualTo: ,
-        // whereBodyPartsIdsAnd: ,
-        // whereBodyPartsIdsInclude: ,
-        // whereDurationAnd: ,
-
-        // whereGoalIdIsEqualTo: ,
-        // whereGoalIdsAnd: ,
-        whereGoalIdsInclude: searchFilter('goal', confirmedFilter.value),
-        // whereLevelFieldAnd: ,
-
-        // whereLocationAnd: ,
-
-        // whereTypeIdIsEqualTo: ,
-        // whereTypeIdsAnd: ,
-        whereTypeIdsInclude: searchFilter('type', confirmedFilter.value),
-      ) as List<WorkoutModel>;
-
-      if (fetcheddata.isEmpty) {
-        return fetcheddata;
-      } else {
-        return fetcheddata;
+      final fetcheddata = await WorkoutRequest.listOfWorkout(
+        queryParameters: {
+          "filter[limit]": limitContentPerPage ?? '10',
+          "filter[offset]": pageNumber ?? "0",
+          if (mainSearch != null) "filter[where][q][contains]": mainSearch,
+          if (checkfilter('goals', confirmedFilter.value))
+            "filter[where][goals][in]":
+                searchFilter('goals', confirmedFilter.value),
+          if (checkfilter('body_parts', confirmedFilter.value))
+            "filter[where][body_parts][in]":
+                searchFilter('body_parts', confirmedFilter.value),
+          if (checkfilter('level', confirmedFilter.value))
+            "filter[where][level][in]":
+                searchFilter('level', confirmedFilter.value),
+          if (checkfilter('duration', confirmedFilter.value))
+            "filter[where][duration][in]":
+                searchFilter('duration', confirmedFilter.value),
+          if (checkfilter('types', confirmedFilter.value))
+            "filter[where][types][in]":
+                searchFilter('types', confirmedFilter.value),
+          if (checkfilter('locations', confirmedFilter.value))
+            "filter[where][locations][in]":
+                searchFilter('locations', confirmedFilter.value),
+        },
+      );
+      if (fetcheddata != null) {
+        final List<WorkoutModel> data =
+            List.from(fetcheddata.map((e) => WorkoutModel.fromJson(e)));
+        return data;
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
@@ -167,31 +153,29 @@ class CategoryListController {
     print(pageNumber);
 
     try {
-      List<TrainingPlanModel> fetcheddata =
-          await TrainingPlanRequest.listOfTrainingPlan(
-        whereDaysPerWeekInclude:
-            searchFilter('workout per week', confirmedFilter.value),
-
-        whereNameContains: mainSearch,
-        whereLimitContentPerPageIsEqualTo: limitContentPerPage ?? '20',
-        whereLocationInclude: searchFilter('location', confirmedFilter.value),
-
-        wherePageNumberIsEqualTo: pageNumber ?? '1',
-        // whereDaysPerWeekAnd: ,
-
-        // whereGoalIdIsEqualTo: ,
-        // whereGoalIdsAnd: ,
-        whereGoalIdsInclude: searchFilter('goal', confirmedFilter.value),
-        // whereLevelFieldAnd: ,
-        whereLevelFieldInclude: searchFilter('level', confirmedFilter.value),
-        // whereLocationAnd: ,
-        // whereOrderingAccordingToNameEqualTo: ,
-      ) as List<TrainingPlanModel>;
-
-      if (fetcheddata.isEmpty) {
-        return fetcheddata;
-      } else {
-        return fetcheddata;
+      final fetcheddata = await TrainingPlanRequest.listOfTrainingPlan(
+        queryParameters: {
+          "filter[limit]": limitContentPerPage ?? '10',
+          "filter[offset]": pageNumber ?? '0',
+          if (mainSearch != null) "filter[where][q][contains]": mainSearch,
+          if (checkfilter('goals', confirmedFilter.value))
+            "filter[where][goals][in]":
+                searchFilter('goals', confirmedFilter.value),
+          if (checkfilter('level', confirmedFilter.value))
+            "filter[where][level][in]":
+                searchFilter('level', confirmedFilter.value),
+          if (checkfilter('locations', confirmedFilter.value))
+            "filter[where][locations][in]":
+                searchFilter('locations', confirmedFilter.value),
+          if (checkfilter('max_days_per_week', confirmedFilter.value))
+            "filter[where][max_days_per_week][in]":
+                searchFilter('max_days_per_week', confirmedFilter.value),
+        },
+      );
+      if (fetcheddata != null) {
+        final List<TrainingPlanModel> data =
+            List.from(fetcheddata.map((e) => TrainingPlanModel.fromJson(e)));
+        return data;
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
@@ -201,145 +185,148 @@ class CategoryListController {
     return null;
   }
 
-  static String? searchFilter(
-      String type, List<TypeFilterModel>? confirmedFilter) {
-    List<String> filters = [];
+  static List<FollowTrainingplanModel> searchFilterLocal(
+    ValueNotifier<List<TypeFilterModel>> confirmedFilter,
+    Box<FollowTrainingplanModel> box,
+  ) {
+    List<FollowTrainingplanModel> result = [];
+    if (checkfilter('goals', confirmedFilter.value)) {
+      result.addAll(box.values
+          .toList()
+          .where((element) => element.goalsId
+              .contains(searchFilter('goals', confirmedFilter.value) ?? ""))
+          .toList());
+    }
+    if (checkfilter('level', confirmedFilter.value)) {
+      result.addAll(box.values.toList().where((element) => element.levelName
+          .contains(searchFilter('level', confirmedFilter.value) ?? "")));
+    }
+
+    if (checkfilter('locations', confirmedFilter.value)) {
+      result.addAll(box.values.toList().where((element) => element.location
+          .contains(searchFilter('locations', confirmedFilter.value) ?? "")));
+    }
+
+    if (checkfilter('max_days_per_week', confirmedFilter.value)) {
+      result.addAll(box.values.toList().where((element) => element.daysPerWeek
+          .contains(
+              searchFilter('max_days_per_week', confirmedFilter.value) ?? "")));
+    }
+    return result;
+  }
+
+
+  
+
+
+  static bool checkfilter(String type, List<TypeFilterModel>? confirmedFilter) {
     if (confirmedFilter != null) {
       for (var element in confirmedFilter) {
         if (element.type == type) {
-          filters.add(element.filter);
+          return true;
         }
       }
-      if (filters.isNotEmpty) {
-        print(filters
-            .map((e) => e.toLowerCase().trim())
-            .join(",")
-            .replaceAll('medium', 'intermediate')
-            .replaceAll('10 min', '0-15')
-            .replaceAll('20 min', '16-30')
-            .replaceAll('30 min', '31-45')
-            .replaceAll('45 min', '46-60')
-            .replaceAll('build strength', "3")
-            .replaceAll('strength', '18')
-            .replaceAll('cardio', '4')
-            .replaceAll('hiit', '8')
-            .replaceAll('build muscle', '1')
-            .replaceAll('lose weight', "2")
-            .replaceAll('fitness', '4')
-            .replaceAll('flexibilty', '6')
-            .replaceAll('tone up', '5')
-            .replaceAll('2.0', '2')
-            .replaceAll('3.0', '3')
-            .replaceAll('4.0', '4')
-            .replaceAll('5.0', '5')
-            .replaceAll('gym', 'club'));
-        return filters
-            .map((e) => e.toLowerCase().trim())
-            .join(",")
-            .replaceAll('medium', 'intermediate')
-            .replaceAll('10 min', '0-15')
-            .replaceAll('20 min', '16-30')
-            .replaceAll('30 min', '31-45')
-            .replaceAll('45 min', '46-60')
-            .replaceAll('build strength', "3")
-            .replaceAll('strength', '18')
-            .replaceAll('cardio', '4')
-            .replaceAll('hiit', '8')
-            .replaceAll('build muscle', '1')
-            .replaceAll('lose weight', "2")
-            .replaceAll('fitness', '4')
-            .replaceAll('flexibilty', '6')
-            .replaceAll('tone up', '5')
-            .replaceAll('2.0', '2')
-            .replaceAll('3.0', '3')
-            .replaceAll('4.0', '4')
-            .replaceAll('5.0', '5')
-            .replaceAll('gym', 'club');
+    }
+    return false;
+  }
+
+  static String? searchFilter(
+      String type, List<TypeFilterModel>? confirmedFilter) {
+    List<String> filters = [];
+
+    if (confirmedFilter != null) {
+      for (var element in confirmedFilter) {
+        if (element.type == type) {
+          if (element.id.toString() != "null") {
+            filters.add(element.id.toString());
+          } else {
+            filters.add(element.filter);
+          }
+        }
       }
 
-      print(filters);
+      if (filters.isNotEmpty) {
+        // log(filters.map((e) => e.toLowerCase().trim()).join(","));
+        return filters.map((e) => e.toLowerCase().trim()).join(",");
+      }
     }
     return null;
   }
 
-  static List<IconTextModel> level = [
-    IconTextModel(text: 'Beginner', imageName: AppAssets.chartLowIcon),
-    IconTextModel(text: 'Medium', imageName: AppAssets.chatMidIcon),
-    IconTextModel(text: 'Advanced', imageName: AppAssets.chartFullIcon),
-  ];
-  static List<IconTextModel> duration = [
-    IconTextModel(
-      text: '10 min',
-    ),
-    IconTextModel(
-      text: '20 min',
-    ),
-    IconTextModel(
-      text: '30 min',
-    ),
-    IconTextModel(
-      text: '45 min',
-    )
-  ];
-  static List<IconTextModel> durationWeek = [
-    IconTextModel(
-      text: '3 weeks',
-    ),
-    IconTextModel(
-      text: '4 weeks',
-    ),
-    IconTextModel(
-      text: '5 weeks',
-    ),
-    IconTextModel(
-      text: '6 weeks',
-    )
-  ];
-  static List<IconTextModel> location = [
-    IconTextModel(text: 'Home', imageName: AppAssets.homeIcon),
-    IconTextModel(text: 'Gym', imageName: AppAssets.gymIcon),
-    IconTextModel(text: 'Outdoor', imageName: AppAssets.outdoorIcon),
-  ];
-  static List<IconTextModel> type = [
-    IconTextModel(
-      text: 'Yoga',
-    ),
-    IconTextModel(
-      text: 'HIIT',
-    ),
-    IconTextModel(
-      text: 'Strength',
-    ),
-    IconTextModel(
-      text: 'Cardio',
-    ),
-    IconTextModel(
-      text: 'Pilates',
-    ),
-    IconTextModel(
-      text: 'Disco',
-    )
-  ];
-  static List<IconTextModel> goals = [
-    IconTextModel(
-      text: 'Build Muscle',
-    ),
-    IconTextModel(
-      text: 'Build Strength',
-    ),
-    IconTextModel(
-      text: 'Lose Weight',
-    ),
-    IconTextModel(
-      text: 'Fitness',
-    ),
-    IconTextModel(
-      text: 'Flexibilty',
-    ),
-    IconTextModel(
-      text: 'Tone Up',
-    ),
-  ];
+
+  static List<OnDemandFiltersModel> onDemandfiltersData = [];
+  static Future<List<OnDemandFiltersModel>> runComplexTask(
+    context,
+    CategoryName name,
+    ValueNotifier<bool> filterLoader,
+  ) async {
+    filterLoader.value = true;
+    if (onDemandfiltersData.isEmpty) {
+      onDemandfiltersData.clear();
+      if (name == CategoryName.videoClasses ||
+          name == CategoryName.audioClasses) {
+        try {
+          await OnDemandRequest.onDemandFilter().then((value) {
+            for (var element in value!) {
+              if (element['key'] == "q" ||
+                  element['key'] == "type" ||
+                  element['key'] == "content_package") {
+                print('got it');
+              } else if (element['values'].length > 2) {
+                onDemandfiltersData.add(OnDemandFiltersModel.fromJson(element));
+              }
+            }
+
+            //  Map<String, dynamic> jsoon={};
+          });
+        } on RequestException catch (e) {
+          BaseHelper.showSnackBar(context, e.message);
+        }
+      } else if (name == CategoryName.workouts) {
+        try {
+          await WorkoutRequest.workoutFilters().then((value) {
+            for (var element in value!) {
+              if (element['key'] == "q" ||
+                  element['key'] == "content_package") {
+                print('got it');
+              } else if (element['values'].length > 2) {
+                onDemandfiltersData.add(OnDemandFiltersModel.fromJson(element));
+              }
+            }
+          });
+        } on RequestException catch (e) {
+          BaseHelper.showSnackBar(context, e.message);
+        }
+      } else if (name == CategoryName.trainingPlans) {
+        try {
+          await TrainingPlanRequest.trainingPlanFilters().then((value) {
+            for (var element in value!) {
+              if (element['key'] == "q" ||
+                  element['key'] == "type" ||
+                  element['key'] == "content_package" ||
+                  element['key'] == "max_days_per_week") {
+                print('got it');
+              } else if (element['values'].length > 2) {
+                onDemandfiltersData.add(OnDemandFiltersModel.fromJson(element));
+              }
+            }
+
+            //  Map<String, dynamic> jsoon={};
+          });
+        } on RequestException catch (e) {
+          BaseHelper.showSnackBar(context, e.message);
+        }
+    
+      }
+   
+    }
+    filterLoader.value = false;
+    return onDemandfiltersData;
+  }
+
+
+ 
+
   static void deleteAFilter(
       context, String e, ValueNotifier<List<TypeFilterModel>> confirmedFilter) {
     confirmedFilter.value.removeWhere((element) => element.filter == e);
@@ -352,25 +339,10 @@ class CategoryListController {
     if (selectedFilter.any((element) =>
         element.filter == value.filter && element.type == value.type)) {
       if (confirmedFilter.value.isNotEmpty) {
-        restConfirmFilterAlso = true;
+        // restConfirmFilterAlso = true;
       }
       selectedFilter.removeWhere((element) =>
           element.filter == value.filter && element.type == value.type);
-
-      return;
-    } else {
-      selectedFilter.add(value);
-
-      return;
-    }
-  }
-
-  static double slderValue = 1;
-  static void addAFilter(
-      TypeFilterModel value, List<TypeFilterModel> selectedFilter) {
-    if (selectedFilter.any((element) => element.type == value.type)) {
-      selectedFilter.removeWhere((element) => element.type == value.type);
-      selectedFilter.add(value);
 
       return;
     } else {
@@ -394,15 +366,16 @@ class CategoryListController {
       ValueNotifier<List<TypeFilterModel>> confirmedFilter) {
     if (confirmedFilter.value.isNotEmpty) {
       restConfirmFilterAlso = true;
+      confirmedFilter.value.clear();
     }
     selectedFilter.clear();
-    slderValue = 1;
+    // slderValue = 1;
   }
 
   static void clearAppliedFilter(
       ValueNotifier<List<TypeFilterModel>> confirmedFilter) {
     confirmedFilter.value.clear();
-    slderValue = 1;
+
     hideAllFilter();
   }
 
@@ -413,73 +386,96 @@ class CategoryListController {
     confirmedFilter.value = selectedFilter;
   }
 
+  static Map<int, String> workoutDataType = {};
+  static Map<int, String> videoDataType = {};
+  static Map<int, String> audioDataType = {};
+
+  
   static Timer? timer;
   static void delayedFunction({
     required VoidCallback fn,
   }) async {
-    if (timer != null && timer!.isActive) {
+    if (timer != null) {
       timer!.cancel();
     }
 
-    timer = Timer(const Duration(milliseconds: 425), fn);
+    timer = Timer(const Duration(milliseconds: 750), fn);
   }
 
-  static int itemCount(
-      {required CategoryName categoryName,
-      required List<OnDemandModel> listOndemandData,
-      required List<WorkoutModel> listWorkoutData,
-      required List<TrainingPlanModel> listTrainingPLanData}) {
+  static int itemCount({
+    required CategoryName categoryName,
+    required List<OnDemandModel> listOndemandData,
+    required List<WorkoutModel> listWorkoutData,
+  }) {
     return categoryName == CategoryName.videoClasses
         ? listOndemandData.length
         : categoryName == CategoryName.workouts
             ? listWorkoutData.length
-            : categoryName == CategoryName.trainingPLans
-                ? listTrainingPLanData.length
-                : listOndemandData.length;
+            : listOndemandData.length;
   }
 
-  static String title(
-      {required int index,
-      required CategoryName categoryName,
-      required List<OnDemandModel> listOndemandData,
-      required List<WorkoutModel> listWorkoutData,
-      required List<TrainingPlanModel> listTrainingPLanData}) {
+  static List? chekList({
+    required CategoryName categoryName,
+    required List<OnDemandModel> listOndemandData,
+    required List<WorkoutModel> listWorkoutData,
+  }) {
+    switch (categoryName) {
+      case CategoryName.videoClasses:
+        return listOndemandData;
+
+      case CategoryName.audioClasses:
+        return listOndemandData;
+
+      case CategoryName.workouts:
+        return listWorkoutData;
+
+      default:
+        return [];
+    }
+  }
+
+  static String title({
+    required int index,
+    required CategoryName categoryName,
+    required List<OnDemandModel> listOndemandData,
+    required List<WorkoutModel> listWorkoutData,
+  }) {
     return categoryName == CategoryName.videoClasses
         ? listOndemandData[index].title.toString()
         : categoryName == CategoryName.workouts
             ? listWorkoutData[index].title.toString()
-            : categoryName == CategoryName.trainingPLans
-                ? listTrainingPLanData[index].title.toString()
-                : listOndemandData[index].title.toString();
+            : listOndemandData[index].title.toString();
   }
 
-  static String subtitle(
-      {required int index,
-      required CategoryName categoryName,
-      required List<OnDemandModel> listOndemandData,
-      required List<WorkoutModel> listWorkoutData,
-      required List<TrainingPlanModel> listTrainingPLanData}) {
+  static String subtitle({
+    required int index,
+    required CategoryName categoryName,
+    required List<OnDemandModel> listOndemandData,
+    required List<WorkoutModel> listWorkoutData,
+    required Map<int, String> categoryTypeData,
+    required Map<int, String> onDemandCategoryVideoData,
+    required Map<int, String> onDemandCategoryAudioData,
+  }) {
     return categoryName == CategoryName.videoClasses
-        ? "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${listOndemandData[index].type}` • ${listOndemandData[index].level}"
+        ? "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${onDemandCategoryVideoData[index]} • ${listOndemandData[index].level.toString()}"
         : categoryName == CategoryName.workouts
-            ? "${listWorkoutData[index].duration.substring(listWorkoutData[index].duration.indexOf('-') + 1)} min • ${listWorkoutData[index].types.map((e) => e)}` • ${listWorkoutData[index].level}"
-            : categoryName == CategoryName.trainingPLans
-                ? "${listTrainingPLanData[index].weeksTotal} weeks • ${listTrainingPLanData[index].types}` • ${listTrainingPLanData[index].level}"
-                : "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${listOndemandData[index].type}` • ${listOndemandData[index].level}";
+            ? "${listWorkoutData[index].duration!.substring(listWorkoutData[index].duration!.indexOf('-') + 1)} min • ${categoryTypeData[index]} • ${listWorkoutData[index].level.toString()}"
+            : "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${onDemandCategoryAudioData[index]} • ${listOndemandData[index].level}";
   }
 
-  static String imageUrl(
-      {required int index,
-      required CategoryName categoryName,
-      required List<OnDemandModel> listOndemandData,
-      required List<WorkoutModel> listWorkoutData,
-      required List<TrainingPlanModel> listTrainingPLanData}) {
+  static String imageUrl({
+    required int index,
+    required CategoryName categoryName,
+    required List<OnDemandModel> listOndemandData,
+    required List<WorkoutModel> listWorkoutData,
+  }) {
     return categoryName == CategoryName.videoClasses
         ? listOndemandData[index].image.toString()
         : categoryName == CategoryName.workouts
             ? listWorkoutData[index].image.toString()
-            : categoryName == CategoryName.trainingPLans
-                ? listTrainingPLanData[index].image.toString()
-                : listOndemandData[index].image.toString();
+            : listOndemandData[index].image.toString();
   }
 }
+
+
+

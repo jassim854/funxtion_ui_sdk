@@ -4,11 +4,11 @@ import 'package:funxtion/funxtion_sdk.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
 class AuthController {
-  
+  static String userName = 'FUNXTION_API_EMAIL';
+  static String password = 'FUNXTION_API_PASSWORD';
   static Future<bool> login(BuildContext context) async {
     try {
-      await AuthRequest.loginUser(
-              username: 'nasir@evolverstech.com', password: 'P@ss.1122')
+      await AuthRequest.loginUser(username: userName, password: password)
           .then((value) {
         if (value == true) {
           print(AuthRequest.getToken);

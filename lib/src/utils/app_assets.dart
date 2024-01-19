@@ -31,4 +31,14 @@ class AppAssets {
       'packages/ui_tool_kit/assets/icons_svg/person_notes_icon.svg';
   static const String workoutHeaderIcon =
       'packages/ui_tool_kit/assets/icons_svg/workout_header_icon.svg';
+  static const String headPhoneIcon =
+      'packages/ui_tool_kit/assets/icons_svg/headPhone_icon.svg';
+  static const String calendarIcon =
+      'packages/ui_tool_kit/assets/icons_svg/calender_icon.svg';
+  static const String exploreIcon =
+      'packages/ui_tool_kit/assets/icons_svg/explore_icon.svg';
+  static const String backArrowIcon =
+      'packages/ui_tool_kit/assets/icons_svg/back_arrow_icon.svg';
+  static const String checkMarkIcon =
+      'packages/ui_tool_kit/assets/icons_svg/check_mark_icon.svg';
 }

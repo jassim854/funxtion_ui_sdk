@@ -3,47 +3,29 @@ import 'package:flutter/material.dart';
 import '../../ui_tool_kit.dart';
 
 class CustomSLiderWidget extends StatelessWidget {
-  CustomSLiderWidget({
-    super.key,
-    required this.sliderValue,
-    required this.division,
-  });
+  CustomSLiderWidget(
+      {super.key,
+      required this.sliderValue,
+      required this.division,
+      this.backgroundColor,
+      this.valueColor});
   int division;
   double sliderValue;
-
+  Color? backgroundColor, valueColor;
   @override
   Widget build(BuildContext context) {
-    return SliderTheme(
-      data: SliderThemeData(
-          trackShape: CustomTrackShape(),
-          trackHeight: 7,
-          activeTrackColor: AppColor.surfaceBrandDarkColor,
-          inactiveTrackColor: AppColor.surfaceBrandDarkColor.withOpacity(0.1),
-          thumbShape: SliderComponentShape.noThumb),
-      child: Slider(
-        min: 0,
-        max: division.toDouble(),
-        divisions: division,
-        value: sliderValue,
-        onChanged: (value) {},
-      ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(22),
+      child: LinearProgressIndicator(
+          minHeight: 8,
+       
+          backgroundColor: backgroundColor ??
+              AppColor.surfaceBrandDarkColor.withOpacity(0.1),
+          valueColor: AlwaysStoppedAnimation(
+            valueColor ?? AppColor.surfaceBrandDarkColor,
+          ),
+          value: sliderValue / division),
     );
-  }
-}
-
-class CustomTrackShape extends RoundedRectSliderTrackShape {
-  @override
-  Rect getPreferredRect({
-    required RenderBox parentBox,
-    Offset offset = Offset.zero,
-    required SliderThemeData sliderTheme,
-    bool isEnabled = false,
-    bool isDiscrete = false,
-  }) {
-    final trackHeight = sliderTheme.trackHeight;
-    final trackLeft = offset.dx;
-    final trackTop = offset.dy;
-    final trackWidth = parentBox.size.width;
-    return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight!);
+   
   }
 }

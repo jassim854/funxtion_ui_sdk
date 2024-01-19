@@ -1,10 +1,13 @@
+import 'package:flutter/material.dart';
+// import 'package:sensors_plus/sensors_plus.dart';
+
 class VideoController {
-  static bool showControls = false;
-  static bool isTap = false;
+  static ValueNotifier<bool> showControls = ValueNotifier(false);
+// static   GyroscopeEvent? gyroscope;
 
   static void onTap(videoPlayerController) {
     print(showControls);
-    print("object1");
+    
   }
 
   static String getPosition(videoPlayerController) {

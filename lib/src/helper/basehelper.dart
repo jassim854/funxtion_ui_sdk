@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
@@ -26,12 +27,17 @@ class BaseHelper {
   }
 
   static CircularProgressIndicator loadingWidget(
-      {double? value, double? strokeWidth, Color? valueColor}) {
+      {double? value,
+      double? strokeWidth,
+      Color? valueColor,
+      Color? backgroundColor}) {
     return CircularProgressIndicator.adaptive(
       value: value,
       strokeWidth:
           strokeWidth ?? const CircularProgressIndicator.adaptive().strokeWidth,
-      backgroundColor: AppColor.textInvertSubtitle,
+      backgroundColor: Platform.isIOS
+          ? null
+          : backgroundColor ?? AppColor.textInvertSubtitle,
       valueColor:
           AlwaysStoppedAnimation(valueColor ?? AppColor.linkTeritaryCOlor),
     );

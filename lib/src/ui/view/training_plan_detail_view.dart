@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:funxtion/funxtion_sdk.dart';
+
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ui_tool_kit/src/helper/boxes.dart';
+import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
+import 'package:ui_tool_kit/src/ui/view/workout_detail_view.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
 class TrainingPlanDetailView extends StatefulWidget {
+  final String workoutLength;
   final String id;
+
   const TrainingPlanDetailView({
     super.key,
     required this.id,
+    required this.workoutLength,
   });
 
   @override
@@ -16,6 +23,7 @@ class TrainingPlanDetailView extends StatefulWidget {
 class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   bool isLoadingNotifier = false;
   bool isNodData = false;
+
   late ScrollController scrollController;
 
   TrainingPlanModel? trainingPlanData;
@@ -27,28 +35,25 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   ValueNotifier<int> weekIndex = ValueNotifier(0);
   ValueNotifier<bool> centerTitle = ValueNotifier(false);
   FitnessActivityTypeModel? workoutType;
-  List<WorkoutModel?> listSheduleWorkoutData = [];
+  List<WorkoutModel> listSheduleWorkoutData = [];
   ValueNotifier<bool> shedulePlanLoader = ValueNotifier(false);
   ValueNotifier<bool> fitnessTypeLoader = ValueNotifier(true);
   ValueNotifier<bool> goalLoader = ValueNotifier(true);
-  List<WeekName> weekName = [
-    WeekName('Monday', false),
-    WeekName('Tuesday', false),
-    WeekName('Wednesday', false),
-    WeekName('Thursday', false),
-    WeekName('Friday', false),
-    WeekName('Saturday', false),
-    WeekName('Sunday', false),
-  ];
+  FollowTrainingplanModel? followTrainingData;
+  // Map<int, String> typeData = {};
+  ValueNotifier<bool> typeLoader = ValueNotifier(false);
+  Map<int, String> categoryFilterTypeData = {};
+  List<Map<String, String>> workoutLocalData = [];
+
 
   @override
   void initState() {
     scrollController = ScrollController()
       ..addListener(() {
         print(scrollController.offset);
-        if (scrollController.offset > 155) {
+        if (scrollController.offset > 90) {
           centerTitle.value = true;
-        } else if (scrollController.offset < 160) {
+        } else if (scrollController.offset < 105) {
           centerTitle.value = false;
         }
       });
@@ -64,24 +69,13 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
     isNodData = false;
 
     TrainingPlanDetailController.getTrainingPlanData(context, id: widget.id)
-        .then((value) async {
-      if (value != null && context.mounted) {
+        .then((data) async {
+      if (data != null && context.mounted) {
         isLoadingNotifier = false;
-        trainingPlanData = value;
-        setState(() {});
-        if (trainingPlanData?.types.isNotEmpty ?? false) {
-          TrainingPlanDetailController.getFitnessType(
-                  context, trainingPlanData?.types.first.toString() ?? "")
-              .then((value) {
-            if (value != null) {
-              fitnessActivityTypeData = value;
-              fitnessTypeLoader.value = false;
-            } else {
-              fitnessTypeLoader.value = false;
-            }
-          });
-        }
-        TrainingPlanDetailController.getGoal(context,
+        trainingPlanData = data;
+
+        
+        await TrainingPlanDetailController.getGoal(context,
                 trainingPlanData: trainingPlanData)
             .then((value) {
           if (value != null) {
@@ -91,14 +85,13 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
             goalLoader.value = false;
           }
         });
+        setState(() {});
 
         TrainingPlanDetailController.shedulePlanFn(context,
             listSheduleWorkoutData: listSheduleWorkoutData,
             shedulePlanLoader: shedulePlanLoader,
             trainingPlanData: trainingPlanData,
             weekIndex: weekIndex);
-
-        return;
       } else if (context.mounted) {
         setState(() {
           isLoadingNotifier = false;
@@ -108,6 +101,20 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
     });
   }
 
+
+
+  addWorkoutData() {
+    for (var i = 0; i < listSheduleWorkoutData.length; i++) {
+      workoutLocalData.add({
+        "workoutTitle": listSheduleWorkoutData[i].title.toString(),
+        "workoutSubtitle":
+            "${listSheduleWorkoutData[i].duration} • ${categoryFilterTypeData[i]} • ${listSheduleWorkoutData[i].level.toString()}",
+        "workoutId": listSheduleWorkoutData[i].id.toString(),
+        "workoutImg": listSheduleWorkoutData[i].mapImage!.url
+      });
+    }
+  }
+
   @override
   void dispose() {
     scrollController.dispose();
@@ -115,200 +122,604 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: isLoadingNotifier == true
-            ? const LoaderStackWidget()
-            : isNodData == true
-                ? const CustomErrorWidget()
-                : Column(
-                    children: [
-                      Expanded(
-                        child: ValueListenableBuilder(
-                            valueListenable: centerTitle,
-                            builder: (_, value, child) {
-                              return CustomScrollView(
-                                physics: const BouncingScrollPhysics(),
-                                controller: scrollController,
-                                slivers: [
-                                  SliverAppBarWidget(
-                                    value: value,
-                                    appBarTitle: "${trainingPlanData?.title}",
-                                    flexibleTitle: "${trainingPlanData?.title}",
-                                    flexibleTitle2:
-                                        "${trainingPlanData?.weeksTotal} weeks • ${trainingPlanData?.maxDaysPerWeek} workouts / week",
-                                    backGroundImg: trainingPlanData
-                                            ?.mapImage?.url
-                                            .toString() ??
-                                        "",
-                                  ),
-                                  DescriptionBoxWidget(
-                                      text: trainingPlanData?.description
-                                              .toString() ??
-                                          ""),
-                                  cardBoxWidget(),
-                                  sheduleCardBoxWidget(context)
-                                ],
-                              );
-                            }),
-                      ),
-                      bottomWidget()
-                    ],
-                  ));
+  checkIsFollowed(Box<FollowTrainingplanModel> box) {
+    if (box.isNotEmpty) {
+      for (var element in box.values.toList()) {
+        if (element.trainingplanId == trainingPlanData?.id) {
+          followTrainingData = element;
+        }
+      }
+    } else {
+      followTrainingData = null;
+    }
   }
 
-  Container bottomWidget() {
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<Box<FollowTrainingplanModel>>(
+        valueListenable: Boxes.getData().listenable(),
+        builder: (_, box, child) {
+          checkIsFollowed(box);
+
+          return Scaffold(
+            body: isLoadingNotifier == true
+                ? const LoaderStackWidget()
+                : isNodData == true
+                    ? const CustomErrorWidget()
+                    : Column(
+                        children: [
+                          Expanded(
+                            child: ValueListenableBuilder(
+                                valueListenable: centerTitle,
+                                builder: (_, value, child) {
+                                  return CustomScrollView(
+                                    physics: const BouncingScrollPhysics(),
+                                    controller: scrollController,
+                                    slivers: [
+                                      SliverAppBarWidget(
+                                        value: value,
+                                        appBarTitle:
+                                            "${trainingPlanData?.title}",
+                                        flexibleTitle:
+                                            "${trainingPlanData?.title}",
+                                        flexibleSubtitleWidget: Text(
+                                          "${widget.workoutLength} workouts • ${fitnessGoalData?.name} • ${trainingPlanData?.level.toString()}",
+                                          style: AppTypography.label16MD
+                                              .copyWith(
+                                                  color: AppColor
+                                                      .textInvertPrimaryColor),
+                                        ),
+                                        backGroundImg: trainingPlanData
+                                                ?.mapImage?.url
+                                                .toString() ??
+                                            "",
+                                        isFollowingPlan:
+                                            followTrainingData == null
+                                                ? false
+                                                : true,
+                                        bottomWidget: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                                "${followTrainingData?.workoutCount}/${followTrainingData?.totalWorkoutLength}"),
+                                            4.height(),
+                                            FollowedBorderWidget(
+                                                followTrainingData:
+                                                    followTrainingData),
+                                          ],
+                                        ),
+                                      ),
+                                      DescriptionBoxWidget(
+                                          text: trainingPlanData?.description
+                                                  .toString() ??
+                                              ""),
+                                      cardBoxWidget(),
+                                      schedulHeadingWidget(),
+                                      sheduleCardBoxWidget(context, box),
+                                      if (followTrainingData != null)
+                                        SliverPadding(
+                                          padding: const EdgeInsets.all(20),
+                                          sliver: SliverToBoxAdapter(
+                                            child: Card(
+                                              elevation: 0.2,
+                                              color: AppColor
+                                                  .surfaceBackgroundColor,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          16)),
+                                              child: InkWell(
+                                                onTap: () async {
+                                                  await showDialog(
+                                                    // barrierDismissible: false,
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return const ShowAlertDialogWidget(
+                                                        body:
+                                                            'If you unfollow the training plan all progress will be removed',
+                                                        btnText1: 'Cancel',
+                                                        btnText2: 'Unfollow',
+                                                        title:
+                                                            'Unfollow training plan?',
+                                                      );
+                                                    },
+                                                  ).then((value) {
+                                                    if (value == true) {
+                                                      followTrainingData
+                                                          ?.delete();
+                                                      followTrainingData = null;
+                                                    }
+                                                  });
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(20),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Unfollow training plan',
+                                                        style: AppTypography
+                                                            .label16MD
+                                                            .copyWith(
+                                                                color: AppColor
+                                                                    .textEmphasisColor),
+                                                      ),
+                                                      const Icon(
+                                                        Icons
+                                                            .keyboard_arrow_right,
+                                                        size: 30,
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                    ],
+                                  );
+                                }),
+                          ),
+                        ],
+                      ),
+            bottomNavigationBar:
+                isLoadingNotifier == false && isNodData == false
+                    ? bottomWidget(box)
+                    : null,
+          );
+        });
+  }
+
+  SliverToBoxAdapter schedulHeadingWidget() {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12, top: 35, left: 20),
+        child: Text(
+          'Schedule',
+          style: AppTypography.title18LG
+              .copyWith(color: AppColor.textEmphasisColor),
+        ),
+      ),
+    );
+  }
+
+  Container bottomWidget(Box<FollowTrainingplanModel> box) {
     return Container(
       color: AppColor.surfaceBackgroundColor,
-      padding: const EdgeInsets.only(
-        left: 20,
-        right: 20,
-        bottom: 24,
-      ),
+      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24, top: 24),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "${trainingPlanData?.title}",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.title14XS
-                      .copyWith(color: AppColor.textEmphasisColor),
-                ),
-                4.height(),
-                Text(
-                    "${trainingPlanData?.weeksTotal} weeks / ${trainingPlanData?.maxDaysPerWeek} workouts",
-                    style: AppTypography.paragraph12SM
-                        .copyWith(color: AppColor.textPrimaryColor))
-              ],
-            ),
-          ),
+              child: box.values.any((element) =>
+                      element.trainingplanId == trainingPlanData?.id)
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (box.values.any((element) =>
+                            element.workoutCount <
+                            element.totalWorkoutLength)) ...[
+                          Text(
+                            "Next up",
+                            style: AppTypography.paragraph12SM
+                                .copyWith(color: AppColor.textPrimaryColor),
+                          ),
+                          2.height(),
+                          Text(
+                              "${followTrainingData?.workoutData[followTrainingData!.workoutCount]['workoutTitle'].toString()}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTypography.title14XS
+                                  .copyWith(color: AppColor.textEmphasisColor))
+                        ]
+                      ],
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "${trainingPlanData?.title}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTypography.title14XS
+                              .copyWith(color: AppColor.textEmphasisColor),
+                        ),
+                        2.height(),
+                        Text("${widget.workoutLength} workouts",
+                            style: AppTypography.paragraph12SM
+                                .copyWith(color: AppColor.textPrimaryColor))
+                      ],
+                    )),
           Expanded(
-            child: SheduletButtonWidget(
-              onPressed: () {
-                showModalBottomSheet(
-                  useSafeArea: true,
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (context) => ShedulePlanSheet(
-                    trainingPlanModel: trainingPlanData,
-                    weekName: weekName,
-                  ),
-                );
-              },
-            ),
-          )
+              child: ValueListenableBuilder<bool>(
+                  valueListenable: shedulePlanLoader,
+                  builder: (_, value, child) {
+                    return box.values.any((element) =>
+                            element.trainingplanId == trainingPlanData?.id)
+                        ? SheduletButtonWidget(
+                            text: box.values.any((element) =>
+                                    element.workoutCount ==
+                                    element.totalWorkoutLength)
+                                ? "Done"
+                                : 'Next Workout',
+                            onPressed: value == true
+                                ? null
+                                : () {
+                                    if (box.values.any((element) =>
+                                        element.workoutCount ==
+                                        element.totalWorkoutLength)) {
+                                      for (var i = 0;
+                                          i < Boxes.getData().length;
+                                          i++) {
+                                        if (Boxes.getData()
+                                                .values
+                                                .toList()[i]
+                                                .trainingplanId ==
+                                            followTrainingData!
+                                                .trainingplanId) {
+                                          Boxes.getData().deleteAt(i);
+                                          context.popPage();
+                                        }
+                                      }
+                                    } else {
+                                      int nextIndex =
+                                          followTrainingData!.workoutCount + 1;
+                                  
+                                      context.navigateTo(WorkoutDetailView(
+                                          id: followTrainingData?.workoutData[
+                                                      followTrainingData!
+                                                          .workoutCount]
+                                                  ['workoutId'] ??
+                                              '',
+                                          followTrainingplanModel:
+                                              FollowTrainingplanModel(
+                                            trainingplanId: followTrainingData!
+                                                .trainingplanId,
+                                            workoutData: workoutLocalData,
+                                            workoutCount: nextIndex,
+                                            totalWorkoutLength:
+                                                followTrainingData!
+                                                    .totalWorkoutLength,
+                                            outOfSequence: false,
+                                            trainingPlanImg: followTrainingData!
+                                                .trainingPlanImg,
+                                            trainingPlanTitle:
+                                                followTrainingData!
+                                                    .trainingPlanTitle,
+                                            daysPerWeek:
+                                                followTrainingData!.daysPerWeek,
+                                            goalsId:
+                                                followTrainingData!.goalsId,
+                                            levelName:
+                                                followTrainingData!.levelName,
+                                            location:
+                                                followTrainingData!.location,
+                                          )));
+                                    }
+                                  },
+                            child: value == true
+                                ? BaseHelper.loadingWidget()
+                                : null)
+                        : SheduletButtonWidget(
+                            text: "Start Following",
+                            onPressed: value == true
+                                ? null
+                                : () {
+                                    final data = FollowTrainingplanModel(
+                                        daysPerWeek:
+                                            TrainingPlanDetailController
+                                                .daysPerWeek
+                                                .toString(),
+                                        goalsId: trainingPlanData!.goals
+                                            .map((e) => e)
+                                            .join(','),
+                                        levelName:
+                                            trainingPlanData!.level.toString(),
+                                        location: trainingPlanData!.locations
+                                            .map((e) => e)
+                                            .join(','),
+                                        outOfSequence: false,
+                                        trainingPlanImg:
+                                            trainingPlanData?.mapImage?.url ??
+                                                "",
+                                        trainingPlanTitle:
+                                            trainingPlanData?.title ?? '',
+                                        trainingplanId: trainingPlanData!.id,
+                                        workoutData: workoutLocalData,
+                                        totalWorkoutLength:
+                                            listSheduleWorkoutData.length,
+                                        workoutCount: 0);
+                                    box.add(data);
+                               
+                                  },
+                            child: value == true
+                                ? BaseHelper.loadingWidget()
+                                : null);
+                  }))
         ],
       ),
     );
   }
 
-  SliverToBoxAdapter sheduleCardBoxWidget(BuildContext context) {
+  SliverToBoxAdapter sheduleCardBoxWidget(
+      BuildContext context, Box<FollowTrainingplanModel> box) {
     return SliverToBoxAdapter(
         child: Card(
             elevation: 0.2,
-            margin:
-                const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
             color: AppColor.surfaceBackgroundColor,
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             child: Padding(
-              padding: const EdgeInsets.only(
-                  bottom: 16, top: 16, left: 16, right: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    child: Text(
-                      'Your Schedule',
-                      style: AppTypography.title24XL,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                    width: context.dynamicWidth,
-                    child: ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: trainingPlanData?.weeks?.length,
-                      itemBuilder: (context, index) {
-                        return ValueListenableBuilder(
-                            valueListenable: weekIndex,
-                            builder: (context, value, child) {
-                              return InkWell(
-                                onTap: () {
-                                  weekIndex.value = index;
-                                  setState(() {
-                                    TrainingPlanDetailController.shedulePlanFn(
-                                        context,
-                                        listSheduleWorkoutData:
-                                            listSheduleWorkoutData,
-                                        shedulePlanLoader: shedulePlanLoader,
-                                        trainingPlanData: trainingPlanData,
-                                        weekIndex: weekIndex);
-                                  });
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  padding: const EdgeInsets.all(6),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
-                                      color: value == index
-                                          ? AppColor.surfaceBrandDarkColor
-                                          : AppColor
-                                              .surfaceBackgroundBaseColor),
-                                  child: Text(
-                                    'week ${index + 1}',
-                                    style: AppTypography.paragraph14MD.copyWith(
-                                        color: value == index
-                                            ? AppColor.textInvertEmphasis
-                                            : AppColor.textEmphasisColor),
+              padding: const EdgeInsets.all(12.0),
+              child: ValueListenableBuilder(
+                valueListenable: shedulePlanLoader,
+                builder: (_, value, child) {
+                  return value == true
+                      ? Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Center(
+                            child: BaseHelper.loadingWidget(),
+                          ),
+                        )
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            box.values.any((element) =>
+                                        element.trainingplanId ==
+                                        trainingPlanData?.id) ==
+                                    false
+                                ? Container()
+                                : SizedBox(
+                                    width: 25,
+                                    child: ListView.builder(
+                                      padding: EdgeInsets.only(top: 46),
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount: listSheduleWorkoutData.length,
+                                      itemBuilder: (context, index) {
+                                        return Column(
+                                          children: [
+                                            StepWidget(
+                                                isCompleted: box.values.any((element) =>
+                                                            element.trainingplanId ==
+                                                                trainingPlanData
+                                                                    ?.id &&
+                                                            index <=
+                                                                element.workoutCount -
+                                                                    1
+                                                                        .toInt()) ==
+                                                        true
+                                                    ? true
+                                                    : false,
+                                                isActive: box.values.any((element) =>
+                                                            element.trainingplanId ==
+                                                                trainingPlanData
+                                                                    ?.id &&
+                                                            index ==
+                                                                element
+                                                                    .workoutCount
+                                                                    .toInt()) ==
+                                                        true
+                                                    ? true
+                                                    : false),
+                                            if (index !=
+                                                listSheduleWorkoutData.length -
+                                                    1)
+                                              LineWidget(
+                                                height: 78,
+                                                color: box.values.any((element) =>
+                                                        element.trainingplanId ==
+                                                            trainingPlanData
+                                                                ?.id &&
+                                                        index <=
+                                                            element.workoutCount -
+                                                                1.toInt())
+                                                    ? AppColor
+                                                        .surfaceBrandDarkColor
+                                                    : null,
+                                              )
+                                          ],
+                                        );
+                                      },
+                                    ),
                                   ),
-                                ),
-                              );
-                            });
-                      },
-                    ),
-                  ),
-                  ValueListenableBuilder(
-                    valueListenable: shedulePlanLoader,
-                    builder: (_, value, child) {
-                      return value == true
-                          ? Padding(
-                              padding: const EdgeInsets.only(top: 50),
-                              child: Center(
-                                child: BaseHelper.loadingWidget(),
-                              ),
-                            )
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              padding: EdgeInsets.zero,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: listSheduleWorkoutData.length,
-                              itemBuilder: (context, index) {
-                                WorkoutModel? data =
-                                    listSheduleWorkoutData[index];
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 16),
-                                  child: CustomTileWidget(
-                                      imageUrl: data?.mapImage?.url ?? "",
-                                      title: data?.title ?? "",
-                                      subtitle:
-                                          "${data?.duration} ${data?.level}",
-                                      onTap: () {}),
-                                );
-                              });
-                    },
-                  )
-                ],
+                            Expanded(
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  padding: const EdgeInsets.only(left: 15),
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: listSheduleWorkoutData.length,
+                                  itemBuilder: (context, index) {
+                                    if (categoryFilterTypeData.isEmpty) {
+                                      CommonController.filterCategoryTypeData(
+                                          listSheduleWorkoutData,
+                                          categoryFilterTypeData);
+                                    }
+                                    if (workoutLocalData.isEmpty) {
+                                      addWorkoutData();
+                                    }
+                                    WorkoutModel? data =
+                                        listSheduleWorkoutData[index];
+
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 16),
+                                      child: CustomTileTrainingPlanWidget(
+                                          imageUrl: data.mapImage?.url ?? "",
+                                          title: data.title ?? "",
+                                          subtitle:
+                                              " ${data.duration} • ${categoryFilterTypeData[index]} • ${data.level.toString()}",
+                                          onTap: () {
+                                            if (followTrainingData != null) {
+                                              if (followTrainingData!
+                                                      .workoutCount ==
+                                                  index) {
+                                                // followTrainingData
+                                                //     ?.outOfSequence = false;
+                                                // followTrainingData!
+                                                //         .workoutCount =
+                                                //     followTrainingData!
+                                                //             .workoutCount +
+                                                //         1;
+
+                                                context.navigateTo(
+                                                    WorkoutDetailView(
+                                                        id: listSheduleWorkoutData[
+                                                                index]
+                                                            .id
+                                                            .toString(),
+                                                        followTrainingplanModel:
+                                                            FollowTrainingplanModel(
+                                                          workoutData:
+                                                              workoutLocalData,
+                                                          trainingplanId:
+                                                              followTrainingData!
+                                                                  .trainingplanId,
+                                                          workoutCount:
+                                                              followTrainingData!
+                                                                      .workoutCount +
+                                                                  1,
+                                                          totalWorkoutLength:
+                                                              followTrainingData!
+                                                                  .totalWorkoutLength,
+                                                          outOfSequence: false,
+                                                          trainingPlanImg:
+                                                              followTrainingData!
+                                                                  .trainingPlanImg,
+                                                          trainingPlanTitle:
+                                                              followTrainingData!
+                                                                  .trainingPlanTitle,
+                                                          daysPerWeek:
+                                                              followTrainingData!
+                                                                  .daysPerWeek,
+                                                          goalsId:
+                                                              followTrainingData!
+                                                                  .goalsId,
+                                                          levelName:
+                                                              followTrainingData!
+                                                                  .levelName,
+                                                          location:
+                                                              followTrainingData!
+                                                                  .location,
+                                                        )));
+                                              } else if (followTrainingData!
+                                                      .workoutCount
+                                                      .toInt() >=
+                                                  index) {
+                                                // followTrainingData
+                                                //     ?.outOfSequence = false;
+
+                                                context.navigateTo(
+                                                    WorkoutDetailView(
+                                                        id: listSheduleWorkoutData[
+                                                                index]
+                                                            .id
+                                                            .toString(),
+                                                        followTrainingplanModel:
+                                                            FollowTrainingplanModel(
+                                                          trainingplanId:
+                                                              followTrainingData!
+                                                                  .trainingplanId,
+                                                          workoutData:
+                                                              workoutLocalData,
+                                                          workoutCount:
+                                                              index + 1,
+                                                          totalWorkoutLength:
+                                                              followTrainingData!
+                                                                  .totalWorkoutLength,
+                                                          outOfSequence: false,
+                                                          trainingPlanImg:
+                                                              followTrainingData!
+                                                                  .trainingPlanImg,
+                                                          trainingPlanTitle:
+                                                              followTrainingData!
+                                                                  .trainingPlanTitle,
+                                                          daysPerWeek:
+                                                              followTrainingData!
+                                                                  .daysPerWeek,
+                                                          goalsId:
+                                                              followTrainingData!
+                                                                  .goalsId,
+                                                          levelName:
+                                                              followTrainingData!
+                                                                  .levelName,
+                                                          location:
+                                                              followTrainingData!
+                                                                  .location,
+                                                        )));
+                                              } else {
+                                                // followTrainingData
+                                                //     ?.workoutCount = index + 1;
+                                                // followTrainingData
+                                                //     ?.outOfSequence = true;
+                                                // updateData();
+
+                                                context.navigateTo(
+                                                    WorkoutDetailView(
+                                                        id: listSheduleWorkoutData[
+                                                                index]
+                                                            .id
+                                                            .toString(),
+                                                        followTrainingplanModel:
+                                                            FollowTrainingplanModel(
+                                                          workoutData:
+                                                              workoutLocalData,
+                                                          trainingplanId:
+                                                              followTrainingData!
+                                                                  .trainingplanId,
+                                                          workoutCount:
+                                                              index + 1,
+                                                          totalWorkoutLength:
+                                                              followTrainingData!
+                                                                  .totalWorkoutLength,
+                                                          outOfSequence: true,
+                                                          trainingPlanImg:
+                                                              followTrainingData!
+                                                                  .trainingPlanImg,
+                                                          trainingPlanTitle:
+                                                              followTrainingData!
+                                                                  .trainingPlanTitle,
+                                                          daysPerWeek:
+                                                              followTrainingData!
+                                                                  .daysPerWeek,
+                                                          goalsId:
+                                                              followTrainingData!
+                                                                  .goalsId,
+                                                          levelName:
+                                                              followTrainingData!
+                                                                  .levelName,
+                                                          location:
+                                                              followTrainingData!
+                                                                  .location,
+                                                        )));
+                                              }
+                                            } else {
+                                              context
+                                                  .navigateTo(WorkoutDetailView(
+                                                id: listSheduleWorkoutData[
+                                                        index]
+                                                    .id
+                                                    .toString(),
+                                              ));
+                                            }
+                                          }),
+                                    );
+                                  }),
+                            ),
+                          ],
+                        );
+                },
               ),
             )));
   }
@@ -316,7 +727,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   SliverToBoxAdapter cardBoxWidget() {
     return SliverToBoxAdapter(
       child: Card(
-        elevation: 0.2,
+        elevation: 0,
         margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
         color: AppColor.surfaceBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -325,33 +736,8 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
               const EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 16),
           child: Column(
             children: [
-              CustomRowTextChartIcon(
-                level: trainingPlanData?.level.toString() ?? "",
-                text1: 'Level',
-                text2: trainingPlanData?.level.toString() ?? "",
-                isChartIcon: true,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 16),
-                child: CustomDivider(),
-              ),
-              ValueListenableBuilder(
-                valueListenable: fitnessTypeLoader,
-                builder: (context, value, child) {
-                  return value == true
-                      ? Center(
-                          child: BaseHelper.loadingWidget(),
-                        )
-                      : CustomRowTextChartIcon(
-                          text1: 'Type',
-                          text2: fitnessActivityTypeData?.name ?? "No Data",
-                        );
-                },
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 16),
-                child: CustomDivider(),
-              ),
+           
+
               ValueListenableBuilder(
                 valueListenable: goalLoader,
                 builder: (context, value, child) {
@@ -365,10 +751,49 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                         );
                 },
               ),
+              const Padding(
+                padding: EdgeInsets.only(top: 16, bottom: 16),
+                child: CustomDivider(),
+              ),
+              CustomRowTextChartIcon(
+                level: trainingPlanData?.level.toString() ?? "",
+                text1: 'Level',
+                text2: trainingPlanData?.level.toString() ?? "",
+                isChartIcon: true,
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+class FollowedBorderWidget extends StatelessWidget {
+  const FollowedBorderWidget(
+      {super.key, required this.followTrainingData, this.color, this.color2});
+
+  final FollowTrainingplanModel? followTrainingData;
+  final Color? color, color2;
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+        children: List.generate(
+      followTrainingData?.totalWorkoutLength ?? 0,
+      (index) => Flexible(
+        child: Container(
+          height: 6,
+          margin: const EdgeInsets.only(left: 2, right: 2),
+          // foregroundDecoration: BoxDecoration(
+          //   color:
+          // ),
+          decoration: BoxDecoration(
+              color: index + 1 <= followTrainingData!.workoutCount.toInt()
+                  ? color ?? AppColor.textInvertEmphasis
+                  : color2 ?? AppColor.surfaceBrandSecondaryColor,
+              borderRadius: BorderRadius.circular(16)),
+        ),
+      ),
+    ));
   }
 }
