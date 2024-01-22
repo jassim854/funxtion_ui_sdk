@@ -412,7 +412,7 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
                   }
                 },
                 confirmedFilter: widget.followedConfirmedFilter,
-                categoryName: CategoryName.trainingPLans)),
+                categoryName: CategoryName.trainingPlans)),
         4.height(),
         Expanded(
           child: Stack(
@@ -618,7 +618,7 @@ class _FirstTabWidgetState extends State<FirstTabWidget> {
                 searchDelayFn: widget.searchDelayFn,
                 requestCall: widget.requestCall,
                 confirmedFilter: widget.confirmedFilter,
-                categoryName: CategoryName.trainingPLans)),
+                categoryName: CategoryName.trainingPlans)),
         1.height(),
         Expanded(
           child: Stack(
