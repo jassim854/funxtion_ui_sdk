@@ -8,9 +8,9 @@ CachedNetworkImage cacheNetworkWidget(BuildContext context,
     required int width,
     required int height}) {
   return CachedNetworkImage(
-    // imageUrl:imageUrl,
-    imageUrl:
-        "$imageUrl/width/${width * 2.8}/height/${height * 2.8}/quality/1500",
+    imageUrl: imageUrl,
+    // imageUrl:
+    //     "$imageUrl/width/${width * 2.8}/height/${height * 2.8}/quality/1500",
 
     fit: BoxFit.fitHeight,
 

@@ -79,50 +79,27 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
         appBar: PreferredSize(
             preferredSize: const Size.fromHeight(90),
             child: AppBar(
-              surfaceTintColor: AppColor.surfaceBackgroundColor,
-              titleSpacing: 0,
-              leadingWidth: 75,
-              leading: GestureDetector(
-                onTap: () {
-                  context.maybePopPage();
-                },
-                child: Transform.scale(
-                  scale: 1.2,
-                  child: SvgPicture.asset(
-                    AppAssets.backArrowIcon,
+                surfaceTintColor: AppColor.surfaceBackgroundColor,
+                titleSpacing: 0,
+                leadingWidth: 75,
+                leading: GestureDetector(
+                  onTap: () {
+                    context.maybePopPage();
+                  },
+                  child: Transform.scale(
+                    scale: 1.2,
+                    child: SvgPicture.asset(
+                      AppAssets.backArrowIcon,
+                    ),
                   ),
                 ),
-              ),
-              backgroundColor: AppColor.surfaceBackgroundColor,
-              elevation: 0.0,
-              title: HeaderTitleWIdget(
-                categoryName: widget.categoryName,
-              ),
-              centerTitle: true,
-              bottom: AppBar(
-                surfaceTintColor: AppColor.surfaceBackgroundColor,
-                elevation: 0,
                 backgroundColor: AppColor.surfaceBackgroundColor,
-                // toolbarHeight: 80,
-                leadingWidth: 0,
-                titleSpacing: 0,
-                leading: const SizedBox.shrink(),
-                title: BottomSearchWIdget(
-                    searchController: _searchController,
-                    searchDelayFn: (value) {
-                      getData(
-                          categoryName: widget.categoryName,
-                          isScroll: false,
-                          mainSearch: value.isEmpty ? null : value);
-                    },
-                    confirmedFilter: confirmedFilter,
-                    categoryName: widget.categoryName,
-                    requestCall: () {
-                      getData(
-                          categoryName: widget.categoryName, isScroll: false);
-                    }),
-              ),
-            )),
+                elevation: 0.0,
+                title: HeaderTitleWIdget(
+                  categoryName: widget.categoryName,
+                ),
+                centerTitle: true,
+                bottom: bottomAppBar())),
         backgroundColor: AppColor.borderOutlineColor,
         body: Column(
           children: [
@@ -313,6 +290,108 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
         ));
   }
 
+  bottomAppBar() {
+    return AppBar(
+      surfaceTintColor: AppColor.surfaceBackgroundColor,
+      elevation: 0,
+      backgroundColor: AppColor.surfaceBackgroundColor,
+      leadingWidth: 0,
+      titleSpacing: 0,
+      leading: const SizedBox.shrink(),
+      title: CustomSearchTextFieldWidget(
+          showCloseIcon: _searchController.text.isNotEmpty,
+          onChange: (value) {
+            CategoryListController.delayedFunction(fn: () {
+              getData(
+                  categoryName: widget.categoryName,
+                  isScroll: false,
+                  mainSearch: value);
+            });
+          },
+          onIconTap: () {
+            _searchController.clear();
+
+            getData(categoryName: widget.categoryName, isScroll: false);
+          },
+          searchController: _searchController),
+      actions: [
+        _searchController.text.isNotEmpty
+            ? GestureDetector(
+                onTap: () {
+                  context.hideKeypad();
+                  _searchController.clear();
+
+                  CategoryListController.clearAppliedFilter(confirmedFilter);
+
+                  getData(categoryName: widget.categoryName, isScroll: false);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.only(right: 20),
+                  child: Text('Cancel',
+                      style: AppTypography.label14SM.copyWith(
+                        color: AppColor.textEmphasisColor,
+                      )),
+                ),
+              )
+            : iconFilterWidget(context)
+      ],
+    );
+  }
+
+  iconFilterWidget(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        context.hideKeypad();
+        await showModalBottomSheet(
+          useSafeArea: true,
+          enableDrag: false,
+          isDismissible: false,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+          backgroundColor: AppColor.surfaceBackgroundBaseColor,
+          isScrollControlled: true,
+          context: context,
+          builder: (_) {
+            return WillPopScope(
+              child: FilterSheetWidget(
+                confirmedFilter: confirmedFilter,
+                onDone: (value) {
+                  if (value.isNotEmpty ||
+                      CategoryListController.restConfirmFilterAlso == true) {
+                    CategoryListController.restConfirmFilterAlso = false;
+                    CategoryListController.confirmFilter(
+                        confirmedFilter: confirmedFilter,
+                        selectedFilter: value);
+                    // requestCall();
+                  }
+                },
+                categoryName: CategoryName.videoClasses,
+              ),
+              onWillPop: () async {
+                return false;
+              },
+            );
+          },
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 20),
+        padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 8),
+        decoration: BoxDecoration(
+            color: confirmedFilter.value.isEmpty
+                ? null
+                : AppColor.textEmphasisColor,
+            borderRadius: BorderRadius.circular(12)),
+        child: SvgPicture.asset(AppAssets.iconFilter,
+            color: confirmedFilter.value.isEmpty
+                ? AppColor.textEmphasisColor
+                : AppColor.textInvertEmphasis),
+      ),
+    );
+  }
+
   void checkAndNavigateFn(BuildContext context, int index) {
     if (widget.categoryName == CategoryName.videoClasses) {
       context.navigateTo(VideoAudioDetailView(id: listOndemandData[index].id));
@@ -359,7 +438,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
               CommonController.getListFilterOnDemandCategoryTypeFn(
                   count, value, onDemandCategoryVideoData);
               isLoadingNotifier = isScroll == true ? false : false;
-           
+
               setState(() {});
             } else if (value?.isEmpty ?? false) {
               nextPage = false;

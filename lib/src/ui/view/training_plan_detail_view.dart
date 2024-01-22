@@ -45,7 +45,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   Map<int, String> categoryFilterTypeData = {};
   List<Map<String, String>> workoutLocalData = [];
 
-
   @override
   void initState() {
     scrollController = ScrollController()
@@ -74,7 +73,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
         isLoadingNotifier = false;
         trainingPlanData = data;
 
-        
         await TrainingPlanDetailController.getGoal(context,
                 trainingPlanData: trainingPlanData)
             .then((value) {
@@ -100,8 +98,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
       }
     });
   }
-
-
 
   addWorkoutData() {
     for (var i = 0; i < listSheduleWorkoutData.length; i++) {
@@ -133,7 +129,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
       followTrainingData = null;
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -375,7 +370,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                     } else {
                                       int nextIndex =
                                           followTrainingData!.workoutCount + 1;
-                                  
+
                                       context.navigateTo(WorkoutDetailView(
                                           id: followTrainingData?.workoutData[
                                                       followTrainingData!
@@ -441,7 +436,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                             listSheduleWorkoutData.length,
                                         workoutCount: 0);
                                     box.add(data);
-                               
                                   },
                             child: value == true
                                 ? BaseHelper.loadingWidget()
@@ -555,7 +549,9 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
 
                                     return Padding(
                                       padding: const EdgeInsets.only(top: 16),
-                                      child: CustomTileTrainingPlanWidget(
+                                      child: CustomListtileWidget(
+                                          imageHeaderIcon:
+                                              AppAssets.workoutHeaderIcon,
                                           imageUrl: data.mapImage?.url ?? "",
                                           title: data.title ?? "",
                                           subtitle:
@@ -736,8 +732,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
               const EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 16),
           child: Column(
             children: [
-           
-
               ValueListenableBuilder(
                 valueListenable: goalLoader,
                 builder: (context, value, child) {

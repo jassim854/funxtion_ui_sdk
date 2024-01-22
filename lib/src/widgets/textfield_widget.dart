@@ -10,8 +10,9 @@ class CustomSearchTextFieldWidget extends StatelessWidget {
       this.onIconTap,
       this.hintText = 'Yoga, HIIT, cardio',
       this.margin =
-          const EdgeInsets.only(top: 10, left: 20, right: 10, bottom: 10),
-      this.onFieldTap});
+          const EdgeInsets.only(top: 10, left: 20, right: 8, bottom: 12),
+      this.onFieldTap,
+      this.focusNode});
   bool? showCloseIcon;
   void Function()? onIconTap;
   void Function(String)? onChange;
@@ -19,6 +20,7 @@ class CustomSearchTextFieldWidget extends StatelessWidget {
   String hintText;
   EdgeInsetsGeometry? margin;
   void Function()? onFieldTap;
+  FocusNode? focusNode;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,7 +31,8 @@ class CustomSearchTextFieldWidget extends StatelessWidget {
           color: AppColor.surfaceBackgroundSecondaryColor,
           borderRadius: BorderRadius.circular(12)),
       child: TextField(
-        enabled: onFieldTap != null ? false : true,
+        focusNode: focusNode,
+        readOnly: onFieldTap != null ? true : false,
         magnifierConfiguration: TextMagnifier.adaptiveMagnifierConfiguration,
         textAlignVertical: TextAlignVertical.center,
         onTap: onFieldTap,

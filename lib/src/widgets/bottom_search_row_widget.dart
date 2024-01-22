@@ -40,9 +40,8 @@ class BottomSearchWIdget extends StatelessWidget {
                 },
                 searchController: searchController)),
         searchController.text.isNotEmpty
-            ? InkWell(
+            ? GestureDetector(
                 onTap: () {
-                  context.hideKeypad();
                   searchController.clear();
 
                   CategoryListController.clearAppliedFilter(confirmedFilter);
@@ -71,7 +70,7 @@ class BottomSearchWIdget extends StatelessWidget {
           useSafeArea: true,
           enableDrag: false,
           isDismissible: false,
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16), topRight: Radius.circular(16))),
           backgroundColor: AppColor.surfaceBackgroundBaseColor,

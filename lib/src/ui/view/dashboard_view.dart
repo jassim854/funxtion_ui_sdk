@@ -63,8 +63,8 @@ class _DashBoardViewState extends State<DashBoardView> {
           leading: const SizedBox.shrink(),
           title: CustomSearchTextFieldWidget(
             onFieldTap: () {
-              // context.navigateTo(const SearchView());
-              // print('object');
+              context.navigateTo(const SearchView());
+              print('object');
             },
             hintText: 'Workouts, trainers, exercises',
             margin:
