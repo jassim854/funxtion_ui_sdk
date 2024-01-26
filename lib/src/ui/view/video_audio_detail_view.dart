@@ -28,7 +28,7 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
   void initState() {
     scrollController = ScrollController()
       ..addListener(() {
-        print(scrollController.offset);
+     
         if (scrollController.offset > 155) {
           centerTitle.value = true;
         } else if (scrollController.offset < 160) {
@@ -36,7 +36,7 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
         }
       });
     fetchData();
-    // TODO: implement initState
+
     super.initState();
   }
 

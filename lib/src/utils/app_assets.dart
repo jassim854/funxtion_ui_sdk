@@ -41,4 +41,5 @@ class AppAssets {
       'packages/ui_tool_kit/assets/icons_svg/back_arrow_icon.svg';
   static const String checkMarkIcon =
       'packages/ui_tool_kit/assets/icons_svg/check_mark_icon.svg';
+  static const String logo = 'packages/ui_tool_kit/assets/logo.png';
 }

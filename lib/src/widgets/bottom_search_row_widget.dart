@@ -29,7 +29,7 @@ class BottomSearchWIdget extends StatelessWidget {
                 onChange: (value) {
                   searchDelayFn(value);
 
-                  print(value);
+          
                   // setState(() {});
                 },
                 onIconTap: () {
@@ -77,7 +77,8 @@ class BottomSearchWIdget extends StatelessWidget {
           isScrollControlled: true,
           context: context,
           builder: (_) {
-            return WillPopScope(
+            return PopScope(
+              canPop: false,
               child: FilterSheetWidget(
                 confirmedFilter: confirmedFilter,
                 onDone: (value) {
@@ -92,9 +93,7 @@ class BottomSearchWIdget extends StatelessWidget {
                 },
                 categoryName: categoryName,
               ),
-              onWillPop: () async {
-                return false;
-              },
+        
             );
           },
         );

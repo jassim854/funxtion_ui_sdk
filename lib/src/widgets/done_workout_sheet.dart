@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ui_tool_kit/src/helper/boxes.dart';
 import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
 
-import 'package:ui_tool_kit/src/ui/view/training_plan_detail_view.dart';
 
 import '../../ui_tool_kit.dart';
 
@@ -255,10 +254,7 @@ class DoneWorkoutSheet extends StatelessWidget {
                                                   TrainingPlanDetailView(
                                                       id: followTrainingplanModel!
                                                           .trainingplanId,
-                                                      workoutLength:
-                                                          followTrainingplanModel!
-                                                              .totalWorkoutLength
-                                                              .toString()));
+                                              ));
                                             },
                                             childPadding:
                                                 const EdgeInsets.symmetric(
@@ -302,7 +298,7 @@ class DoneWorkoutSheet extends StatelessWidget {
                                               );
 
                                               context.navigateTo(
-                                                  TrainingPlanListView(
+                                                  const TrainingPlanListView(
                                                       initialIndex: 0));
                                             } else {
                                               Navigator.popUntil(
@@ -314,10 +310,7 @@ class DoneWorkoutSheet extends StatelessWidget {
                                                   TrainingPlanDetailView(
                                                 id: followTrainingplanModel!
                                                     .trainingplanId,
-                                                workoutLength:
-                                                    followTrainingplanModel!
-                                                        .totalWorkoutLength
-                                                        .toString(),
+                                              
                                               ));
                                             }
                                           },

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
-import 'package:ui_tool_kit/src/ui/view/start_workout_view.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
 class UpNextSheetWidget extends StatelessWidget {

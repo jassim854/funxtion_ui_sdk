@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import 'package:ui_tool_kit/src/ui/view/workout_detail_view.dart';
-
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
 class VideoAudioWorkoutListView extends StatefulWidget {
@@ -23,7 +21,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
   List<WorkoutModel> listWorkoutData = [];
 
   bool nextPage = true;
-  bool showCloseIcon = false;
+
   bool isLoadMore = false;
   bool isNodData = false;
 
@@ -354,24 +352,23 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
           isScrollControlled: true,
           context: context,
           builder: (_) {
-            return WillPopScope(
+            return PopScope(
               child: FilterSheetWidget(
-                confirmedFilter: confirmedFilter,
-                onDone: (value) {
-                  if (value.isNotEmpty ||
-                      CategoryListController.restConfirmFilterAlso == true) {
-                    CategoryListController.restConfirmFilterAlso = false;
-                    CategoryListController.confirmFilter(
-                        confirmedFilter: confirmedFilter,
-                        selectedFilter: value);
-                    // requestCall();
-                  }
-                },
-                categoryName: CategoryName.videoClasses,
-              ),
-              onWillPop: () async {
-                return false;
-              },
+                  confirmedFilter: confirmedFilter,
+                  onDone: (value) {
+                    if (value.isNotEmpty ||
+                        CategoryListController.restConfirmFilterAlso == true) {
+                      CategoryListController.restConfirmFilterAlso = false;
+                      CategoryListController.confirmFilter(
+                          confirmedFilter: confirmedFilter,
+                          selectedFilter: value);
+                      getData(
+                          categoryName: widget.categoryName, isScroll: false);
+                    }
+                  },
+                  categoryName: widget.categoryName),
+              onPopInvoked: (value) {},
+              canPop: false,
             );
           },
         );

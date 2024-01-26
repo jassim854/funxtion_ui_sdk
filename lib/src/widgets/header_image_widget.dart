@@ -3,8 +3,8 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../ui_tool_kit.dart';
 
-class BuildBodyWidget extends StatefulWidget {
-  const BuildBodyWidget({
+class BuildBodyWidget extends StatelessWidget {
+   BuildBodyWidget({
     super.key,
     required this.currentListData,
     this.goHereTap,
@@ -36,28 +36,36 @@ class BuildBodyWidget extends StatefulWidget {
   final ValueNotifier<bool>? amrapExpandNew;
   final ValueNotifier<bool>? enomExpandNew;
 
-  @override
-  State<BuildBodyWidget> createState() => _BuildBodyWidgetState();
-}
-
-class _BuildBodyWidgetState extends State<BuildBodyWidget> {
   ValueNotifier<bool>? ctExpand = ValueNotifier(true);
+
   ValueNotifier<bool>? crExpand = ValueNotifier(true);
+
   ValueNotifier<bool>? seExpand = ValueNotifier(true);
+
   ValueNotifier<bool>? rftExpand = ValueNotifier(true);
+
   ValueNotifier<bool>? ssExpand = ValueNotifier(true);
+
   ValueNotifier<bool>? amrapExpand = ValueNotifier(true);
+
   ValueNotifier<bool>? enomExpand = ValueNotifier(true);
+
   Map<ExerciseDetailModel, ExerciseModel> seExercise = {};
+
   Map<ExerciseDetailModel, ExerciseModel> circuitTimeExercise = {};
+
   Map<ExerciseDetailModel, ExerciseModel> rftExercise = {};
+
   Map<ExerciseDetailModel, ExerciseModel> ssExercise = {};
+
   Map<ExerciseDetailModel, ExerciseModel> circuitRepExercise = {};
+
   Map<ExerciseDetailModel, ExerciseModel> amrapExercise = {};
+
   Map<ExerciseDetailModel, ExerciseModel> enomExercise = {};
 
   addData() {
-    for (var element in widget.currentListData.entries) {
+    for (var element in currentListData.entries) {
       if (element.key.exerciseCategoryName == ItemType.circuitTime) {
         circuitTimeExercise.addEntries({element});
       }
@@ -83,23 +91,17 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 20, right: 20),
       color: AppColor.surfaceBackgroundColor,
       child: ValueListenableBuilder(
-          valueListenable: widget.expandHeaderValueListenable,
+          valueListenable: expandHeaderValueListenable,
           builder: (_, value, child) {
             return ExpandedSection(
               expand: value,
               child: ValueListenableBuilder(
-                valueListenable: widget.loaderValueListenable,
+                valueListenable: loaderValueListenable,
                 builder: (_, value, child) {
                   return value == true
                       ? Padding(
@@ -108,13 +110,13 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                             child: BaseHelper.loadingWidget(),
                           ),
                         )
-                      : widget.currentListData.isEmpty
+                      : currentListData.isEmpty
                           ? const Center(
                               child: Text('No Data'),
                             )
                           : ListView.builder(
                               padding: const EdgeInsets.all(0),
-                              itemCount: widget.currentListData.length,
+                              itemCount: currentListData.length,
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
@@ -122,7 +124,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                   addData();
                                 }
 
-                                return widget.currentListData.keys
+                                return currentListData.keys
                                             .toList()[index]
                                             .exerciseCategoryName ==
                                         ItemType.circuitTime
@@ -130,11 +132,11 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                         children: [
                                           header2CheckWidget(
                                               index: index,
-                                              expandVar: widget.ctExpandNew ??
+                                              expandVar: ctExpandNew ??
                                                   ctExpand!),
                                           ValueListenableBuilder<bool>(
                                               valueListenable:
-                                                  widget.ctExpandNew ??
+                                                  ctExpandNew ??
                                                       ctExpand!,
                                               builder: (_, value, child) {
                                                 return ExpandedSection(
@@ -143,7 +145,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                     roundCheckWidget(index),
                                                     showExerciseTileWidget(
                                                       context,
-                                                      widget.currentListData,
+                                                      currentListData,
                                                       index,
                                                     ),
                                                     cutomDiviDerWidget(index)
@@ -152,7 +154,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                               })
                                         ],
                                       )
-                                    : widget.currentListData.keys
+                                    : currentListData.keys
                                                 .toList()[index]
                                                 .exerciseCategoryName ==
                                             ItemType.singleExercise
@@ -161,11 +163,11 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                               header2CheckWidget(
                                                   index: index,
                                                   expandVar:
-                                                      widget.seExpandNew ??
+                                                      seExpandNew ??
                                                           seExpand!),
                                               ValueListenableBuilder<bool>(
                                                   valueListenable:
-                                                      widget.seExpandNew ??
+                                                      seExpandNew ??
                                                           seExpand!,
                                                   builder: (_, value, child) {
                                                     return ExpandedSection(
@@ -176,8 +178,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                           12.height(),
                                                         showExerciseTileWidget(
                                                           context,
-                                                          widget
-                                                              .currentListData,
+                                                          currentListData,
                                                           index,
                                                         ),
                                                         cutomDiviDerWidget(
@@ -187,7 +188,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                   })
                                             ],
                                           )
-                                        : widget.currentListData.keys
+                                        : currentListData.keys
                                                     .toList()[index]
                                                     .exerciseCategoryName ==
                                                 ItemType.superSet
@@ -196,11 +197,11 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                   header2CheckWidget(
                                                       index: index,
                                                       expandVar:
-                                                          widget.ssExpandNew ??
+                                                          ssExpandNew ??
                                                               ssExpand!),
                                                   ValueListenableBuilder<bool>(
                                                       valueListenable:
-                                                          widget.ssExpandNew ??
+                                                          ssExpandNew ??
                                                               ssExpand!,
                                                       builder:
                                                           (_, value, child) {
@@ -212,8 +213,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                                 index),
                                                             showExerciseTileWidget(
                                                               context,
-                                                              widget
-                                                                  .currentListData,
+                                                              currentListData,
                                                               index,
                                                             ),
                                                             cutomDiviDerWidget(
@@ -223,7 +223,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                       })
                                                 ],
                                               )
-                                            : widget.currentListData.keys
+                                            : currentListData.keys
                                                         .toList()[index]
                                                         .exerciseCategoryName ==
                                                     ItemType.circuitRep
@@ -231,13 +231,11 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                     children: [
                                                       header2CheckWidget(
                                                           index: index,
-                                                          expandVar: widget
-                                                                  .crExpandNew ??
+                                                          expandVar: crExpandNew ??
                                                               crExpand!),
                                                       ValueListenableBuilder<
                                                               bool>(
-                                                          valueListenable: widget
-                                                                  .crExpandNew ??
+                                                          valueListenable: crExpandNew ??
                                                               crExpand!,
                                                           builder: (_, value,
                                                               child) {
@@ -249,8 +247,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                                         index),
                                                                     showExerciseTileWidget(
                                                                       context,
-                                                                      widget
-                                                                          .currentListData,
+                                                                      currentListData,
                                                                       index,
                                                                     ),
                                                                     cutomDiviDerWidget(
@@ -260,7 +257,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                           })
                                                     ],
                                                   )
-                                                : widget.currentListData.keys
+                                                : currentListData.keys
                                                             .toList()[index]
                                                             .exerciseCategoryName ==
                                                         ItemType.rft
@@ -268,13 +265,12 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                         children: [
                                                           header2CheckWidget(
                                                               index: index,
-                                                              expandVar: widget
-                                                                      .rftExpandNew ??
+                                                              expandVar: rftExpandNew ??
                                                                   rftExpand!),
                                                           ValueListenableBuilder<
                                                                   bool>(
                                                               valueListenable:
-                                                                  widget.rftExpandNew ??
+                                                                  rftExpandNew ??
                                                                       rftExpand!,
                                                               builder: (_,
                                                                   value,
@@ -288,8 +284,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                                         12.height(),
                                                                         showExerciseTileWidget(
                                                                           context,
-                                                                          widget
-                                                                              .currentListData,
+                                                                          currentListData,
                                                                           index,
                                                                         ),
                                                                         cutomDiviDerWidget(
@@ -299,7 +294,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                               })
                                                         ],
                                                       )
-                                                    : widget.currentListData
+                                                    : currentListData
                                                                 .keys
                                                                 .toList()[index]
                                                                 .exerciseCategoryName ==
@@ -308,13 +303,12 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                             children: [
                                                               header2CheckWidget(
                                                                   index: index,
-                                                                  expandVar: widget
-                                                                          .enomExpandNew ??
+                                                                  expandVar: enomExpandNew ??
                                                                       enomExpand!),
                                                               ValueListenableBuilder<
                                                                       bool>(
                                                                   valueListenable:
-                                                                      widget.enomExpandNew ??
+                                                                      enomExpandNew ??
                                                                           enomExpand!,
                                                                   builder: (_,
                                                                       value,
@@ -327,7 +321,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                                             roundCheckWidget(index),
                                                                             showExerciseTileWidget(
                                                                               context,
-                                                                              widget.currentListData,
+                                                                              currentListData,
                                                                               index,
                                                                             ),
                                                                             cutomDiviDerWidget(index)
@@ -336,7 +330,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                                   })
                                                             ],
                                                           )
-                                                        : widget.currentListData
+                                                        : currentListData
                                                                     .keys
                                                                     .toList()[
                                                                         index]
@@ -348,12 +342,12 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                                       index:
                                                                           index,
                                                                       expandVar:
-                                                                          widget.amrapExpandNew ??
+                                                                          amrapExpandNew ??
                                                                               amrapExpand!),
                                                                   ValueListenableBuilder<
                                                                           bool>(
                                                                       valueListenable:
-                                                                          widget.amrapExpandNew ??
+                                                                          amrapExpandNew ??
                                                                               amrapExpand!,
                                                                       builder: (_,
                                                                           value,
@@ -366,7 +360,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                                                                             roundCheckWidget(index),
                                                                             showExerciseTileWidget(
                                                                               context,
-                                                                              widget.currentListData,
+                                                                              currentListData,
                                                                               index,
                                                                             ),
                                                                             cutomDiviDerWidget(index)
@@ -391,7 +385,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
       required ValueNotifier<bool> expandVar}) {
     return index == 0
         ? BuildHeader2(
-            subtitle: widget.currentListData.currentHeaderSubTitle(
+            subtitle: currentListData.currentHeaderSubTitle(
               index: index,
               amrapExercise: amrapExercise,
               circuitRepExercise: circuitRepExercise,
@@ -403,19 +397,19 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
             ),
             expandValueListenable: expandVar,
             exerciseWorkoutData: WorkoutDetailController.addCurrentList(
-                index, widget.currentListData),
-            title: widget.currentListData.currentHeaderTitle(index),
+                index, currentListData),
+            title: currentListData.currentHeaderTitle(index),
             onExpand: () {
               expandVar.value = !expandVar.value;
               // setState(() {});
             })
-        : index == widget.currentListData.length - 1
+        : index == currentListData.length - 1
             ? Container()
-            : widget.currentListData.entries
+            : currentListData.entries
                         .toList()[index]
                         .key
                         .exerciseCategoryName !=
-                    widget.currentListData.entries
+                    currentListData.entries
                         .toList()[index - 1]
                         .key
                         .exerciseCategoryName
@@ -428,7 +422,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                       // 8.height(),
                       BuildHeader2(
                           subtitle:
-                              widget.currentListData.currentHeaderSubTitle(
+                              currentListData.currentHeaderSubTitle(
                             index: index,
                             amrapExercise: amrapExercise,
                             circuitRepExercise: circuitRepExercise,
@@ -441,9 +435,9 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                           expandValueListenable: expandVar,
                           exerciseWorkoutData:
                               WorkoutDetailController.addCurrentList(
-                                  index, widget.currentListData),
+                                  index, currentListData),
                           title:
-                              widget.currentListData.currentHeaderTitle(index),
+                              currentListData.currentHeaderTitle(index),
                           onExpand: () {
                             expandVar.value = !expandVar.value;
                             // setState(() {});
@@ -457,22 +451,22 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
     return i == 0
         ? RoundWidget(
             i: i,
-            listData: widget.currentListData,
+            listData: currentListData,
           )
-        : i == widget.currentListData.length - 1
+        : i == currentListData.length - 1
             ? Container()
-            : widget.currentListData.entries.toList()[i].key.setsCount !=
-                    widget.currentListData.entries.toList()[i - 1].key.setsCount
+            : currentListData.entries.toList()[i].key.setsCount !=
+                    currentListData.entries.toList()[i - 1].key.setsCount
                 ? RoundWidget(
                     i: i,
-                    listData: widget.currentListData,
+                    listData: currentListData,
                   )
                 : Container();
   }
 
   cutomDiviDerWidget(int i) {
-    return i == 0 && widget.currentListData.length > 1
-        ? Padding(
+    return i == 0 && currentListData.length > 1
+        ? const Padding(
             padding: EdgeInsets.only(top: 12, bottom: 12),
             child: CustomDivider(
               indent: 145,
@@ -481,18 +475,18 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
               // endIndent: context.dynamicWidth * 0.02,
             ),
           )
-        : i == widget.currentListData.length - 1
+        : i == currentListData.length - 1
             ? Container()
-            : widget.currentListData.entries.toList()[i + 1].key.setsCount ==
-                        widget.currentListData.entries
+            : currentListData.entries.toList()[i + 1].key.setsCount ==
+                        currentListData.entries
                             .toList()[i]
                             .key
                             .setsCount ||
-                    widget.currentListData.entries
+                    currentListData.entries
                             .toList()[i + 1]
                             .key
                             .exerciseCategoryName !=
-                        widget.currentListData.entries
+                        currentListData.entries
                             .toList()[i]
                             .key
                             .exerciseCategoryName
@@ -561,16 +555,16 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                             .copyWith(color: AppColor.textEmphasisColor),
                       ),
                       Text(
-                          widget.currentListData.keys
+                          currentListData.keys
                                           .toList()[index]
                                           .exerciseCategoryName ==
                                       ItemType.singleExercise ||
-                                  widget.currentListData.keys
+                                  currentListData.keys
                                           .toList()[index]
                                           .exerciseCategoryName ==
                                       ItemType.rft
-                              ? "${widget.currentListData.keys.toList()[index].getGoalAndResistantTargets} • ${widget.currentListData.keys.toList()[index].setsCount} sets"
-                              : widget.currentListData.keys
+                              ? "${currentListData.keys.toList()[index].getGoalAndResistantTargets} • ${currentListData.keys.toList()[index].setsCount} sets"
+                              : currentListData.keys
                                   .toList()[index]
                                   .getGoalAndResistantTargets,
                           style: AppTypography.paragraph14MD.copyWith(
@@ -582,7 +576,7 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
               ],
             ),
           ),
-          widget.showTrailing == true
+          showTrailing == true
               ? PopupMenuButton(
                   // iconSize: 16,
                   onSelected: (value) {
@@ -598,8 +592,8 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                       // context.navigateTo(DetailExerciseBottomSheet(
                       //     exerciseModel: warmupListData[index]));
                     } else if (value == 2) {
-                      if (widget.goHereTap != null) {
-                        widget.goHereTap!(index);
+                      if (goHereTap != null) {
+                        goHereTap!(index);
                       }
                     }
                   },
@@ -646,7 +640,6 @@ class _BuildBodyWidgetState extends State<BuildBodyWidget> {
                     color: AppColor.surfaceBrandDarkColor,
                   ))
               : const SizedBox.shrink(),
-       
         ],
       ),
     );

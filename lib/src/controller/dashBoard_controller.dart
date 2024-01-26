@@ -67,14 +67,12 @@ class DashBoardController {
       BaseHelper.showSnackBar(context, e.message);
     }
     await CommonController.getListGoalData(
-        context, 0,trainingPlanData, false, fitnessGoalData);
-    await CommonController.getListFilterOnDemandCategoryTypeFn(0,
-        audioData, audioDataType);
-    await CommonController.getListFilterOnDemandCategoryTypeFn(0,
-        onDemadDataVideo, videoDataType);
+        context, 0, trainingPlanData, false, fitnessGoalData);
+    await CommonController.getListFilterOnDemandCategoryTypeFn(
+        0, audioData, audioDataType);
+    await CommonController.getListFilterOnDemandCategoryTypeFn(
+        0, onDemadDataVideo, videoDataType);
     await CommonController.filterCategoryTypeData(workoutData, workoutDataType);
-
+    isLoading.value = false;
   }
-
-  
 }

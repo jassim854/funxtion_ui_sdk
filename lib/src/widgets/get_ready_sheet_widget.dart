@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
 
-import 'package:ui_tool_kit/src/ui/view/start_workout_view.dart';
 
 import '../../ui_tool_kit.dart';
 

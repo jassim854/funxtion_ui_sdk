@@ -18,7 +18,7 @@ class HeaderExerciseInfoSheet extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 16,
               ),
               Text(

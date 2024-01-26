@@ -47,7 +47,7 @@ class _StartWorkoutHeaderWidgetState extends State<StartWorkoutHeaderWidget> {
         widget.durationNotifier.value += 1;
       });
     }
-    // TODO: implement initState
+  
     super.initState();
   }
 
@@ -60,7 +60,7 @@ class _StartWorkoutHeaderWidgetState extends State<StartWorkoutHeaderWidget> {
       }
     });
 
-    // TODO: implement dispose
+   
     super.dispose();
   }
 

@@ -15,7 +15,7 @@ class CategoryListController {
       String? limitContentPerPage,
       String? pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
-    print(pageNumber);
+   
 
     try {
       final fetcheddata = await OnDemandRequest.listOnDemand(
@@ -48,7 +48,7 @@ class CategoryListController {
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
-      print(e.response);
+  
     }
 
     return null;
@@ -59,7 +59,7 @@ class CategoryListController {
       String? limitContentPerPage,
       String? pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
-    print(pageNumber);
+   
     try {
       // log(" level query ${searchFilter('level', confirmedFilter.value)}");
       final fetcheddata = await OnDemandRequest.listOnDemand(
@@ -92,7 +92,7 @@ class CategoryListController {
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
-      print(e.response);
+
     }
 
     return null;
@@ -103,7 +103,7 @@ class CategoryListController {
       String? limitContentPerPage,
       String? pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
-    print(pageNumber);
+  
    
 
     try {
@@ -139,7 +139,7 @@ class CategoryListController {
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
-      print(e.response);
+
     }
 
     return null;
@@ -150,7 +150,7 @@ class CategoryListController {
       String? limitContentPerPage,
       String? pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
-    print(pageNumber);
+
 
     try {
       final fetcheddata = await TrainingPlanRequest.listOfTrainingPlan(
@@ -179,7 +179,7 @@ class CategoryListController {
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
-      print(e.response);
+
     }
 
     return null;
@@ -271,7 +271,7 @@ class CategoryListController {
               if (element['key'] == "q" ||
                   element['key'] == "type" ||
                   element['key'] == "content_package") {
-                print('got it');
+          
               } else if (element['values'].length > 2) {
                 onDemandfiltersData.add(OnDemandFiltersModel.fromJson(element));
               }
@@ -288,7 +288,7 @@ class CategoryListController {
             for (var element in value!) {
               if (element['key'] == "q" ||
                   element['key'] == "content_package") {
-                print('got it');
+            
               } else if (element['values'].length > 2) {
                 onDemandfiltersData.add(OnDemandFiltersModel.fromJson(element));
               }
@@ -305,7 +305,7 @@ class CategoryListController {
                   element['key'] == "type" ||
                   element['key'] == "content_package" ||
                   element['key'] == "max_days_per_week") {
-                print('got it');
+        
               } else if (element['values'].length > 2) {
                 onDemandfiltersData.add(OnDemandFiltersModel.fromJson(element));
               }

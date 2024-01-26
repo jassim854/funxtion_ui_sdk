@@ -60,7 +60,6 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     checkData();
     scrollController = ScrollController()
       ..addListener(() {
-        print(scrollController.offset);
         if (scrollController.offset > 155) {
           centerTitle.value = true;
         } else if (scrollController.offset < 160) {
@@ -70,7 +69,6 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
 
     fetchData();
 
-    // TODO: implement initState
     super.initState();
   }
 
@@ -146,10 +144,12 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
         }
         if (workoutData?.bodyParts?.isNotEmpty == true &&
             WorkoutDetailController.shouldBreakLoop == false) {
-          if (workoutData?.goals?.isEmpty == true &&
-              WorkoutDetailController.shouldBreakLoop == false)
-            goalLoader.value = false;
           bodyPartLoader.value = true;
+          if (workoutData?.goals?.isEmpty == true &&
+              WorkoutDetailController.shouldBreakLoop == false) {
+            goalLoader.value = false;
+          }
+
           try {
             WorkoutDetailController.getBodyPart(
                     context, workoutData?.bodyParts?.first.toString() ?? "")
@@ -220,7 +220,6 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
       _timer?.cancel();
     }
 
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -491,10 +490,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
         isDismissible: false,
         enableDrag: false,
         context: context,
-        builder: (context) => WillPopScope(
-              onWillPop: () {
-                return Future.value(false);
-              },
+        builder: (context) => PopScope(
+              canPop: false,
               child: GetReadySheetWidget(
                 equipmentData: equipmentData,
                 fitnessGoalModel: fitnessGoalData,
@@ -667,4 +664,3 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     );
   }
 }
-

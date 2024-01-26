@@ -19,3 +19,4 @@ export 'package:ui_tool_kit/src/model/network_models/workout_model.dart';
 export 'package:ui_tool_kit/src/model/network_models/body_part_model.dart';
 export 'package:ui_tool_kit/src/model/exercise_detail_model.dart';
 export 'package:ui_tool_kit/src/model/network_models/on_demand_filters_model.dart';
+export 'package:ui_tool_kit/src/model/network_models/search_content_model.dart';

@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
@@ -9,6 +11,7 @@ class CustomSearchTextFieldWidget extends StatelessWidget {
       this.onChange,
       this.onIconTap,
       this.hintText = 'Yoga, HIIT, cardio',
+      this.onSubmitted,
       this.margin =
           const EdgeInsets.only(top: 10, left: 20, right: 8, bottom: 12),
       this.onFieldTap,
@@ -20,6 +23,7 @@ class CustomSearchTextFieldWidget extends StatelessWidget {
   String hintText;
   EdgeInsetsGeometry? margin;
   void Function()? onFieldTap;
+  void Function(String)? onSubmitted;
   FocusNode? focusNode;
   @override
   Widget build(BuildContext context) {
@@ -38,6 +42,12 @@ class CustomSearchTextFieldWidget extends StatelessWidget {
         onTap: onFieldTap,
         onChanged: onChange,
         controller: searchController,
+        textInputAction: TextInputAction.search,
+        onSubmitted: (value) {
+          if (onSubmitted != null) {
+            onSubmitted!(value);
+          }
+        },
         style: AppTypography.paragraph14MD
             .copyWith(color: AppColor.textSubTitleColor),
         decoration: InputDecoration(
