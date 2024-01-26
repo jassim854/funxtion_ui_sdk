@@ -1,9 +1,9 @@
-import 'dart:developer';
+
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:funxtion/funxtion_sdk.dart';
-import 'package:ui_tool_kit/src/model/exercise_detail_model.dart';
+
 
 import '../../ui_tool_kit.dart';
 
@@ -109,7 +109,7 @@ class WorkoutDetailController {
         }
       });
     } on RequestException catch (e) {
-      print(e.message);
+
     }
   }
 

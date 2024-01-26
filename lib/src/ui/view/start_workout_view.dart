@@ -19,17 +19,18 @@ class StartWorkoutView extends StatefulWidget {
   final List<EquipmentModel> equipmentData;
   final FollowTrainingplanModel? followTrainingplanModel;
 
-  const StartWorkoutView(
-      {super.key,
-      required this.workoutModel,
-      required this.warmUpData,
-      required this.trainingData,
-      required this.coolDownData,
-      this.fitnessGoalModel,
-      required this.durationNotifier,
-      required this.equipmentData,
-      required this.mainTimer,
-      required this.followTrainingplanModel,});
+  const StartWorkoutView({
+    super.key,
+    required this.workoutModel,
+    required this.warmUpData,
+    required this.trainingData,
+    required this.coolDownData,
+    this.fitnessGoalModel,
+    required this.durationNotifier,
+    required this.equipmentData,
+    required this.mainTimer,
+    required this.followTrainingplanModel,
+  });
 
   @override
   State<StartWorkoutView> createState() => _StartWorkoutViewState();
@@ -63,8 +64,6 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
         if (secondsCountDown.value > 0) {
           secondsCountDown.value -= 1;
-
-          print(secondsCountDown);
         } else if (secondsCountDown.value == 0) {
           _timer?.cancel();
           if (nextElementText == "Training") {
@@ -343,7 +342,6 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
       _timer?.cancel();
     }
 
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -563,8 +561,8 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                   margin: const EdgeInsets.only(
                                       left: 45, right: 45, top: 8, bottom: 16),
                                   child: cacheNetworkWidget(context,
-                                          height: 190,
-                                                      width: context.dynamicWidth.toInt(),
+                                      height: 190,
+                                      width: context.dynamicWidth.toInt(),
                                       imageUrl: value == true
                                           ? data?.mapGif?.url ?? ''
                                           : data?.mapImage?.url ?? ''));
@@ -1193,13 +1191,11 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
       isDismissible: false,
       enableDrag: false,
       context: context,
-      builder: (context) => WillPopScope(
-        onWillPop: () {
+      builder: (context) => PopScope(
+        onPopInvoked: (value) {
           isPlaying.value = true;
-          return Future.value(true);
         },
         child: DoneWorkoutSheet(
-    
             type: widget.fitnessGoalModel?.name.toString() ?? "",
             workoutName: widget.workoutModel.title.toString(),
             totalDuration: widget.durationNotifier.value,
@@ -1266,8 +1262,6 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
       }
     });
   }
-
-
 
   Text mordernDurationMSTextWidget(
       {required Duration clockTimer, Color? color}) {

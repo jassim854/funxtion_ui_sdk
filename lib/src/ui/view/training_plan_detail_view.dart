@@ -1,19 +1,18 @@
+
+
 import 'package:flutter/material.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ui_tool_kit/src/helper/boxes.dart';
 import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
-import 'package:ui_tool_kit/src/ui/view/workout_detail_view.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
 class TrainingPlanDetailView extends StatefulWidget {
-  final String workoutLength;
   final String id;
 
   const TrainingPlanDetailView({
     super.key,
     required this.id,
-    required this.workoutLength,
   });
 
   @override
@@ -45,12 +44,11 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   Map<int, String> categoryFilterTypeData = {};
   List<Map<String, String>> workoutLocalData = [];
 
-
   @override
   void initState() {
     scrollController = ScrollController()
       ..addListener(() {
-        print(scrollController.offset);
+  
         if (scrollController.offset > 90) {
           centerTitle.value = true;
         } else if (scrollController.offset < 105) {
@@ -60,7 +58,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
 
     fetchData();
 
-    // TODO: implement initState
     super.initState();
   }
 
@@ -74,7 +71,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
         isLoadingNotifier = false;
         trainingPlanData = data;
 
-        
         await TrainingPlanDetailController.getGoal(context,
                 trainingPlanData: trainingPlanData)
             .then((value) {
@@ -86,12 +82,14 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
           }
         });
         setState(() {});
-
-        TrainingPlanDetailController.shedulePlanFn(context,
-            listSheduleWorkoutData: listSheduleWorkoutData,
-            shedulePlanLoader: shedulePlanLoader,
-            trainingPlanData: trainingPlanData,
-            weekIndex: weekIndex);
+        if (trainingPlanData!.weeks!.isNotEmpty) {
+          // ignore: use_build_context_synchronously
+          TrainingPlanDetailController.shedulePlanFn(context,
+              listSheduleWorkoutData: listSheduleWorkoutData,
+              shedulePlanLoader: shedulePlanLoader,
+              trainingPlanData: trainingPlanData,
+              weekIndex: weekIndex);
+        }
       } else if (context.mounted) {
         setState(() {
           isLoadingNotifier = false;
@@ -100,8 +98,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
       }
     });
   }
-
-
 
   addWorkoutData() {
     for (var i = 0; i < listSheduleWorkoutData.length; i++) {
@@ -118,7 +114,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   @override
   void dispose() {
     scrollController.dispose();
-    // TODO: implement dispose
+
     super.dispose();
   }
 
@@ -133,7 +129,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
       followTrainingData = null;
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -163,12 +158,43 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                             "${trainingPlanData?.title}",
                                         flexibleTitle:
                                             "${trainingPlanData?.title}",
-                                        flexibleSubtitleWidget: Text(
-                                          "${widget.workoutLength} workouts • ${fitnessGoalData?.name} • ${trainingPlanData?.level.toString()}",
-                                          style: AppTypography.label16MD
-                                              .copyWith(
-                                                  color: AppColor
-                                                      .textInvertPrimaryColor),
+                                        flexibleSubtitleWidget: Row(
+                                          children: [
+                                            ValueListenableBuilder(
+                                                valueListenable:
+                                                    shedulePlanLoader,
+                                                builder: (_, value, child) {
+                                                  return value == true
+                                                      ? SizedBox(
+                                                          height: 12,
+                                                          width: 12,
+                                                          child: BaseHelper
+                                                              .loadingWidget(),
+                                                        )
+                                                      : Text(
+                                                          '${listSheduleWorkoutData.length} ${listSheduleWorkoutData.length > 1 ? "workouts" : "workout"}',
+                                                          style: AppTypography
+                                                              .label16MD
+                                                              .copyWith(
+                                                                  color: AppColor
+                                                                      .textInvertPrimaryColor),
+                                                        );
+                                                }),
+                                            Text(
+                                              " • ${fitnessGoalData?.name}",
+                                              style: AppTypography.label16MD
+                                                  .copyWith(
+                                                      color: AppColor
+                                                          .textInvertPrimaryColor),
+                                            ),
+                                            Text(
+                                              " • ${trainingPlanData?.level.toString()}",
+                                              style: AppTypography.label16MD
+                                                  .copyWith(
+                                                      color: AppColor
+                                                          .textInvertPrimaryColor),
+                                            )
+                                          ],
                                         ),
                                         backGroundImg: trainingPlanData
                                                 ?.mapImage?.url
@@ -185,9 +211,13 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                             Text(
                                                 "${followTrainingData?.workoutCount}/${followTrainingData?.totalWorkoutLength}"),
                                             4.height(),
-                                            FollowedBorderWidget(
-                                                followTrainingData:
-                                                    followTrainingData),
+                                            if (followTrainingData
+                                                    ?.workoutCount !=
+                                                followTrainingData
+                                                    ?.totalWorkoutLength)
+                                              FollowedBorderWidget(
+                                                  followTrainingData:
+                                                      followTrainingData),
                                           ],
                                         ),
                                       ),
@@ -196,8 +226,22 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                                   .toString() ??
                                               ""),
                                       cardBoxWidget(),
-                                      schedulHeadingWidget(),
-                                      sheduleCardBoxWidget(context, box),
+                                      SliverToBoxAdapter(
+                                          child: ValueListenableBuilder(
+                                        valueListenable: shedulePlanLoader,
+                                        builder: (_, value, child) {
+                                          return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              schedulHeadingWidget(),
+                                              sheduleCardBoxWidget(
+                                                  context, box, value),
+                                            ],
+                                          );
+                                          // : Container();
+                                        },
+                                      )),
                                       if (followTrainingData != null)
                                         SliverPadding(
                                           padding: const EdgeInsets.all(20),
@@ -275,15 +319,13 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
         });
   }
 
-  SliverToBoxAdapter schedulHeadingWidget() {
-    return SliverToBoxAdapter(
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12, top: 35, left: 20),
-        child: Text(
-          'Schedule',
-          style: AppTypography.title18LG
-              .copyWith(color: AppColor.textEmphasisColor),
-        ),
+  schedulHeadingWidget() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12, top: 35, left: 20),
+      child: Text(
+        'Schedule',
+        style:
+            AppTypography.title18LG.copyWith(color: AppColor.textEmphasisColor),
       ),
     );
   }
@@ -305,9 +347,8 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (box.values.any((element) =>
-                            element.workoutCount <
-                            element.totalWorkoutLength)) ...[
+                        if (followTrainingData?.workoutCount !=
+                            followTrainingData?.totalWorkoutLength) ...[
                           Text(
                             "Next up",
                             style: AppTypography.paragraph12SM
@@ -336,9 +377,22 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                               .copyWith(color: AppColor.textEmphasisColor),
                         ),
                         2.height(),
-                        Text("${widget.workoutLength} workouts",
-                            style: AppTypography.paragraph12SM
-                                .copyWith(color: AppColor.textPrimaryColor))
+                        ValueListenableBuilder(
+                            valueListenable: shedulePlanLoader,
+                            builder: (_, value, child) {
+                              return value == true
+                                  ? SizedBox(
+                                      height: 12,
+                                      width: 12,
+                                      child: BaseHelper.loadingWidget(),
+                                    )
+                                  : Text(
+                                      '${listSheduleWorkoutData.length} ${listSheduleWorkoutData.length > 1 ? "workouts" : "workout"}',
+                                      style: AppTypography.paragraph12SM
+                                          .copyWith(
+                                              color:
+                                                  AppColor.textPrimaryColor));
+                            }),
                       ],
                     )),
           Expanded(
@@ -348,17 +402,16 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                     return box.values.any((element) =>
                             element.trainingplanId == trainingPlanData?.id)
                         ? SheduletButtonWidget(
-                            text: box.values.any((element) =>
-                                    element.workoutCount ==
-                                    element.totalWorkoutLength)
+                            text: followTrainingData?.workoutCount ==
+                                    followTrainingData?.totalWorkoutLength
                                 ? "Done"
                                 : 'Next Workout',
                             onPressed: value == true
                                 ? null
                                 : () {
-                                    if (box.values.any((element) =>
-                                        element.workoutCount ==
-                                        element.totalWorkoutLength)) {
+                                    if (followTrainingData?.workoutCount ==
+                                        followTrainingData
+                                            ?.totalWorkoutLength) {
                                       for (var i = 0;
                                           i < Boxes.getData().length;
                                           i++) {
@@ -375,7 +428,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                     } else {
                                       int nextIndex =
                                           followTrainingData!.workoutCount + 1;
-                                  
+
                                       context.navigateTo(WorkoutDetailView(
                                           id: followTrainingData?.workoutData[
                                                       followTrainingData!
@@ -441,7 +494,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                             listSheduleWorkoutData.length,
                                         workoutCount: 0);
                                     box.add(data);
-                               
                                   },
                             child: value == true
                                 ? BaseHelper.loadingWidget()
@@ -452,276 +504,234 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
     );
   }
 
-  SliverToBoxAdapter sheduleCardBoxWidget(
-      BuildContext context, Box<FollowTrainingplanModel> box) {
-    return SliverToBoxAdapter(
-        child: Card(
-            elevation: 0.2,
-            color: AppColor.surfaceBackgroundColor,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ValueListenableBuilder(
-                valueListenable: shedulePlanLoader,
-                builder: (_, value, child) {
-                  return value == true
-                      ? Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Center(
-                            child: BaseHelper.loadingWidget(),
-                          ),
-                        )
-                      : Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            box.values.any((element) =>
-                                        element.trainingplanId ==
-                                        trainingPlanData?.id) ==
-                                    false
-                                ? Container()
-                                : SizedBox(
-                                    width: 25,
-                                    child: ListView.builder(
-                                      padding: EdgeInsets.only(top: 46),
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount: listSheduleWorkoutData.length,
-                                      itemBuilder: (context, index) {
-                                        return Column(
-                                          children: [
-                                            StepWidget(
-                                                isCompleted: box.values.any((element) =>
-                                                            element.trainingplanId ==
-                                                                trainingPlanData
-                                                                    ?.id &&
-                                                            index <=
-                                                                element.workoutCount -
-                                                                    1
-                                                                        .toInt()) ==
-                                                        true
-                                                    ? true
-                                                    : false,
-                                                isActive: box.values.any((element) =>
-                                                            element.trainingplanId ==
-                                                                trainingPlanData
-                                                                    ?.id &&
-                                                            index ==
-                                                                element
-                                                                    .workoutCount
-                                                                    .toInt()) ==
-                                                        true
-                                                    ? true
-                                                    : false),
-                                            if (index !=
-                                                listSheduleWorkoutData.length -
-                                                    1)
-                                              LineWidget(
-                                                height: 78,
-                                                color: box.values.any((element) =>
-                                                        element.trainingplanId ==
-                                                            trainingPlanData
-                                                                ?.id &&
-                                                        index <=
-                                                            element.workoutCount -
-                                                                1.toInt())
-                                                    ? AppColor
-                                                        .surfaceBrandDarkColor
-                                                    : null,
-                                              )
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                  ),
-                            Expanded(
-                              child: ListView.builder(
-                                  shrinkWrap: true,
-                                  padding: const EdgeInsets.only(left: 15),
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: listSheduleWorkoutData.length,
-                                  itemBuilder: (context, index) {
-                                    if (categoryFilterTypeData.isEmpty) {
-                                      CommonController.filterCategoryTypeData(
-                                          listSheduleWorkoutData,
-                                          categoryFilterTypeData);
-                                    }
-                                    if (workoutLocalData.isEmpty) {
-                                      addWorkoutData();
-                                    }
-                                    WorkoutModel? data =
-                                        listSheduleWorkoutData[index];
-
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 16),
-                                      child: CustomTileTrainingPlanWidget(
-                                          imageUrl: data.mapImage?.url ?? "",
-                                          title: data.title ?? "",
-                                          subtitle:
-                                              " ${data.duration} • ${categoryFilterTypeData[index]} • ${data.level.toString()}",
-                                          onTap: () {
-                                            if (followTrainingData != null) {
-                                              if (followTrainingData!
-                                                      .workoutCount ==
-                                                  index) {
-                                                // followTrainingData
-                                                //     ?.outOfSequence = false;
-                                                // followTrainingData!
-                                                //         .workoutCount =
-                                                //     followTrainingData!
-                                                //             .workoutCount +
-                                                //         1;
-
-                                                context.navigateTo(
-                                                    WorkoutDetailView(
-                                                        id: listSheduleWorkoutData[
-                                                                index]
-                                                            .id
-                                                            .toString(),
-                                                        followTrainingplanModel:
-                                                            FollowTrainingplanModel(
-                                                          workoutData:
-                                                              workoutLocalData,
-                                                          trainingplanId:
-                                                              followTrainingData!
-                                                                  .trainingplanId,
-                                                          workoutCount:
-                                                              followTrainingData!
-                                                                      .workoutCount +
-                                                                  1,
-                                                          totalWorkoutLength:
-                                                              followTrainingData!
-                                                                  .totalWorkoutLength,
-                                                          outOfSequence: false,
-                                                          trainingPlanImg:
-                                                              followTrainingData!
-                                                                  .trainingPlanImg,
-                                                          trainingPlanTitle:
-                                                              followTrainingData!
-                                                                  .trainingPlanTitle,
-                                                          daysPerWeek:
-                                                              followTrainingData!
-                                                                  .daysPerWeek,
-                                                          goalsId:
-                                                              followTrainingData!
-                                                                  .goalsId,
-                                                          levelName:
-                                                              followTrainingData!
-                                                                  .levelName,
-                                                          location:
-                                                              followTrainingData!
-                                                                  .location,
-                                                        )));
-                                              } else if (followTrainingData!
-                                                      .workoutCount
-                                                      .toInt() >=
-                                                  index) {
-                                                // followTrainingData
-                                                //     ?.outOfSequence = false;
-
-                                                context.navigateTo(
-                                                    WorkoutDetailView(
-                                                        id: listSheduleWorkoutData[
-                                                                index]
-                                                            .id
-                                                            .toString(),
-                                                        followTrainingplanModel:
-                                                            FollowTrainingplanModel(
-                                                          trainingplanId:
-                                                              followTrainingData!
-                                                                  .trainingplanId,
-                                                          workoutData:
-                                                              workoutLocalData,
-                                                          workoutCount:
-                                                              index + 1,
-                                                          totalWorkoutLength:
-                                                              followTrainingData!
-                                                                  .totalWorkoutLength,
-                                                          outOfSequence: false,
-                                                          trainingPlanImg:
-                                                              followTrainingData!
-                                                                  .trainingPlanImg,
-                                                          trainingPlanTitle:
-                                                              followTrainingData!
-                                                                  .trainingPlanTitle,
-                                                          daysPerWeek:
-                                                              followTrainingData!
-                                                                  .daysPerWeek,
-                                                          goalsId:
-                                                              followTrainingData!
-                                                                  .goalsId,
-                                                          levelName:
-                                                              followTrainingData!
-                                                                  .levelName,
-                                                          location:
-                                                              followTrainingData!
-                                                                  .location,
-                                                        )));
-                                              } else {
-                                                // followTrainingData
-                                                //     ?.workoutCount = index + 1;
-                                                // followTrainingData
-                                                //     ?.outOfSequence = true;
-                                                // updateData();
-
-                                                context.navigateTo(
-                                                    WorkoutDetailView(
-                                                        id: listSheduleWorkoutData[
-                                                                index]
-                                                            .id
-                                                            .toString(),
-                                                        followTrainingplanModel:
-                                                            FollowTrainingplanModel(
-                                                          workoutData:
-                                                              workoutLocalData,
-                                                          trainingplanId:
-                                                              followTrainingData!
-                                                                  .trainingplanId,
-                                                          workoutCount:
-                                                              index + 1,
-                                                          totalWorkoutLength:
-                                                              followTrainingData!
-                                                                  .totalWorkoutLength,
-                                                          outOfSequence: true,
-                                                          trainingPlanImg:
-                                                              followTrainingData!
-                                                                  .trainingPlanImg,
-                                                          trainingPlanTitle:
-                                                              followTrainingData!
-                                                                  .trainingPlanTitle,
-                                                          daysPerWeek:
-                                                              followTrainingData!
-                                                                  .daysPerWeek,
-                                                          goalsId:
-                                                              followTrainingData!
-                                                                  .goalsId,
-                                                          levelName:
-                                                              followTrainingData!
-                                                                  .levelName,
-                                                          location:
-                                                              followTrainingData!
-                                                                  .location,
-                                                        )));
-                                              }
-                                            } else {
-                                              context
-                                                  .navigateTo(WorkoutDetailView(
-                                                id: listSheduleWorkoutData[
-                                                        index]
-                                                    .id
-                                                    .toString(),
-                                              ));
-                                            }
-                                          }),
-                                    );
-                                  }),
+  sheduleCardBoxWidget(BuildContext context, Box<FollowTrainingplanModel> box,
+      bool shedulePlanLoader) {
+    return Card(
+        elevation: 0.2,
+        color: AppColor.surfaceBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: shedulePlanLoader == true
+              ? Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Center(
+                    child: BaseHelper.loadingWidget(),
+                  ),
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    box.values.any((element) =>
+                                element.trainingplanId ==
+                                trainingPlanData?.id) ==
+                            false
+                        ? Container()
+                        : SizedBox(
+                            width: 25,
+                            child: ListView.builder(
+                              padding: const EdgeInsets.only(top: 46),
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: listSheduleWorkoutData.length,
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  children: [
+                                    StepWidget(
+                                        isCompleted: box.values.any((element) =>
+                                                    element.trainingplanId ==
+                                                        trainingPlanData?.id &&
+                                                    index <=
+                                                        element.workoutCount -
+                                                            1.toInt()) ==
+                                                true
+                                            ? true
+                                            : false,
+                                        isActive: box.values.any((element) =>
+                                                    element.trainingplanId ==
+                                                        trainingPlanData?.id &&
+                                                    index ==
+                                                        element.workoutCount
+                                                            .toInt()) ==
+                                                true
+                                            ? true
+                                            : false),
+                                    if (index !=
+                                        listSheduleWorkoutData.length - 1)
+                                      LineWidget(
+                                        height: 78,
+                                        color: box.values.any((element) =>
+                                                element.trainingplanId ==
+                                                    trainingPlanData?.id &&
+                                                index <=
+                                                    element.workoutCount -
+                                                        1.toInt())
+                                            ? AppColor.surfaceBrandDarkColor
+                                            : null,
+                                      )
+                                  ],
+                                );
+                              },
                             ),
-                          ],
-                        );
-                },
-              ),
-            )));
+                          ),
+                    Expanded(
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(left: 15),
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: listSheduleWorkoutData.length,
+                          itemBuilder: (context, index) {
+                            if (categoryFilterTypeData.isEmpty) {
+                              CommonController.filterCategoryTypeData(
+                                  listSheduleWorkoutData,
+                                  categoryFilterTypeData);
+                            }
+                            if (workoutLocalData.isEmpty) {
+                              addWorkoutData();
+                            }
+                            WorkoutModel? data = listSheduleWorkoutData[index];
+
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: CustomListtileWidget(
+                                  imageHeaderIcon: AppAssets.workoutHeaderIcon,
+                                  imageUrl: data.mapImage?.url ?? "",
+                                  title: data.title ?? "",
+                                  subtitle:
+                                      " ${data.duration} • ${categoryFilterTypeData[index]} • ${data.level.toString()}",
+                                  onTap: () {
+                                    if (followTrainingData != null) {
+                                      if (followTrainingData!.workoutCount ==
+                                          index) {
+                                        // followTrainingData
+                                        //     ?.outOfSequence = false;
+                                        // followTrainingData!
+                                        //         .workoutCount =
+                                        //     followTrainingData!
+                                        //             .workoutCount +
+                                        //         1;
+
+                                        context.navigateTo(WorkoutDetailView(
+                                            id: listSheduleWorkoutData[index]
+                                                .id
+                                                .toString(),
+                                            followTrainingplanModel:
+                                                FollowTrainingplanModel(
+                                              workoutData: workoutLocalData,
+                                              trainingplanId:
+                                                  followTrainingData!
+                                                      .trainingplanId,
+                                              workoutCount: followTrainingData!
+                                                      .workoutCount +
+                                                  1,
+                                              totalWorkoutLength:
+                                                  followTrainingData!
+                                                      .totalWorkoutLength,
+                                              outOfSequence: false,
+                                              trainingPlanImg:
+                                                  followTrainingData!
+                                                      .trainingPlanImg,
+                                              trainingPlanTitle:
+                                                  followTrainingData!
+                                                      .trainingPlanTitle,
+                                              daysPerWeek: followTrainingData!
+                                                  .daysPerWeek,
+                                              goalsId:
+                                                  followTrainingData!.goalsId,
+                                              levelName:
+                                                  followTrainingData!.levelName,
+                                              location:
+                                                  followTrainingData!.location,
+                                            )));
+                                      } else if (followTrainingData!
+                                              .workoutCount
+                                              .toInt() >=
+                                          index) {
+                                        // followTrainingData
+                                        //     ?.outOfSequence = false;
+
+                                        context.navigateTo(WorkoutDetailView(
+                                            id: listSheduleWorkoutData[index]
+                                                .id
+                                                .toString(),
+                                            followTrainingplanModel:
+                                                FollowTrainingplanModel(
+                                              trainingplanId:
+                                                  followTrainingData!
+                                                      .trainingplanId,
+                                              workoutData: workoutLocalData,
+                                              workoutCount: index + 1,
+                                              totalWorkoutLength:
+                                                  followTrainingData!
+                                                      .totalWorkoutLength,
+                                              outOfSequence: false,
+                                              trainingPlanImg:
+                                                  followTrainingData!
+                                                      .trainingPlanImg,
+                                              trainingPlanTitle:
+                                                  followTrainingData!
+                                                      .trainingPlanTitle,
+                                              daysPerWeek: followTrainingData!
+                                                  .daysPerWeek,
+                                              goalsId:
+                                                  followTrainingData!.goalsId,
+                                              levelName:
+                                                  followTrainingData!.levelName,
+                                              location:
+                                                  followTrainingData!.location,
+                                            )));
+                                      } else {
+                                        // followTrainingData
+                                        //     ?.workoutCount = index + 1;
+                                        // followTrainingData
+                                        //     ?.outOfSequence = true;
+                                        // updateData();
+
+                                        context.navigateTo(WorkoutDetailView(
+                                            id: listSheduleWorkoutData[index]
+                                                .id
+                                                .toString(),
+                                            followTrainingplanModel:
+                                                FollowTrainingplanModel(
+                                              workoutData: workoutLocalData,
+                                              trainingplanId:
+                                                  followTrainingData!
+                                                      .trainingplanId,
+                                              workoutCount: index + 1,
+                                              totalWorkoutLength:
+                                                  followTrainingData!
+                                                      .totalWorkoutLength,
+                                              outOfSequence: true,
+                                              trainingPlanImg:
+                                                  followTrainingData!
+                                                      .trainingPlanImg,
+                                              trainingPlanTitle:
+                                                  followTrainingData!
+                                                      .trainingPlanTitle,
+                                              daysPerWeek: followTrainingData!
+                                                  .daysPerWeek,
+                                              goalsId:
+                                                  followTrainingData!.goalsId,
+                                              levelName:
+                                                  followTrainingData!.levelName,
+                                              location:
+                                                  followTrainingData!.location,
+                                            )));
+                                      }
+                                    } else {
+                                      context.navigateTo(WorkoutDetailView(
+                                        id: listSheduleWorkoutData[index]
+                                            .id
+                                            .toString(),
+                                      ));
+                                    }
+                                  }),
+                            );
+                          }),
+                    ),
+                  ],
+                ),
+        ));
   }
 
   SliverToBoxAdapter cardBoxWidget() {
@@ -736,8 +746,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
               const EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 16),
           child: Column(
             children: [
-           
-
               ValueListenableBuilder(
                 valueListenable: goalLoader,
                 builder: (context, value, child) {

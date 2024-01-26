@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:funxtion/funxtion_sdk.dart';
 
 import '../../ui_tool_kit.dart';
 

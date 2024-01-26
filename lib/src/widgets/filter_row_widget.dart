@@ -55,7 +55,7 @@ class FilterRowWidget extends StatelessWidget {
     return Padding(
       padding: confirmedFilter.value.isEmpty
           ? EdgeInsets.zero
-          : EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          : const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: confirmedFilter.value.isEmpty

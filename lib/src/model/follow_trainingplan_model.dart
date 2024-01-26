@@ -1,6 +1,4 @@
 import 'package:hive/hive.dart';
-
-import '../../ui_tool_kit.dart';
 part 'follow_trainingplan_model.g.dart';
 
 @HiveType(typeId: 0)

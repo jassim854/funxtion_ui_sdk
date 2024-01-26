@@ -64,7 +64,7 @@ class TrainingPlanDetailController {
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
-      print(e.response);
+     
     }
     return null;
   }
@@ -81,10 +81,8 @@ class TrainingPlanDetailController {
       });
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
-      print(e.response);
+
     }
     return fetchData;
   }
-
-
 }

@@ -46,9 +46,6 @@ class _CategoryPlayerViewState extends State<CategoryPlayerView>
           });
 
     setLandScapeAutoRotation();
-    // _gyroscopeSubscription = gyroscopeEvents.listen((event) {
-    //   // VideoController.gyroscope = event;
-    // });
   }
 
   @override
@@ -95,10 +92,9 @@ class _CategoryPlayerViewState extends State<CategoryPlayerView>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
+    return PopScope(
+      onPopInvoked: (value) {
         setPotrait();
-        return Future.delayed(const Duration(milliseconds: 350), () => true);
       },
       child: _videoPlayerController.value.isInitialized
           ? VideoPlayerWidget(videoPlayerController: _videoPlayerController)

@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 
 import 'package:funxtion/funxtion_sdk.dart';
 
@@ -14,8 +14,6 @@ class CommonController {
       List<TrainingPlanModel> trainingPlanData,
       bool shouldBreakLoop,
       Map<int, String> fitnessGoalData) async {
-
-
     List<FitnessGoalModel> listOfFitnessGoal = [];
     for (var j = 0; j < trainingPlanData.length; j++) {
       listOfFitnessGoal.clear();
@@ -48,17 +46,20 @@ class CommonController {
   static getListCategoryTypeDataFn(
     context,
   ) async {
-    try {
-      await ContentProviderCategoryOnDemandRequest.contentCategory()
-          .then((value) {
-        List<ContentProvidersCategoryOnDemandModel> fetchData = List.from(value!
-            .map((e) => ContentProvidersCategoryOnDemandModel.fromJson(e)));
-        for (var i = 0; i <= 50; i++) {
-          categoryTypeData.add(fetchData[i]);
-        }
-      });
-    } on RequestException catch (e) {
-      BaseHelper.showSnackBar(context, e.message);
+    if (categoryTypeData.isEmpty) {
+      try {
+        await ContentProviderCategoryOnDemandRequest.contentCategory()
+            .then((value) {
+          List<ContentProvidersCategoryOnDemandModel> fetchData = List.from(
+              value!.map(
+                  (e) => ContentProvidersCategoryOnDemandModel.fromJson(e)));
+          for (var i = 0; i <= 50; i++) {
+            categoryTypeData.add(fetchData[i]);
+          }
+        });
+      } on RequestException catch (e) {
+        BaseHelper.showSnackBar(context, e.message);
+      }
     }
   }
 
@@ -95,11 +96,8 @@ class CommonController {
     }
   }
 
-  static getListFilterOnDemandCategoryTypeFn(
-    int count,
+  static getListFilterOnDemandCategoryTypeFn(int count,
       List<OnDemandModel> value, Map<int, String> onDemandCategoryFilterData) {
-
-
     for (var i = 0; i < value.length; i++) {
       List<ContentProvidersCategoryOnDemandModel> data = [];
       for (var typeElement in value[i].categories!) {
@@ -113,9 +111,10 @@ class CommonController {
             data.add(onDemandCategoryData[j]);
           }
         }
-      } 
+      }
 
-      onDemandCategoryFilterData.addAll({count+ i: data.map((e) => e.name).join(',')});
-    } 
+      onDemandCategoryFilterData
+          .addAll({count + i: data.map((e) => e.name).join(',')});
+    }
   }
 }

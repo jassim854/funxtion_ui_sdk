@@ -23,17 +23,18 @@ class LoaderStackWidget extends StatelessWidget {
 }
 
 class CustomErrorWidget extends StatelessWidget {
-  const CustomErrorWidget({
-    super.key,
+ final EdgeInsetsGeometry? customPadding;
+    const CustomErrorWidget({
+    super.key, this.customPadding,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20, left: 20),
+      padding:customPadding?? const EdgeInsets.only(top: 20, left: 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        // mainAxisAlignment: MainAxisAlignment.center,
+ 
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -53,14 +54,15 @@ class CustomErrorWidget extends StatelessWidget {
 }
 
 class NoResultFOundWIdget extends StatelessWidget {
+   final EdgeInsetsGeometry? customPadding;
   const NoResultFOundWIdget({
-    super.key,
+    super.key, this.customPadding,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20, left: 20),
+   padding:customPadding?? const EdgeInsets.only(top: 20, left: 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -27,7 +27,7 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
     CategoryListController.runComplexTask(
         context, widget.categoryName, filterLoader);
     selectedFilter.addAll(widget.confirmedFilter.value);
-    // TODO: implement initState
+
     super.initState();
   }
 

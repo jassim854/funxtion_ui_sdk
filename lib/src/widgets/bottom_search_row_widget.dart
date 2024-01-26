@@ -29,7 +29,7 @@ class BottomSearchWIdget extends StatelessWidget {
                 onChange: (value) {
                   searchDelayFn(value);
 
-                  print(value);
+          
                   // setState(() {});
                 },
                 onIconTap: () {
@@ -40,9 +40,8 @@ class BottomSearchWIdget extends StatelessWidget {
                 },
                 searchController: searchController)),
         searchController.text.isNotEmpty
-            ? InkWell(
+            ? GestureDetector(
                 onTap: () {
-                  context.hideKeypad();
                   searchController.clear();
 
                   CategoryListController.clearAppliedFilter(confirmedFilter);
@@ -71,14 +70,15 @@ class BottomSearchWIdget extends StatelessWidget {
           useSafeArea: true,
           enableDrag: false,
           isDismissible: false,
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16), topRight: Radius.circular(16))),
           backgroundColor: AppColor.surfaceBackgroundBaseColor,
           isScrollControlled: true,
           context: context,
           builder: (_) {
-            return WillPopScope(
+            return PopScope(
+              canPop: false,
               child: FilterSheetWidget(
                 confirmedFilter: confirmedFilter,
                 onDone: (value) {
@@ -93,9 +93,7 @@ class BottomSearchWIdget extends StatelessWidget {
                 },
                 categoryName: categoryName,
               ),
-              onWillPop: () async {
-                return false;
-              },
+        
             );
           },
         );

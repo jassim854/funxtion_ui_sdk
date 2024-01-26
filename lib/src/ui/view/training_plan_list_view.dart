@@ -1,10 +1,9 @@
-import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:funxtion/funxtion_sdk.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ui_tool_kit/src/helper/boxes.dart';
-import 'package:ui_tool_kit/src/ui/view/training_plan_detail_view.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 import '../../model/follow_trainingplan_model.dart';
 
@@ -54,7 +53,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
 
   @override
   void initState() {
-    print('second init message');
+  
 
     _searchControllerPage1 = TextEditingController();
     _searchControllerPage2 = TextEditingController();
@@ -68,7 +67,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
     getData(isScroll: false);
     _scrollControllerPage1.addListener(
       () {
-        print(_scrollControllerPage1.position.extentBefore);
+    
         if (isLoadMore == false &&
             nextPage == true &&
             _scrollControllerPage1.position.extentAfter < 300.0 &&
@@ -199,6 +198,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
                       : null),
               body: Column(
                 children: [
+                  1.height(),
                   Expanded(
                     child: TabBarView(
                       physics: isFollowed == false
@@ -337,7 +337,6 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
       BaseHelper.showSnackBar(context, e.message);
     }
   }
-
 }
 
 class SecondTabWidget extends StatefulWidget {
@@ -403,7 +402,7 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
                       widget.followedConfirmedFilter,
                       widget.box,
                     ));
-                   
+
                     setState(() {});
                   } else {
                     widget.followTrainingData.clear();
@@ -455,7 +454,6 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
                         );
                       },
                     ),
-
                     widget.isNodData == true
                         ? const NoResultFOundWIdget()
                         : widget.followTrainingData.isEmpty
@@ -485,10 +483,7 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
                                                 id: widget
                                                     .followTrainingData[index]
                                                     .trainingplanId,
-                                                workoutLength: widget
-                                                    .followTrainingData[index]
-                                                    .workoutCount
-                                                    .toString(),
+                                               
                                               ));
                                             },
                                             imageHeaderIcon:
@@ -502,7 +497,6 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
                                                     followTrainingData: widget
                                                             .followTrainingData[
                                                         index]),
-                                         
                                             title: widget
                                                 .followTrainingData[index]
                                                 .trainingPlanTitle
@@ -519,9 +513,7 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
                                           widget.followTrainingData.length),
                                 ),
                               ),
-     
                   ]),
-            
             ],
           ),
         ),
@@ -683,11 +675,7 @@ class _FirstTabWidgetState extends State<FirstTabWidget> {
                                                     context.hideKeypad();
                                                     context.navigateTo(
                                                         TrainingPlanDetailView(
-                                                            workoutLength: widget
-                                                                .listTrainingPLanData[
-                                                                    index]
-                                                                .daysTotal
-                                                                .toString(),
+                                                        
                                                             id: widget
                                                                 .listTrainingPLanData[
                                                                     index]

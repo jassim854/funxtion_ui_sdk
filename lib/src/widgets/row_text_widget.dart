@@ -6,7 +6,7 @@ class RowEndToEndTextWidget extends StatelessWidget {
     super.key,
     required this.columnText1,
     required this.rowText1,
-    this.columnText2,
+    this. columnText2,
     this.seeOnTap
   });
   final String columnText1, rowText1;

@@ -25,7 +25,7 @@ export 'package:ui_tool_kit/src/widgets/done_workout_sheet.dart';
 export 'package:ui_tool_kit/src/widgets/equipment_extended_sheet_widget.dart';
 export 'package:ui_tool_kit/src/widgets/up_next_sheet_widget.dart';
 export 'package:ui_tool_kit/src/widgets/header_exercise_info_sheet_widget.dart';
-export 'package:ui_tool_kit/src/widgets/header_imagesHeader_widget.dart';
+export 'package:ui_tool_kit/src/widgets/header_image_widget.dart';
 export 'package:ui_tool_kit/src/widgets/start_workout_header_widget.dart';
 export 'package:ui_tool_kit/src/widgets/bottom_search_row_widget.dart';
 export 'package:ui_tool_kit/src/widgets/row_text_widget.dart';

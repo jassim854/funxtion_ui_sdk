@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 
 class VideoController {
   static ValueNotifier<bool> showControls = ValueNotifier(false);
-// static   GyroscopeEvent? gyroscope;
 
   static void onTap(videoPlayerController) {
-    print(showControls);
+
     
   }
 
