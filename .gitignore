@@ -25,14 +25,14 @@ migrate_working_dir/
 # Libraries should not include pubspec.lock, per https://dart.dev/guides/libraries/private-files#pubspeclock.
 /pubspec.lock
 /example
-.flutter-plugins
-.flutter-plugins-dependencies
-/ios/Flutter/flutter_export_environment.sh
-/ios/Flutter/Generated.xcconfig
-/linux/flutter/ephemeral/.plugin_symlinks/connectivity_plus
-/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux
-/macos/Flutter/ephemeral/flutter_export_environment.sh
-/macos/Flutter/ephemeral/Flutter-Generated.xcconfig
+# .flutter-plugins
+# .flutter-plugins-dependencies
+# /ios/Flutter/flutter_export_environment.sh
+# /ios/Flutter/Generated.xcconfig
+# /linux/flutter/ephemeral/.plugin_symlinks/connectivity_plus
+# /linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux
+# /macos/Flutter/ephemeral/flutter_export_environment.sh
+# /macos/Flutter/ephemeral/Flutter-Generated.xcconfig
 **/doc/api/
 .dart_tool/
 .packages
