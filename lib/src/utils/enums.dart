@@ -2,6 +2,8 @@ enum CategoryName{
 videoClasses,
 workouts,
 trainingPlans,
-audioClasses
+audioClasses,
+dashBoard
+
 }
 

@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:ui_tool_kit/src/utils/utils.dart';
 
 class BaseHelper {
-  static showSnackBar(context, msg, {Duration? duration}) {
+  static showSnackBar(context, msg, {Duration? duration,Color? backgroundColor,Color? textColor}) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           msg,
           style: AppTypography.title14XS
-              .copyWith(color: AppColor.textEmphasisColor),
+              .copyWith(color:textColor?? AppColor.textEmphasisColor),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor:backgroundColor?? Colors.white,
         margin: const EdgeInsets.all(5),
         duration: duration ?? const Duration(seconds: 4),
         behavior: SnackBarBehavior.floating,

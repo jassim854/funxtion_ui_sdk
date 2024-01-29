@@ -80,17 +80,19 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                 surfaceTintColor: AppColor.surfaceBackgroundColor,
                 titleSpacing: 0,
                 leadingWidth: 75,
-                leading: GestureDetector(
-                  onTap: () {
-                    context.maybePopPage();
-                  },
-                  child: Transform.scale(
-                    scale: 1.2,
-                    child: SvgPicture.asset(
-                      AppAssets.backArrowIcon,
-                    ),
-                  ),
-                ),
+                leading: NavigatorState().canPop()
+                    ? GestureDetector(
+                        onTap: () {
+                          context.maybePopPage();
+                        },
+                        child: Transform.scale(
+                          scale: 1.2,
+                          child: SvgPicture.asset(
+                            AppAssets.backArrowIcon,
+                          ),
+                        ),
+                      )
+                    : SizedBox.shrink(),
                 backgroundColor: AppColor.surfaceBackgroundColor,
                 elevation: 0.0,
                 title: HeaderTitleWIdget(

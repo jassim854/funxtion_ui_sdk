@@ -132,14 +132,14 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
                   titleSpacing: 0,
                   leadingWidth: 75,
                   toolbarHeight: 40,
-                  leading: GestureDetector(
+                  leading:NavigatorState().canPop()? GestureDetector(
                     onTap: () {
                       context.maybePopPage();
                     },
                     child: SvgPicture.asset(
                       AppAssets.backArrowIcon,
                     ),
-                  ),
+                  ):const SizedBox.shrink(),
                   backgroundColor: AppColor.surfaceBackgroundColor,
                   elevation: 0.0,
                   centerTitle: true,

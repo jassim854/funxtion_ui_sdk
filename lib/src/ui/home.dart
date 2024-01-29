@@ -1,5 +1,3 @@
-
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
@@ -9,10 +7,9 @@ import '../../ui_tool_kit.dart';
 
 class UiToolKitSDK extends StatefulWidget {
   final String token;
-  const UiToolKitSDK({
-    super.key,
-    required this.token,
-  });
+  final CategoryName categoryName;
+  const UiToolKitSDK(
+      {super.key, required this.token, required this.categoryName});
 
   @override
   State<UiToolKitSDK> createState() => _UiToolKitSDKState();
@@ -21,13 +18,9 @@ class UiToolKitSDK extends StatefulWidget {
 class _UiToolKitSDKState extends State<UiToolKitSDK> {
   @override
   void initState() {
-    getPath();
     setToken();
-    super.initState();
-  }
 
-  getPath() async {
-    await PkgAppController.getPath();
+    super.initState();
   }
 
   setToken() {
@@ -36,16 +29,16 @@ class _UiToolKitSDKState extends State<UiToolKitSDK> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      color: Colors.transparent,
-      home: HomePage(),
+      home: HomePage(categoryName: widget.categoryName),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final CategoryName categoryName;
+  const HomePage({super.key, required this.categoryName});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -61,26 +54,41 @@ class _HomePageState extends State<HomePage> {
   Map<int, String> audioDataType = {};
   Map<int, String> fitnessGoalData = {};
   ValueNotifier<bool> isLoading = ValueNotifier(false);
-
+  ValueNotifier<bool> isInitlize = ValueNotifier(true);
+  ConnectivityResult? isInternet;
   @override
   void initState() {
+    checkInternet();
+    getPath();
     fetchData();
-
 
     super.initState();
   }
 
+  checkInternet() async {
+    isInternet = await Connectivity().checkConnectivity();
+  }
+
+  Future getPath() async {
+    if (widget.categoryName == CategoryName.trainingPlans ||
+        widget.categoryName == CategoryName.dashBoard) {
+      await PkgAppController.getPath(isInitlize: isInitlize);
+    }
+  }
+
   fetchData() async {
-    await DashBoardController.getData(context,
-        audioDataType: audioDataType,
-        videoDataType: videoDataType,
-        workoutDataType: workoutDataType,
-        isLoading: isLoading,
-        onDemadDataVideo: onDemadDataVideo,
-        audioData: onDemadDataAudio,
-        workoutData: workoutData,
-        trainingPlanData: trainingPlanData,
-        fitnessGoalData: fitnessGoalData);
+    if (widget.categoryName == CategoryName.dashBoard) {
+      await DashBoardController.getData(context,
+          audioDataType: audioDataType,
+          videoDataType: videoDataType,
+          workoutDataType: workoutDataType,
+          isLoading: isLoading,
+          onDemadDataVideo: onDemadDataVideo,
+          audioData: onDemadDataAudio,
+          workoutData: workoutData,
+          trainingPlanData: trainingPlanData,
+          fitnessGoalData: fitnessGoalData);
+    }
   }
 
   @override
@@ -88,61 +96,82 @@ class _HomePageState extends State<HomePage> {
     return StreamBuilder(
         stream: Connectivity().onConnectivityChanged,
         builder: (context, snapshot) {
-          return FutureBuilder(
-              future: Connectivity().checkConnectivity(),
-              builder: (context, future) {
-        
-                return Scaffold(
-                    backgroundColor: AppColor.borderBrandDarkColor,
-                    body: ValueListenableBuilder<bool>(
-                        valueListenable: isLoading,
-                        builder: (_, value, child) {
-                          return value == true
-                              ? Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                      Container(
-                                        height: 60,
-                                        decoration: const BoxDecoration(
-                                            image: DecorationImage(
-                                                fit: BoxFit.fill,
-                                                image: AssetImage(
-                                                  AppAssets.logo,
-                                                ))),
-                                      ),
-                                      20.height(),
-                                      const Center(child: ThreeDotLoader()),
-                                    ])
-                              : DashBoardView(
-                                  onDemadDataVideo: onDemadDataVideo,
-                                  workoutData: workoutData,
-                                  onDemadDataAudio: onDemadDataAudio,
-                                  trainingPlanData: trainingPlanData,
-                                  workoutDataType: workoutDataType,
-                                  videoDataType: videoDataType,
-                                  audioDataType: audioDataType,
-                                  fitnessGoalData: fitnessGoalData);
-                        }),
-                    bottomNavigationBar: snapshot.data ==
-                                ConnectivityResult.none ||
-                            future.data == ConnectivityResult.none
-                        ? Container(
-                            alignment: Alignment.center,
-                            color: AppColor.redColor,
-                            height: 30,
-                            width: double.infinity,
-                            child: Text(
-                              'No Internet',
-                              style: AppTypography.title18LG
-                                  .copyWith(color: AppColor.textInvertEmphasis),
-                            ),
-                          )
-                        : null);
+          if (snapshot.data == ConnectivityResult.none ||
+              isInternet == ConnectivityResult.none) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              BaseHelper.showSnackBar(context, "No internet",
+                  backgroundColor: AppColor.redColor,
+                  textColor: AppColor.textInvertEmphasis,
+                  duration: const Duration(days: 1));
+            });
+          } else if (snapshot.data != ConnectivityResult.none ||
+              isInternet != ConnectivityResult.none) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            });
+          }
+          return ValueListenableBuilder(
+              valueListenable: isInitlize,
+              builder: (_, isValue, child) {
+                return ValueListenableBuilder<bool>(
+                    valueListenable: isLoading,
+                    builder: (_, value, child) {
+                      if (value == true || isValue == false) {
+                        return Scaffold(
+                          backgroundColor: AppColor.surfaceBrandDarkColor,
+                          body: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  height: 60,
+                                  decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: AssetImage(
+                                            AppAssets.logo,
+                                          ))),
+                                ),
+                                20.height(),
+                                const Center(child: ThreeDotLoader()),
+                              ]),
+                        );
+                      }
+
+                      if (value == false || isValue == true) {
+                        if (widget.categoryName == CategoryName.dashBoard) {
+                          return DashBoardView(
+                              onDemadDataVideo: onDemadDataVideo,
+                              workoutData: workoutData,
+                              onDemadDataAudio: onDemadDataAudio,
+                              trainingPlanData: trainingPlanData,
+                              workoutDataType: workoutDataType,
+                              videoDataType: videoDataType,
+                              audioDataType: audioDataType,
+                              fitnessGoalData: fitnessGoalData);
+                        } else if (widget.categoryName ==
+                            CategoryName.audioClasses) {
+                          return VideoAudioWorkoutListView(
+                              categoryName: widget.categoryName);
+                        } else if (widget.categoryName ==
+                            CategoryName.videoClasses) {
+                          return VideoAudioWorkoutListView(
+                              categoryName: widget.categoryName);
+                        } else if (widget.categoryName ==
+                            CategoryName.workouts) {
+                          return VideoAudioWorkoutListView(
+                              categoryName: widget.categoryName);
+                        } else if (widget.categoryName ==
+                            CategoryName.trainingPlans) {
+                          return const TrainingPlanListView(initialIndex: 0);
+                        }
+                      }
+
+                      return Container();
+                    });
               });
         });
   }
 }
-
 
 class ThreeDotLoader extends StatefulWidget {
   const ThreeDotLoader({super.key});
