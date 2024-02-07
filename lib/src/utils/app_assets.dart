@@ -42,4 +42,6 @@ class AppAssets {
   static const String checkMarkIcon =
       'packages/ui_tool_kit/assets/icons_svg/check_mark_icon.svg';
   static const String logo = 'packages/ui_tool_kit/assets/logo.png';
+  static const String recentSearchIcon =
+      'packages/ui_tool_kit/assets/icons_svg/recent_search_icon.svg';
 }

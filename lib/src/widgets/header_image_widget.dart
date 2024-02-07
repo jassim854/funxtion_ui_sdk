@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../ui_tool_kit.dart';
 
 class BuildBodyWidget extends StatelessWidget {
-   BuildBodyWidget({
+  BuildBodyWidget({
     super.key,
     required this.currentListData,
     this.goHereTap,
@@ -132,12 +132,11 @@ class BuildBodyWidget extends StatelessWidget {
                                         children: [
                                           header2CheckWidget(
                                               index: index,
-                                              expandVar: ctExpandNew ??
-                                                  ctExpand!),
+                                              expandVar:
+                                                  ctExpandNew ?? ctExpand!),
                                           ValueListenableBuilder<bool>(
                                               valueListenable:
-                                                  ctExpandNew ??
-                                                      ctExpand!,
+                                                  ctExpandNew ?? ctExpand!,
                                               builder: (_, value, child) {
                                                 return ExpandedSection(
                                                   expand: value,
@@ -163,12 +162,10 @@ class BuildBodyWidget extends StatelessWidget {
                                               header2CheckWidget(
                                                   index: index,
                                                   expandVar:
-                                                      seExpandNew ??
-                                                          seExpand!),
+                                                      seExpandNew ?? seExpand!),
                                               ValueListenableBuilder<bool>(
                                                   valueListenable:
-                                                      seExpandNew ??
-                                                          seExpand!,
+                                                      seExpandNew ?? seExpand!,
                                                   builder: (_, value, child) {
                                                     return ExpandedSection(
                                                       expand: value,
@@ -196,9 +193,8 @@ class BuildBodyWidget extends StatelessWidget {
                                                 children: [
                                                   header2CheckWidget(
                                                       index: index,
-                                                      expandVar:
-                                                          ssExpandNew ??
-                                                              ssExpand!),
+                                                      expandVar: ssExpandNew ??
+                                                          ssExpand!),
                                                   ValueListenableBuilder<bool>(
                                                       valueListenable:
                                                           ssExpandNew ??
@@ -231,12 +227,14 @@ class BuildBodyWidget extends StatelessWidget {
                                                     children: [
                                                       header2CheckWidget(
                                                           index: index,
-                                                          expandVar: crExpandNew ??
-                                                              crExpand!),
+                                                          expandVar:
+                                                              crExpandNew ??
+                                                                  crExpand!),
                                                       ValueListenableBuilder<
                                                               bool>(
-                                                          valueListenable: crExpandNew ??
-                                                              crExpand!,
+                                                          valueListenable:
+                                                              crExpandNew ??
+                                                                  crExpand!,
                                                           builder: (_, value,
                                                               child) {
                                                             return ExpandedSection(
@@ -265,8 +263,9 @@ class BuildBodyWidget extends StatelessWidget {
                                                         children: [
                                                           header2CheckWidget(
                                                               index: index,
-                                                              expandVar: rftExpandNew ??
-                                                                  rftExpand!),
+                                                              expandVar:
+                                                                  rftExpandNew ??
+                                                                      rftExpand!),
                                                           ValueListenableBuilder<
                                                                   bool>(
                                                               valueListenable:
@@ -294,8 +293,7 @@ class BuildBodyWidget extends StatelessWidget {
                                                               })
                                                         ],
                                                       )
-                                                    : currentListData
-                                                                .keys
+                                                    : currentListData.keys
                                                                 .toList()[index]
                                                                 .exerciseCategoryName ==
                                                             ItemType.enom
@@ -303,8 +301,9 @@ class BuildBodyWidget extends StatelessWidget {
                                                             children: [
                                                               header2CheckWidget(
                                                                   index: index,
-                                                                  expandVar: enomExpandNew ??
-                                                                      enomExpand!),
+                                                                  expandVar:
+                                                                      enomExpandNew ??
+                                                                          enomExpand!),
                                                               ValueListenableBuilder<
                                                                       bool>(
                                                                   valueListenable:
@@ -330,8 +329,7 @@ class BuildBodyWidget extends StatelessWidget {
                                                                   })
                                                             ],
                                                           )
-                                                        : currentListData
-                                                                    .keys
+                                                        : currentListData.keys
                                                                     .toList()[
                                                                         index]
                                                                     .exerciseCategoryName ==
@@ -396,8 +394,8 @@ class BuildBodyWidget extends StatelessWidget {
               ssExercise: ssExercise,
             ),
             expandValueListenable: expandVar,
-            exerciseWorkoutData: WorkoutDetailController.addCurrentList(
-                index, currentListData),
+            exerciseWorkoutData:
+                WorkoutDetailController.addCurrentList(index, currentListData),
             title: currentListData.currentHeaderTitle(index),
             onExpand: () {
               expandVar.value = !expandVar.value;
@@ -421,8 +419,7 @@ class BuildBodyWidget extends StatelessWidget {
                       // ),
                       // 8.height(),
                       BuildHeader2(
-                          subtitle:
-                              currentListData.currentHeaderSubTitle(
+                          subtitle: currentListData.currentHeaderSubTitle(
                             index: index,
                             amrapExercise: amrapExercise,
                             circuitRepExercise: circuitRepExercise,
@@ -436,8 +433,7 @@ class BuildBodyWidget extends StatelessWidget {
                           exerciseWorkoutData:
                               WorkoutDetailController.addCurrentList(
                                   index, currentListData),
-                          title:
-                              currentListData.currentHeaderTitle(index),
+                          title: currentListData.currentHeaderTitle(index),
                           onExpand: () {
                             expandVar.value = !expandVar.value;
                             // setState(() {});
@@ -466,26 +462,26 @@ class BuildBodyWidget extends StatelessWidget {
 
   cutomDiviDerWidget(int i) {
     return i == 0 && currentListData.length > 1
-        ? const Padding(
-            padding: EdgeInsets.only(top: 12, bottom: 12),
-            child: CustomDivider(
-              indent: 145,
+        ? currentListData.entries.toList()[i + 1].key.exerciseCategoryName ==
+                currentListData.entries.toList()[i].key.exerciseCategoryName
+            ? Padding(
+                padding: EdgeInsets.only(top: 12, bottom: 12),
+                child: CustomDivider(
+                  indent: 145,
 
-              // indent: context.dynamicWidth * 0.29,
-              // endIndent: context.dynamicWidth * 0.02,
-            ),
-          )
+                  // indent: context.dynamicWidth * 0.29,
+                  // endIndent: context.dynamicWidth * 0.02,
+                ),
+              )
+            : Container()
         : i == currentListData.length - 1
             ? Container()
             : currentListData.entries.toList()[i + 1].key.setsCount ==
-                        currentListData.entries
-                            .toList()[i]
-                            .key
-                            .setsCount ||
+                        currentListData.entries.toList()[i].key.setsCount &&
                     currentListData.entries
                             .toList()[i + 1]
                             .key
-                            .exerciseCategoryName !=
+                            .exerciseCategoryName ==
                         currentListData.entries
                             .toList()[i]
                             .key
@@ -499,7 +495,32 @@ class BuildBodyWidget extends StatelessWidget {
                       // endIndent: context.dynamicWidth * 0.02,
                     ),
                   )
-                : const SizedBox.shrink();
+                : currentListData.entries
+                                .toList()[i]
+                                .key
+                                .exerciseCategoryName !=
+                            currentListData.entries
+                                .toList()[i - 1]
+                                .key
+                                .exerciseCategoryName &&
+                        currentListData.entries
+                                .toList()[i + 1]
+                                .key
+                                .exerciseCategoryName ==
+                            currentListData.entries
+                                .toList()[i]
+                                .key
+                                .exerciseCategoryName
+                    ? const Padding(
+                        padding: EdgeInsets.only(top: 12, bottom: 12),
+                        child: CustomDivider(
+                          indent: 145,
+
+                          // indent: context.dynamicWidth * 0.29,
+                          // endIndent: context.dynamicWidth * 0.02,
+                        ),
+                      )
+                    : const SizedBox.shrink();
   }
 
   Padding showExerciseTileWidget(
@@ -567,6 +588,8 @@ class BuildBodyWidget extends StatelessWidget {
                               : currentListData.keys
                                   .toList()[index]
                                   .getGoalAndResistantTargets,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: AppTypography.paragraph14MD.copyWith(
                             color: AppColor.textPrimaryColor,
                           )),

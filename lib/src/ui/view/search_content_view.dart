@@ -1,8 +1,11 @@
-
+import 'dart:developer';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/svg.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ui_tool_kit/src/helper/boxes.dart';
+// import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../ui_tool_kit.dart';
 
@@ -20,6 +23,8 @@ class _SearchContentViewState extends State<SearchContentView> {
   late FocusNode _focusNode;
   SearchContentModel? searchContentData;
   List<Result> resultData = [];
+  List<Result> filterResultData = [];
+
   int pageNumber = 0;
 
   bool nextPage = true;
@@ -28,9 +33,14 @@ class _SearchContentViewState extends State<SearchContentView> {
   bool isNodData = false;
 
   bool isLoadingNotifier = false;
-
+  bool resultPage = false;
+  bool isHive = false;
+  Box<RecentSearchLocalModel>? recentSearchLocalList;
+  Box<RecentlyVisitedLocalModel>? recentlyVisitedLocalList;
+  List<Map<CategoryName, bool>> filterList = [];
   @override
   void initState() {
+    openBoxes();
     _searchController = TextEditingController();
     _scrollController = ScrollController();
     _focusNode = FocusNode();
@@ -45,7 +55,6 @@ class _SearchContentViewState extends State<SearchContentView> {
 
           pageNumber += 10;
           getdata(isScroll: true, text: _searchController.text);
-             
         }
       },
     );
@@ -58,8 +67,59 @@ class _SearchContentViewState extends State<SearchContentView> {
     _searchController.dispose();
     _scrollController.dispose();
     _focusNode.dispose();
+    recentSearchLocalList?.close();
+    recentlyVisitedLocalList?.close();
 
     super.dispose();
+  }
+
+  openBoxes() async {
+    // isHive = false;
+    // setState(() {});
+    // await Hive.deleteBoxFromDisk("recentlyVisited");
+
+    await Hive.initFlutter();
+    if (!Hive.isAdapterRegistered(3)) {
+      Hive.registerAdapter(ResuAdapter());
+    }
+    if (!Hive.isAdapterRegistered(4)) {
+      Hive.registerAdapter(LocalCategoryNameAdapter());
+    }
+    if (!Hive.isAdapterRegistered(1)) {
+      Hive.registerAdapter(RecentSearchLocalModelAdapter());
+    }
+    if (!Hive.isBoxOpen("recentSearch")) {
+      await Hive.openBox<RecentSearchLocalModel>("recentSearch");
+    }
+    if (!Hive.isAdapterRegistered(2)) {
+      Hive.registerAdapter(
+        RecentlyVisitedLocalModelAdapter(),
+      );
+    }
+
+    if (!Hive.isBoxOpen("recentlyVisited")) {
+      await Hive.openBox<RecentlyVisitedLocalModel>("recentlyVisited");
+    }
+    getLocalInstance();
+    log(recentSearchLocalList?.values
+            .toList()
+            .map((e) => e.recentSearch.entries.first.toString())
+            .toString() ??
+        "");
+    log(recentlyVisitedLocalList?.values
+            .toList()
+            .map((e) => e.recentlyVisited.entries.first.value.title)
+            .toString() ??
+        "");
+    // isHive = true;
+    // setState(() {});
+  }
+
+  getLocalInstance() {
+    recentSearchLocalList = Boxes.getRecentSearchBox();
+    recentlyVisitedLocalList = Boxes.getRecentlyVisitedBox();
+
+    setState(() {});
   }
 
   List<String> topMatches = [];
@@ -136,26 +196,44 @@ class _SearchContentViewState extends State<SearchContentView> {
     isNodData = false;
     if (isScroll == false) {
       resultData.clear();
+      filterResultData.clear();
       pageNumber = 0;
     }
+
     setState(() {});
 
-    await SearchContentController.fetchData(data: {
-      "q": text,
-      "cursors": [
-        {"collection": "workouts", "offset": pageNumber, "limit": 10},
-        {"collection": "video", "offset": pageNumber, "limit": 10},
-        {"collection": "audio", "offset": pageNumber, "limit": 10},
-        {"collection": "training-plans", "offset": pageNumber, "limit": 10}
-      ],
-    }, searchContentData: searchContentData, resultData: resultData)
-        .then((data) {
+    await SearchContentController.fetchData(
+      data: {
+        "q": text,
+        "cursors": [
+          {"collection": "workouts", "offset": pageNumber, "limit": 10},
+          {"collection": "video", "offset": pageNumber, "limit": 10},
+          {"collection": "audio", "offset": pageNumber, "limit": 10},
+          {"collection": "training-plans", "offset": pageNumber, "limit": 10}
+        ],
+      },
+      searchContentData: searchContentData,
+    ).then((data) {
       if (data != null) {
         nextPage = true;
         isLoadMore = false;
         searchContentData = data;
+        for (var i = 0; i < searchContentData!.cursors!.length; i++) {
+          if (filterList.any((element) =>
+              element.entries.first.key ==
+              searchContentData!.cursors![i].collection!)) {
+            log(searchContentData!.cursors![i].collection!.toString());
+          } else {
+            filterList.add({searchContentData!.cursors![i].collection!: false});
+          }
+        }
         if (data.results?.isNotEmpty ?? false) {
+          if (filterList
+              .any((element) => element.entries.first.value == true)) {
+            onFiltertapFn();
+          }
           resultData.addAll(data.results as List<Result>);
+          filterResultData.addAll(data.results as List<Result>);
         } else if (data.results?.isEmpty ?? false) {
           nextPage = false;
         }
@@ -172,8 +250,108 @@ class _SearchContentViewState extends State<SearchContentView> {
     });
   }
 
+  recentSearchSortAddDataFn() async {
+    if (recentSearchLocalList!.values.isNotEmpty) {
+      if (recentSearchLocalList!.values.any((element) =>
+          element.recentSearch.containsValue(_searchController.text))) {
+        for (var i = 0; i < recentSearchLocalList!.values.length; i++) {
+          if (recentSearchLocalList!.values
+              .toList()[i]
+              .recentSearch
+              .entries
+              .first
+              .value
+              .contains(_searchController.text)) {
+            await recentSearchLocalList!.put(
+                i,
+                RecentSearchLocalModel(
+                    recentSearch: {DateTime.now(): _searchController.text}));
+          }
+        }
+      } else {
+        await recentSearchLocalList!.add(RecentSearchLocalModel(
+            recentSearch: {DateTime.now(): _searchController.text}));
+      }
+      if (recentSearchLocalList!.length >= 1) {
+        sortRecentSearchList(recentSearchLocalList!.values.toList());
+      }
+    } else {
+      await recentSearchLocalList!.add(RecentSearchLocalModel(
+          recentSearch: {DateTime.now(): _searchController.text}));
+    }
+
+    // log(item.map((e) => e.recentSearch).toString());
+    setState(() {});
+  }
+
+  sortRecentSearchList(List<RecentSearchLocalModel> recentSearchList) async {
+    recentSearchList.sort((a, b) => b.recentSearch.entries.first.key
+        .compareTo(a.recentSearch.entries.first.key));
+
+    await recentSearchLocalList!.clear();
+
+    for (var i = 0;
+        i < (recentSearchList.length > 4 ? 4 : recentSearchList.length);
+        i++) {
+      log("message ${recentSearchList[i].recentSearch.entries.first}");
+      await recentSearchLocalList!.put(i, recentSearchList[i]);
+      log("new data ${recentSearchLocalList!.getAt(i)?.recentSearch}");
+    }
+  }
+
+  sortRecentlyVisitedList(
+      List<RecentlyVisitedLocalModel> recentlyVisitedList) async {
+    recentlyVisitedList.sort((a, b) => b.recentlyVisited.entries.first.key
+        .compareTo(a.recentlyVisited.entries.first.key));
+
+    await recentlyVisitedLocalList!.clear();
+
+    for (var i = 0;
+        i < (recentlyVisitedList.length > 8 ? 8 : recentlyVisitedList.length);
+        i++) {
+      log("message ${recentlyVisitedList[i].recentlyVisited.entries.first}");
+      await recentlyVisitedLocalList!.put(i, recentlyVisitedList[i]);
+      log("new data ${recentlyVisitedLocalList!.getAt(i)?.recentlyVisited}");
+    }
+  }
+
+  recnetlyVisiteSortAddDataFn(Resu localResultData) async {
+    if (recentlyVisitedLocalList!.values.isNotEmpty) {
+      if (recentlyVisitedLocalList!.values.any((element) =>
+          element.recentlyVisited.containsValue(localResultData))) {
+        for (var i = 0; i < recentlyVisitedLocalList!.values.length; i++) {
+          if (recentlyVisitedLocalList!.values
+                  .toList()[i]
+                  .recentlyVisited
+                  .entries
+                  .first
+                  .value ==
+              localResultData) {
+            await recentlyVisitedLocalList!.put(
+                i,
+                RecentlyVisitedLocalModel(
+                    recentlyVisited: {DateTime.now(): localResultData}));
+          }
+        }
+      } else {
+        await recentlyVisitedLocalList!.add(RecentlyVisitedLocalModel(
+            recentlyVisited: {DateTime.now(): localResultData}));
+      }
+      if (recentlyVisitedLocalList!.length >= 1) {
+        sortRecentlyVisitedList(recentlyVisitedLocalList!.values.toList());
+      }
+    } else {
+      await Boxes.getRecentlyVisitedBox().add(RecentlyVisitedLocalModel(
+          recentlyVisited: {DateTime.now(): localResultData}));
+    }
+
+    // log(item.map((e) => e.recentSearch).toString());
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    // log(recentSearchLocalList.values.toList().toString());
     return Scaffold(
       backgroundColor: AppColor.textInvertPrimaryColor,
       appBar: AppBar(
@@ -184,25 +362,42 @@ class _SearchContentViewState extends State<SearchContentView> {
         titleSpacing: 0,
         leading: const SizedBox.shrink(),
         title: CustomSearchTextFieldWidget(
-          onSubmitted: (p0) {
+          onSubmitted: (p0) async {
+            resultPage = true;
+            // recentSearchLocalList!.add(RecentSearchLocalModel(
+            //     recentSearch: {DateTime.now(): _searchController.text}));
+            // recentSearchLocalList!.deleteFromDisk();
 
-            // context.navigatepushReplacement(SearchResultView(
-            //   resultData: resultData,
-            //   text: p0,
-            // ));
+            if (_searchController.text.isNotEmpty) {
+              await recentSearchSortAddDataFn();
+            }
+            // log(recentSearchLocalList!
+            //     .values
+            //     .toList()
+            //     .map((e) => e.recentSearch.entries.first.toString())
+            //     .toString());
+            setState(() {});
           },
           onChange: (p0) {
+            resultPage = false;
             if (p0 == "") {
               topMatches.clear();
               resultData.clear();
               setState(() {});
             } else {
-              updateSuggestions(p0);
-              getdata(isScroll: false, text: _searchController.text);
+              CategoryListController.delayedFunction(fn: () {
+                if (p0 != "") {
+                  updateSuggestions(p0);
+                  getdata(isScroll: false, text: _searchController.text);
+                }
+              });
             }
           },
           onIconTap: () {
             _searchController.clear();
+            filterList.clear();
+            filterResultData.clear();
+            resultPage = false;
             topMatches.clear();
             resultData.clear();
             setState(() {});
@@ -216,8 +411,10 @@ class _SearchContentViewState extends State<SearchContentView> {
           GestureDetector(
             onTap: () {
               context.hideKeypad();
+              resultPage = false;
               _searchController.clear();
-
+              filterResultData.clear();
+              filterList.clear();
               topMatches.clear();
               resultData.clear();
               setState(() {});
@@ -234,165 +431,443 @@ class _SearchContentViewState extends State<SearchContentView> {
         ],
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           1.height(),
-          buildSuggestions(),
-          Flexible(
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                if (isLoadingNotifier == false &&
-                    _searchController.text.isNotEmpty)
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: topMatches.isNotEmpty
-                            ? BorderRadius.circular(20)
-                            : null,
-                        color: AppColor.textInvertEmphasis),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        isNodData == true
-                            ? const CustomErrorWidget()
-                            : resultData.isEmpty &&
-                                    _searchController.text.isNotEmpty
-                                ? const NoResultFOundWIdget()
-                                : Expanded(
-                                    child: ListView.separated(
-                                        // key: const PageStorageKey("page"),
-                                        controller: _scrollController,
-                                        keyboardDismissBehavior:
-                                            ScrollViewKeyboardDismissBehavior
-                                                .onDrag,
-                                        padding: const EdgeInsets.only(
-                                            top: 20,
-                                            left: 20,
-                                            right: 20,
-                                            bottom: 20),
-                                        itemBuilder: (context, index) {
-                                          return Column(
-                                            children: [
-                                              CustomListtileWidget(
-                                                  onTap: () {
-                                                    context.hideKeypad();
-                                                    if (resultData[index]
-                                                            .collection ==
-                                                        CategoryName.workouts) {
-                                                      context.navigateTo(
-                                                          WorkoutDetailView(
-                                                              id: resultData[
-                                                                      index]
-                                                                  .entityId
-                                                                  .toString()));
-                                                    } else if (resultData[index]
-                                                            .collection ==
-                                                        CategoryName
-                                                            .videoClasses) {
-                                                      context.navigateTo(
-                                                          VideoAudioDetailView(
-                                                              id: resultData[
-                                                                      index]
-                                                                  .entityId
-                                                                  .toString()));
-                                                    } else if (resultData[index]
-                                                            .collection ==
-                                                        CategoryName
-                                                            .audioClasses) {
-                                                      context.navigateTo(
-                                                          VideoAudioDetailView(
-                                                              id: resultData[
-                                                                      index]
-                                                                  .entityId
-                                                                  .toString()));
-                                                    } else if (resultData[index]
-                                                            .collection ==
-                                                        CategoryName
-                                                            .trainingPlans) {
-                                                      context.navigateTo(
-                                                          TrainingPlanDetailView(
-                                                        id: resultData[index]
-                                                            .entityId
-                                                            .toString(),
-                                                      ));
-                                                    }
-                                                  },
-                                                  imageHeaderIcon: resultData[
-                                                                  index]
-                                                              .collection ==
-                                                          CategoryName.workouts
-                                                      ? AppAssets
-                                                          .workoutHeaderIcon
-                                                      : resultData[index]
-                                                                  .collection ==
-                                                              CategoryName
-                                                                  .audioClasses
-                                                          ? AppAssets
-                                                              .headPhoneIcon
-                                                          : resultData[index]
-                                                                      .collection ==
-                                                                  CategoryName
-                                                                      .trainingPlans
-                                                              ? AppAssets
-                                                                  .calendarIcon
-                                                              : AppAssets
-                                                                  .videoPlayIcon,
-                                                  imageUrl: resultData[index]
-                                                      .image
-                                                      .toString(),
-                                                  subtitle:
-                                                      '${resultData[index].duration} min • ${resultData[index].categories?.map((e) => e.label).join(',')} • ${resultData[index].level}',
-                                                  title: resultData[index]
-                                                      .title
-                                                      .toString()),
-                                              if (index ==
-                                                      resultData.length - 1 &&
-                                                  nextPage == false)
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0)
-                                                          .copyWith(top: 12),
-                                                  child: Text(
-                                                    "Nothing to load",
-                                                    style:
-                                                        AppTypography.label14SM,
-                                                  ),
-                                                )
-                                            ],
-                                          );
-                                        },
-                                        separatorBuilder: (context, index) {
-                                          return const Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 12, bottom: 12),
-                                            child: CustomDivider(indent: 102),
-                                          );
-                                        },
-                                        itemCount: resultData.length),
-                                  ),
-                        if (isLoadMore == true)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: Center(
-                              child: BaseHelper.loadingWidget(),
-                            ),
-                          ),
-                      ],
-                    ),
+          resultPage == false
+              ? buildSuggestions()
+              : filterList.isNotEmpty
+                  ? Container(
+                      padding:
+                          const EdgeInsets.only(top: 16, bottom: 16, left: 24),
+                      width: double.infinity,
+                      height: 75,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        itemCount: filterList.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) => Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: SearchConatinerWIdget(
+                              isActive: filterList[index].entries.first.value,
+                              onFilterTap: (e) {
+                                if (filterList[index].entries.first.value ==
+                                    false) {
+                                  var tappedItem = filterList.removeAt(index);
+                                  Map<CategoryName, bool> updatedValue = {
+                                    tappedItem.entries.first.key: true
+                                  };
+                                  filterList.insert(0, updatedValue);
+                                  filterResultData.clear();
+                                  onFiltertapFn();
+                                  setState(() {});
+                                }
+                              },
+                              onIconTap: (e) {
+                                var tappedItem = filterList.removeAt(index);
+                                Map<CategoryName, bool> updatedValue = {
+                                  tappedItem.entries.first.key: false
+                                };
+                                filterList.insert(
+                                    filterList.length, updatedValue);
+                                filterResultData.clear();
+                                if (filterList.any((element) =>
+                                    element.entries.first.value == true)) {
+                                  onFiltertapFn();
+                                } else {
+                                  filterResultData.addAll(resultData);
+                                }
+
+                                setState(() {});
+                              },
+                              title: filterTitleWidget(
+                                filterList[index].entries.first.key,
+                              )),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+          _searchController.text.isEmpty
+              ? Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: recentSearchLocalList?.length != 0 ||
+                            recentlyVisitedLocalList?.length != 0
+                        ? recentSearchRecentlyVisitWidget()
+                        : const SizedBox.shrink(),
                   ),
-                if (isLoadingNotifier) ...[
-                  ModalBarrier(
-                      dismissible: false,
-                      color: AppColor.surfaceBackgroundColor),
-                  Center(child: BaseHelper.loadingWidget()),
-                ]
-              ],
-            ),
-          )
+                )
+              : Expanded(
+                  child: Stack(
+                    children: [
+                      if (isLoadingNotifier == false &&
+                          _searchController.text.isNotEmpty)
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: topMatches.isNotEmpty
+                                  ? BorderRadius.circular(20)
+                                  : null,
+                              color: AppColor.textInvertEmphasis),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              isNodData == true
+                                  ? const CustomErrorWidget()
+                                  : resultData.isEmpty &&
+                                          _searchController.text.isNotEmpty
+                                      ? const NoResultFOundWIdget()
+                                      : Expanded(
+                                          child: ListView.separated(
+                                              // key: const PageStorageKey("page"),
+                                              controller: _scrollController,
+                                              keyboardDismissBehavior:
+                                                  ScrollViewKeyboardDismissBehavior
+                                                      .onDrag,
+                                              padding: const EdgeInsets.only(
+                                                  top: 20,
+                                                  left: 20,
+                                                  right: 20,
+                                                  bottom: 20),
+                                              itemBuilder: (context, index) {
+                                                return Column(
+                                                  children: [
+                                                    CustomListtileWidget(
+                                                        onTap: () {
+                                                          recnetlyVisiteSortAddDataFn(
+                                                              Resu(
+                                                            collection:
+                                                                filterResultData[
+                                                                        index]
+                                                                    .collection
+                                                                    .getLocalCategoryName(),
+                                                            duration:
+                                                                filterResultData[
+                                                                        index]
+                                                                    .duration!,
+                                                            entityId:
+                                                                filterResultData[
+                                                                        index]
+                                                                    .entityId!,
+                                                            image:
+                                                                filterResultData[
+                                                                        index]
+                                                                    .image!,
+                                                            level:
+                                                                filterResultData[
+                                                                        index]
+                                                                    .level!,
+                                                            matchScore:
+                                                                filterResultData[
+                                                                        index]
+                                                                    .matchScore!,
+                                                            title:
+                                                                filterResultData[
+                                                                        index]
+                                                                    .title!,
+                                                            categories:
+                                                                List.from(
+                                                              filterResultData[
+                                                                      index]
+                                                                  .categories!
+                                                                  .map((e) =>
+                                                                      e.label)
+                                                                  .toList(),
+                                                            ),
+                                                            goals: List.from(
+                                                              filterResultData[
+                                                                      index]
+                                                                  .goals!
+                                                                  .map((e) =>
+                                                                      e.label)
+                                                                  .toList(),
+                                                            ),
+                                                          ));
+                                                          context.hideKeypad();
+                                                          checkCollectionAndNavigate(
+                                                              filterResultData[
+                                                                      index]
+                                                                  .collection!,
+                                                              filterResultData[
+                                                                      index]
+                                                                  .entityId
+                                                                  .toString(),
+                                                              context);
+                                                        },
+                                                        imageHeaderIcon:
+                                                            checkCollectionShowImage(
+                                                                filterResultData[
+                                                                        index]
+                                                                    .collection!,
+                                                                index,
+                                                                context),
+                                                        imageUrl:
+                                                            filterResultData[
+                                                                    index]
+                                                                .image
+                                                                .toString(),
+                                                        subtitle:
+                                                            '${filterResultData[index].duration} min • ${filterResultData[index].categories?.map((e) => e.label).join(',')} • ${filterResultData[index].level}',
+                                                        title: filterResultData[
+                                                                index]
+                                                            .title
+                                                            .toString()),
+                                                    if (index ==
+                                                            filterResultData
+                                                                    .length -
+                                                                1 &&
+                                                        nextPage == false)
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .all(8.0)
+                                                                .copyWith(
+                                                                    top: 12),
+                                                        child: Text(
+                                                          "Nothing to load",
+                                                          style: AppTypography
+                                                              .label14SM,
+                                                        ),
+                                                      )
+                                                  ],
+                                                );
+                                              },
+                                              separatorBuilder:
+                                                  (context, index) {
+                                                return const Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 12, bottom: 12),
+                                                  child: CustomDivider(
+                                                      indent: 102),
+                                                );
+                                              },
+                                              itemCount:
+                                                  filterResultData.length),
+                                        ),
+                              if (isLoadMore == true)
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 20),
+                                  child: Center(
+                                    child: BaseHelper.loadingWidget(),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      if (isLoadingNotifier) ...[
+                        ModalBarrier(
+                            dismissible: false,
+                            color: AppColor.surfaceBackgroundColor),
+                        Center(child: BaseHelper.loadingWidget()),
+                      ]
+                    ],
+                  ),
+                )
         ],
       ),
     );
+  }
+
+  Column recentSearchRecentlyVisitWidget() {
+    return Column(
+      children: [
+        if (recentSearchLocalList?.isNotEmpty ?? false)
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 20,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                RowEndToEndTextWidget(
+                    seeOnTap: () async {
+                      await recentSearchLocalList!.clear();
+                      setState(() {});
+                    },
+                    columnText1: "Recent Searches",
+                    rowText1: "Clear"),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Wrap(
+                      spacing: 20,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.spaceBetween,
+                      direction: Axis.horizontal,
+                      children: recentSearchLocalList!.values.toList().map((e) {
+                        return Container(
+                          // width: double.infinity,
+                          // // color: Colors.red,
+                          constraints: BoxConstraints(
+                            minWidth: 0,
+                            maxWidth: context.dynamicWidth * 0.41,
+                          ),
+                          margin: const EdgeInsets.only(top: 12, bottom: 12),
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  updateSuggestions(
+                                      e.recentSearch.values.first);
+                                  _searchController.text =
+                                      e.recentSearch.values.first;
+                                  getdata(
+                                      isScroll: false,
+                                      text: e.recentSearch.values.first);
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(
+                                        AppAssets.recentSearchIcon),
+                                    8.width(),
+                                    Expanded(
+                                      child: Text(
+                                        e.recentSearch.values.first,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: AppTypography.label16MD.copyWith(
+                                            color: AppColor.linkPrimaryColor),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              8.height(),
+                              CustomDivider(
+                                thickness: 1,
+                              )
+                            ],
+                          ),
+                        );
+                      }).toList()),
+                )
+              ],
+            ),
+          ),
+        // if (value.values.toList().any((element) =>
+        //     element.recentlyVisited.isNotEmpty))
+        if (recentlyVisitedLocalList?.isNotEmpty ?? false)
+          Expanded(
+            child: Column(
+              children: [
+                RowEndToEndTextWidget(
+                    seeOnTap: () {
+                      recentlyVisitedLocalList?.clear();
+                      setState(() {});
+                    },
+                    columnText1: "Recently Visited",
+                    rowText1: "Clear"),
+                12.height(),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: AppColor.textInvertEmphasis),
+                    child: ListView.separated(
+                      itemCount: recentlyVisitedLocalList!.length,
+                      controller: _scrollController,
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      padding: const EdgeInsets.only(
+                          top: 20, left: 20, right: 20, bottom: 20),
+                      itemBuilder: (context, index) {
+                        return CustomListtileWidget(
+                          imageUrl: recentlyVisitedLocalList!.values
+                              .toList()[index]
+                              .recentlyVisited
+                              .values
+                              .first
+                              .image
+                              .toString(),
+                          title: recentlyVisitedLocalList!.values
+                              .toList()[index]
+                              .recentlyVisited
+                              .values
+                              .first
+                              .title
+                              .toString(),
+                          onTap: () {
+                            checkCollectionAndNavigate(
+                                recentlyVisitedLocalList!.values
+                                    .toList()[index]
+                                    .recentlyVisited
+                                    .values
+                                    .first
+                                    .collection
+                                    .getCategoryName(),
+                                recentlyVisitedLocalList!.values
+                                    .toList()[index]
+                                    .recentlyVisited
+                                    .values
+                                    .first
+                                    .entityId!,
+                                context);
+                          },
+                          imageHeaderIcon: checkCollectionShowImage(
+                              recentlyVisitedLocalList!.values
+                                  .toList()[index]
+                                  .recentlyVisited
+                                  .values
+                                  .first
+                                  .collection
+                                  .getCategoryName(),
+                              index,
+                              context),
+                          subtitle:
+                              '${recentlyVisitedLocalList!.values.toList()[index].recentlyVisited.values.first.duration} min • ${recentlyVisitedLocalList!.values.toList()[index].recentlyVisited.values.first.categories?.map((e) => e).join(',')} • ${recentlyVisitedLocalList!.values.toList()[index].recentlyVisited.values.first.level}',
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 12, bottom: 12),
+                          child: CustomDivider(indent: 102),
+                        );
+                      },
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )
+      ],
+    );
+  }
+
+  void checkCollectionAndNavigate(
+      CategoryName categoryName, String id, BuildContext context) {
+    if (categoryName == CategoryName.workouts) {
+      context.navigateTo(WorkoutDetailView(id: id));
+    } else if (categoryName == CategoryName.videoClasses) {
+      context.navigateTo(VideoAudioDetailView(id: id));
+    } else if (categoryName == CategoryName.audioClasses) {
+      context.navigateTo(VideoAudioDetailView(id: id));
+    } else if (categoryName == CategoryName.trainingPlans) {
+      context.navigateTo(TrainingPlanDetailView(id: id));
+    }
+  }
+
+  String checkCollectionShowImage(
+      CategoryName categoryName, int index, BuildContext context) {
+    if (categoryName == CategoryName.workouts) {
+      return AppAssets.workoutHeaderIcon.toString();
+    } else if (categoryName == CategoryName.videoClasses) {
+      return AppAssets.videoPlayIcon.toString();
+    } else if (categoryName == CategoryName.audioClasses) {
+      return AppAssets.headPhoneIcon.toString();
+    } else if (categoryName == CategoryName.trainingPlans) {
+      return AppAssets.calendarIcon.toString();
+    }
+    return "";
+  }
+
+  void onFiltertapFn() {
+    for (var element in filterList) {
+      if (element.entries.first.value == true) {
+        filterResultData.addAll(
+            resultData.where((a) => a.collection == element.entries.first.key));
+      }
+    }
   }
 
   Widget buildSuggestions() {
@@ -415,6 +890,40 @@ class _SearchContentViewState extends State<SearchContentView> {
             },
           )
         ],
+      ),
+    );
+  }
+}
+
+class SearchConatinerWIdget extends StatefulWidget {
+  final bool isActive;
+  final String title;
+  final Function(String) onIconTap, onFilterTap;
+  const SearchConatinerWIdget(
+      {super.key,
+      required this.onFilterTap,
+      required this.onIconTap,
+      required this.title,
+      required this.isActive});
+
+  @override
+  State<SearchConatinerWIdget> createState() => _SearchConatinerWIdgetState();
+}
+
+class _SearchConatinerWIdgetState extends State<SearchConatinerWIdget> {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        widget.onFilterTap(widget.title);
+      },
+      child: FilterContainer(
+        onIconTap: () {
+          setState(() {});
+          widget.onIconTap(widget.title);
+        },
+        e: widget.title,
+        isActive: widget.isActive,
       ),
     );
   }
@@ -560,3 +1069,14 @@ class _StringComparatorState extends State<StringComparator> {
             );
           },
         ), */
+
+// import 'package:flutter/material.dart';
+
+// class SearchContentView extends StatelessWidget {
+//   const SearchContentView({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Scaffold();
+//   }
+// }

@@ -15,8 +15,6 @@ class CategoryListController {
       String? limitContentPerPage,
       String? pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
-   
-
     try {
       final fetcheddata = await OnDemandRequest.listOnDemand(
         queryParameters: {
@@ -48,7 +46,6 @@ class CategoryListController {
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
-  
     }
 
     return null;
@@ -59,7 +56,6 @@ class CategoryListController {
       String? limitContentPerPage,
       String? pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
-   
     try {
       // log(" level query ${searchFilter('level', confirmedFilter.value)}");
       final fetcheddata = await OnDemandRequest.listOnDemand(
@@ -92,7 +88,6 @@ class CategoryListController {
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
-
     }
 
     return null;
@@ -103,9 +98,6 @@ class CategoryListController {
       String? limitContentPerPage,
       String? pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
-  
-   
-
     try {
       final fetcheddata = await WorkoutRequest.listOfWorkout(
         queryParameters: {
@@ -139,7 +131,6 @@ class CategoryListController {
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
-
     }
 
     return null;
@@ -150,8 +141,6 @@ class CategoryListController {
       String? limitContentPerPage,
       String? pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
-
-
     try {
       final fetcheddata = await TrainingPlanRequest.listOfTrainingPlan(
         queryParameters: {
@@ -179,7 +168,6 @@ class CategoryListController {
       }
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
-
     }
 
     return null;
@@ -215,10 +203,6 @@ class CategoryListController {
     return result;
   }
 
-
-  
-
-
   static bool checkfilter(String type, List<TypeFilterModel>? confirmedFilter) {
     if (confirmedFilter != null) {
       for (var element in confirmedFilter) {
@@ -253,16 +237,15 @@ class CategoryListController {
     return null;
   }
 
-
-  static List<OnDemandFiltersModel> onDemandfiltersData = [];
-  static Future<List<OnDemandFiltersModel>> runComplexTask(
+  static List<FiltersModel> filterListData = [];
+  static Future<List<FiltersModel>> runComplexTask(
     context,
     CategoryName name,
     ValueNotifier<bool> filterLoader,
   ) async {
     filterLoader.value = true;
-    if (onDemandfiltersData.isEmpty) {
-      onDemandfiltersData.clear();
+    if (filterListData.isEmpty) {
+      filterListData.clear();
       if (name == CategoryName.videoClasses ||
           name == CategoryName.audioClasses) {
         try {
@@ -271,9 +254,8 @@ class CategoryListController {
               if (element['key'] == "q" ||
                   element['key'] == "type" ||
                   element['key'] == "content_package") {
-          
               } else if (element['values'].length > 2) {
-                onDemandfiltersData.add(OnDemandFiltersModel.fromJson(element));
+                filterListData.add(FiltersModel.fromJson(element));
               }
             }
 
@@ -288,9 +270,8 @@ class CategoryListController {
             for (var element in value!) {
               if (element['key'] == "q" ||
                   element['key'] == "content_package") {
-            
               } else if (element['values'].length > 2) {
-                onDemandfiltersData.add(OnDemandFiltersModel.fromJson(element));
+                filterListData.add(FiltersModel.fromJson(element));
               }
             }
           });
@@ -305,9 +286,8 @@ class CategoryListController {
                   element['key'] == "type" ||
                   element['key'] == "content_package" ||
                   element['key'] == "max_days_per_week") {
-        
               } else if (element['values'].length > 2) {
-                onDemandfiltersData.add(OnDemandFiltersModel.fromJson(element));
+                filterListData.add(FiltersModel.fromJson(element));
               }
             }
 
@@ -316,16 +296,11 @@ class CategoryListController {
         } on RequestException catch (e) {
           BaseHelper.showSnackBar(context, e.message);
         }
-    
       }
-   
     }
     filterLoader.value = false;
-    return onDemandfiltersData;
+    return filterListData;
   }
-
-
- 
 
   static void deleteAFilter(
       context, String e, ValueNotifier<List<TypeFilterModel>> confirmedFilter) {
@@ -390,7 +365,6 @@ class CategoryListController {
   static Map<int, String> videoDataType = {};
   static Map<int, String> audioDataType = {};
 
-  
   static Timer? timer;
   static void delayedFunction({
     required VoidCallback fn,
@@ -457,10 +431,10 @@ class CategoryListController {
     required Map<int, String> onDemandCategoryAudioData,
   }) {
     return categoryName == CategoryName.videoClasses
-        ? "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${onDemandCategoryVideoData[index]} • ${listOndemandData[index].level.toString()}"
+        ? "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${onDemandCategoryVideoData[index] == "" ? "" : "${onDemandCategoryVideoData[index]} • "}${listOndemandData[index].level.toString()}"
         : categoryName == CategoryName.workouts
-            ? "${listWorkoutData[index].duration!.substring(listWorkoutData[index].duration!.indexOf('-') + 1)} min • ${categoryTypeData[index]} • ${listWorkoutData[index].level.toString()}"
-            : "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${onDemandCategoryAudioData[index]} • ${listOndemandData[index].level}";
+            ? "${listWorkoutData[index].duration!.substring(listWorkoutData[index].duration!.indexOf('-') + 1)} min • ${categoryTypeData[index] == "" ? "" : "${categoryTypeData[index]} • "}${listWorkoutData[index].level.toString()}"
+            : "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min •${onDemandCategoryAudioData[index] == "" ? "" : "${onDemandCategoryAudioData[index]} • "}${listOndemandData[index].level}";
   }
 
   static String imageUrl({
@@ -476,6 +450,3 @@ class CategoryListController {
             : listOndemandData[index].image.toString();
   }
 }
-
-
-

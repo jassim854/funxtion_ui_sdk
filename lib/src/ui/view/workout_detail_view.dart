@@ -55,7 +55,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   Timer? _timer;
   @override
   void initState() {
-    _box = Boxes.getData();
+    _box = Boxes.getTrainingPlanBox();
     WorkoutDetailController.shouldBreakLoop = false;
     checkData();
     scrollController = ScrollController()

@@ -7,7 +7,7 @@ class SearchContentController {
   static Future<SearchContentModel?> fetchData(
           {required Map data,
           required SearchContentModel? searchContentData,
-          required List<Result> resultData}) async =>
+        }) async =>
       await SearchContentRequest.searchContent(data: data).then((value) {
         if (value != null) {
           SearchContentModel fetchData = SearchContentModel.fromJson(value);

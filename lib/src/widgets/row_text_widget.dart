@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
 class RowEndToEndTextWidget extends StatelessWidget {
-  const RowEndToEndTextWidget({
-    super.key,
-    required this.columnText1,
-    required this.rowText1,
-    this. columnText2,
-    this.seeOnTap
-  });
+  const RowEndToEndTextWidget(
+      {super.key,
+      required this.columnText1,
+      required this.rowText1,
+      this.columnText2,
+      this.seeOnTap});
   final String columnText1, rowText1;
   final String? columnText2;
   final VoidCallback? seeOnTap;
@@ -40,8 +39,10 @@ class RowEndToEndTextWidget extends StatelessWidget {
             onTap: seeOnTap,
             child: Text(
               rowText1,
-              style: AppTypography.label12XSM
-                  .copyWith(color: AppColor.linkPrimaryColor),
+              style: AppTypography.label12XSM.copyWith(
+                  color: rowText1.contains("Clear")
+                      ? AppColor.linkTeritaryCOlor
+                      : AppColor.linkPrimaryColor),
             ),
           )
         ],

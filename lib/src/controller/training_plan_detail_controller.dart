@@ -33,8 +33,9 @@ class TrainingPlanDetailController {
       for (int i = 0; i < trainingPlanData.weeks![j].days.length; i++) {
         try {
           await WorkoutRequest.workoutById(
-                  id: trainingPlanData
-                      .weeks![weekIndex.value].days[i].activities.first.id)
+                  id: trainingPlanData.weeks?[j].days[i].activities.first.id
+                          .toString() ??
+                      "")
               .then((value) {
             if (value != null) {
               WorkoutModel data = WorkoutModel.fromJson(value);
@@ -53,36 +54,20 @@ class TrainingPlanDetailController {
     return;
   }
 
-  static Future<FitnessGoalModel?> getGoal(context,
-      {required TrainingPlanModel? trainingPlanData}) async {
-    try {
-      Map<String, dynamic>? fetchData =
-          await FitnessGoalRequest.fitnessGoalById(
-              id: trainingPlanData?.goals.first.toString() ?? '');
-      if (fetchData != null) {
-        return FitnessGoalModel.fromJson(fetchData);
-      }
-    } on RequestException catch (e) {
-      BaseHelper.showSnackBar(context, e.message);
-     
-    }
-    return null;
-  }
+  // static Future<Map<String, dynamic>?> getFitnessType(
+  //     context, String id) async {
+  //   Map<String, dynamic>? fetchData;
+  //   try {
+  //     await FitnessActivityTypeRequest.ftinessActivityTypeById(id: id)
+  //         .then((value) {
+  //       if (value != null) {
+  //         fetchData = value;
+  //       }
+  //     });
+  //   } on RequestException catch (e) {
+  //     BaseHelper.showSnackBar(context, e.message);
 
-  static Future<Map<String, dynamic>?> getFitnessType(
-      context, String id) async {
-    Map<String, dynamic>? fetchData;
-    try {
-      await FitnessActivityTypeRequest.ftinessActivityTypeById(id: id)
-          .then((value) {
-        if (value != null) {
-          fetchData = value;
-        }
-      });
-    } on RequestException catch (e) {
-      BaseHelper.showSnackBar(context, e.message);
-
-    }
-    return fetchData;
-  }
+  //   }
+  //   return fetchData;
+  // }
 }

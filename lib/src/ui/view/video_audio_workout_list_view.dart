@@ -51,10 +51,9 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
 
           pageNumber += 10;
           getData(
-              categoryName: widget.categoryName,
-              isScroll: true,
-              mainSearch:
-                  _searchController.text == "" ? null : _searchController.text);
+            categoryName: widget.categoryName,
+            isScroll: true,
+          );
         }
       },
     );
@@ -67,7 +66,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
     _scrollController.dispose();
     _searchController.dispose();
     // CategoryListController.filterCategoryTypeData.clear();
-    CategoryListController.onDemandfiltersData.clear();
+    CategoryListController.filterListData.clear();
     super.dispose();
   }
 
@@ -80,7 +79,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                 surfaceTintColor: AppColor.surfaceBackgroundColor,
                 titleSpacing: 0,
                 leadingWidth: 75,
-                leading: NavigatorState().canPop()
+                leading: Navigator.of(context).canPop()
                     ? GestureDetector(
                         onTap: () {
                           context.maybePopPage();
@@ -303,9 +302,9 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
           onChange: (value) {
             CategoryListController.delayedFunction(fn: () {
               getData(
-                  categoryName: widget.categoryName,
-                  isScroll: false,
-                  mainSearch: value);
+                categoryName: widget.categoryName,
+                isScroll: false,
+              );
             });
           },
           onIconTap: () {
@@ -402,10 +401,10 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
     }
   }
 
-  void getData(
-      {required CategoryName categoryName,
-      required bool isScroll,
-      String? mainSearch}) async {
+  void getData({
+    required CategoryName categoryName,
+    required bool isScroll,
+  }) async {
     setState(() {
       isNodData = false;
 
@@ -425,7 +424,8 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
         ? await CategoryListController.getListOnDemandData(
             context,
             confirmedFilter: confirmedFilter,
-            mainSearch: mainSearch,
+            mainSearch:
+                _searchController.text == "" ? null : _searchController.text,
             pageNumber: pageNumber.toString(),
           ).then((value) {
             if (value != null && value.isNotEmpty) {
@@ -458,7 +458,9 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
             ? await CategoryListController.getListWorkoutData(
                 context,
                 confirmedFilter: confirmedFilter,
-                mainSearch: mainSearch,
+                mainSearch: _searchController.text == ""
+                    ? null
+                    : _searchController.text,
                 pageNumber: pageNumber.toString(),
               ).then((value) {
                 if (value != null && value.isNotEmpty) {
@@ -489,7 +491,9 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
             : CategoryListController.getListOnDemandAudioData(
                 context,
                 confirmedFilter: confirmedFilter,
-                mainSearch: mainSearch,
+                mainSearch: _searchController.text == ""
+                    ? null
+                    : _searchController.text,
                 pageNumber: pageNumber.toString(),
               ).then((value) {
                 if (value != null && value.isNotEmpty) {

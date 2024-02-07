@@ -255,7 +255,15 @@ class HeaderTitleWIdget extends StatelessWidget {
     );
   }
 }
-
+String filterTitleWidget(CategoryName categoryName){
+return      categoryName == CategoryName.videoClasses
+          ? "Videos"
+          : categoryName == CategoryName.workouts
+              ? "Workouts"
+              : categoryName == CategoryName.audioClasses
+                  ? "Audio"
+                  : categoryName == CategoryName.trainingPlans?"Training Plans":"";
+}
 /// no data widget in video detail 
 /*Padding(
                       padding: const EdgeInsets.symmetric(

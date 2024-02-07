@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:funxtion/funxtion_sdk.dart';
@@ -53,8 +52,6 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
 
   @override
   void initState() {
-  
-
     _searchControllerPage1 = TextEditingController();
     _searchControllerPage2 = TextEditingController();
     _scrollControllerPage1 = ScrollController();
@@ -67,7 +64,6 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
     getData(isScroll: false);
     _scrollControllerPage1.addListener(
       () {
-    
         if (isLoadMore == false &&
             nextPage == true &&
             _scrollControllerPage1.position.extentAfter < 300.0 &&
@@ -75,10 +71,8 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
           isLoadMore = true;
           pageNumber += 10;
           getData(
-              isScroll: true,
-              mainSearch: _searchControllerPage1.text == ""
-                  ? null
-                  : _searchControllerPage1.text);
+            isScroll: true,
+          );
         }
       },
     );
@@ -87,7 +81,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
   }
 
   checkIsFollowed() {
-    isFollowed = Boxes.getData().isNotEmpty;
+    isFollowed = Boxes.getTrainingPlanBox().isNotEmpty;
     if (isFollowed == false) {
       _tabController.animateTo(0);
     }
@@ -101,7 +95,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
     _searchControllerPage2.dispose();
     _scrollControllerPage2.dispose();
     _tabController.dispose();
-    CategoryListController.onDemandfiltersData.clear();
+    CategoryListController.filterListData.clear();
     super.dispose();
   }
 
@@ -121,7 +115,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Box<FollowTrainingplanModel>>(
-        valueListenable: Boxes.getData().listenable(),
+        valueListenable: Boxes.getTrainingPlanBox().listenable(),
         builder: (_, box, child) {
           checkIsFollowed();
           addData(box);
@@ -132,14 +126,16 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
                   titleSpacing: 0,
                   leadingWidth: 75,
                   toolbarHeight: 40,
-                  leading:NavigatorState().canPop()? GestureDetector(
-                    onTap: () {
-                      context.maybePopPage();
-                    },
-                    child: SvgPicture.asset(
-                      AppAssets.backArrowIcon,
-                    ),
-                  ):const SizedBox.shrink(),
+                  leading: Navigator.of(context).canPop()
+                      ? GestureDetector(
+                          onTap: () {
+                            context.maybePopPage();
+                          },
+                          child: SvgPicture.asset(
+                            AppAssets.backArrowIcon,
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                   backgroundColor: AppColor.surfaceBackgroundColor,
                   elevation: 0.0,
                   centerTitle: true,
@@ -212,7 +208,9 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
                           searchControllerPage1: _searchControllerPage1,
                           confirmedFilter: confirmedFilter,
                           requestCall: () {
-                            getData(isScroll: false);
+                            getData(
+                              isScroll: false,
+                            );
                           },
                           isLoadMore: isLoadMore,
                           isLoadingNotifier: isLoadingNotifier,
@@ -224,7 +222,9 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
                           showCloseIcon: showCloseIcon,
                           searchDelayFn: (value) {
                             CategoryListController.delayedFunction(fn: () {
-                              getData(isScroll: false, mainSearch: value);
+                              getData(
+                                isScroll: false,
+                              );
                             });
                           },
                           fitnessGoalData: fitnessGoalData,
@@ -256,7 +256,9 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
     );
   }
 
-  void getData({required bool isScroll, String? mainSearch}) async {
+  void getData({
+    required bool isScroll,
+  }) async {
     setState(() {
       isNodData = false;
 
@@ -273,7 +275,9 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
       await CategoryListController.getListTrainingPlanData(
         context,
         confirmedFilter: confirmedFilter,
-        mainSearch: mainSearch,
+        mainSearch: _searchControllerPage1.text == ""
+            ? null
+            : _searchControllerPage1.text,
         pageNumber: pageNumber.toString(),
       ).then((value) async {
         if (value != null && value.isNotEmpty) {
@@ -281,35 +285,11 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
           isLoadMore = false;
 
           tempListTrainingPLanData.addAll(value);
-          List<FitnessGoalModel> listOfFitnessGoal = [];
 
-          for (var j = 0; j < tempListTrainingPLanData.length; j++) {
-            listOfFitnessGoal.clear();
-            for (var i = 0; i < tempListTrainingPLanData[j].goals.length; i++) {
-              try {
-                await FitnessGoalRequest.fitnessGoalById(
-                        id: tempListTrainingPLanData[j].goals[i].toString())
-                    .then((fitnessValue) {
-                  if (fitnessValue != null) {
-                    FitnessGoalModel fetchData =
-                        FitnessGoalModel.fromJson(fitnessValue);
-                    listOfFitnessGoal.add(fetchData);
-                  }
-                });
-              } on RequestException catch (e) {
-                BaseHelper.showSnackBar(context, e.message);
-              }
-              if (shouldBreakLoop == true) {
-                break;
-              }
-            }
-
-            if (shouldBreakLoop == true) {
-              break;
-            }
-            fitnessGoalData
-                .addAll({j: listOfFitnessGoal.map((e) => e.name).join(',')});
-          }
+          CommonController.getFilterFitnessGoalData(context,
+              shouldBreakLoop: shouldBreakLoop,
+              trainingPlanData: tempListTrainingPLanData,
+              filterFitnessGoalData: fitnessGoalData);
           listTrainingPLanData.addAll(value);
           isLoadingNotifier = isScroll == true ? false : false;
           setState(() {});
@@ -483,7 +463,6 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
                                                 id: widget
                                                     .followTrainingData[index]
                                                     .trainingplanId,
-                                               
                                               ));
                                             },
                                             imageHeaderIcon:
@@ -675,7 +654,6 @@ class _FirstTabWidgetState extends State<FirstTabWidget> {
                                                     context.hideKeypad();
                                                     context.navigateTo(
                                                         TrainingPlanDetailView(
-                                                        
                                                             id: widget
                                                                 .listTrainingPLanData[
                                                                     index]

@@ -4,15 +4,23 @@ import '../../ui_tool_kit.dart';
 
 class FilterContainer extends StatelessWidget {
   final String e;
-  final VoidCallback onTap;
-  const FilterContainer({super.key, required this.onTap, required this.e});
+  final VoidCallback onIconTap;
+  bool isActive;
+
+  FilterContainer(
+      {super.key,
+      required this.onIconTap,
+      required this.e,
+      required this.isActive});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColor.linkTeritaryCOlor,
+        color: isActive == true
+            ? AppColor.linkTeritaryCOlor
+            : AppColor.surfaceBackgroundSecondaryColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -21,16 +29,19 @@ class FilterContainer extends StatelessWidget {
           children: [
             Text(
               e.toString(),
-              style: AppTypography.label14SM
-                  .copyWith(color: AppColor.textInvertEmphasis),
+              style: AppTypography.label14SM.copyWith(
+                  color: isActive == true
+                      ? AppColor.textInvertEmphasis
+                      : AppColor.textEmphasisColor),
             ),
             InkWell(
-              onTap: onTap,
-              child: Icon(
-                Icons.close,
-                color: AppColor.textInvertEmphasis,
-              ),
-            )
+                onTap: onIconTap,
+                child: isActive == true
+                    ? Icon(
+                        Icons.close,
+                        color: AppColor.textInvertEmphasis,
+                      )
+                    : const SizedBox.shrink())
           ]),
     );
   }
@@ -76,22 +87,26 @@ class FilterRowWidget extends StatelessWidget {
                                       ? confirmedFilter.value
                                           .sublist(0, 2)
                                           .map((e) => FilterContainer(
-                                              e: e.filter.toString(),
-                                              onTap: () {
-                                                deleteAFilterOnTap(e);
-                                              }))
+                                                e: e.filter.toString(),
+                                                onIconTap: () {
+                                                  deleteAFilterOnTap(e);
+                                                },
+                                                isActive: true,
+                                              ))
                                           .toList()
                                       : [
                                           for (int i = 0;
                                               i < confirmedFilter.value.length;
                                               i++)
                                             FilterContainer(
-                                                e: confirmedFilter
-                                                    .value[i].filter,
-                                                onTap: () {
-                                                  deleteAFilterOnTap(
-                                                      confirmedFilter.value[i]);
-                                                }),
+                                              e: confirmedFilter
+                                                  .value[i].filter,
+                                              onIconTap: () {
+                                                deleteAFilterOnTap(
+                                                    confirmedFilter.value[i]);
+                                              },
+                                              isActive: true,
+                                            ),
                                           Container(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -136,24 +151,23 @@ class FilterRowWidget extends StatelessWidget {
                             ]
                           : confirmedFilter.value
                               .map((e) => FilterContainer(
-                                  e: e.filter.toString(),
-                                  onTap: () {
-                                    deleteAFilterOnTap(e);
-                                  }))
+                                    e: e.filter.toString(),
+                                    onIconTap: () {
+                                      deleteAFilterOnTap(e);
+                                    },
+                                    isActive: true,
+                                  ))
                               .toList()),
                 ),
                 // if (confirmedFilter.value.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(),
-                  child: InkWell(
-                    onTap: clearOnTap,
-                    child: Text(
-                      'Clear',
-                      style: AppTypography.label14SM.copyWith(
-                          color: AppColor.linkTeritaryCOlor,
-                          decorationStyle: TextDecorationStyle.solid,
-                          decoration: TextDecoration.underline),
-                    ),
+                InkWell(
+                  onTap: clearOnTap,
+                  child: Text(
+                    'Clear',
+                    style: AppTypography.label14SM.copyWith(
+                        color: AppColor.linkTeritaryCOlor,
+                        decorationStyle: TextDecorationStyle.solid,
+                        decoration: TextDecoration.underline),
                   ),
                 )
               ],

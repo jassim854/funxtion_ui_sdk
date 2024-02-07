@@ -91,12 +91,11 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                         child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: CategoryListController.onDemandfiltersData
+                            children: CategoryListController.filterListData
                                 .map((data) => Padding(
                                       padding: EdgeInsets.only(
                                           top: CategoryListController
-                                                      .onDemandfiltersData
-                                                      .first ==
+                                                      .filterListData.first ==
                                                   data
                                               ? 20
                                               : 35,
@@ -192,8 +191,6 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                                                               )))
                                                       .toList(),
                                                 )
-
-                                        
                                         ],
                                       ),
                                     ))

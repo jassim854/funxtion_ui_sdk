@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
@@ -26,7 +24,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   late ScrollController scrollController;
 
   TrainingPlanModel? trainingPlanData;
-  FitnessGoalModel? fitnessGoalData;
+  Map<int, String> fitnessGoalData = {};
   FitnessActivityTypeModel? fitnessActivityTypeData;
   ExerciseModel? exerciseData;
   ExerciseModel? exerciseWorkoutData;
@@ -37,7 +35,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   List<WorkoutModel> listSheduleWorkoutData = [];
   ValueNotifier<bool> shedulePlanLoader = ValueNotifier(false);
   ValueNotifier<bool> fitnessTypeLoader = ValueNotifier(true);
-  ValueNotifier<bool> goalLoader = ValueNotifier(true);
+
   FollowTrainingplanModel? followTrainingData;
   // Map<int, String> typeData = {};
   ValueNotifier<bool> typeLoader = ValueNotifier(false);
@@ -48,7 +46,6 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   void initState() {
     scrollController = ScrollController()
       ..addListener(() {
-  
         if (scrollController.offset > 90) {
           centerTitle.value = true;
         } else if (scrollController.offset < 105) {
@@ -71,16 +68,10 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
         isLoadingNotifier = false;
         trainingPlanData = data;
 
-        await TrainingPlanDetailController.getGoal(context,
-                trainingPlanData: trainingPlanData)
-            .then((value) {
-          if (value != null) {
-            fitnessGoalData = value;
-            goalLoader.value = false;
-          } else {
-            goalLoader.value = false;
-          }
-        });
+        CommonController.getFilterFitnessGoalData(context,
+            shouldBreakLoop: false,
+            trainingData: data,
+            filterFitnessGoalData: fitnessGoalData);
         setState(() {});
         if (trainingPlanData!.weeks!.isNotEmpty) {
           // ignore: use_build_context_synchronously
@@ -133,7 +124,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Box<FollowTrainingplanModel>>(
-        valueListenable: Boxes.getData().listenable(),
+        valueListenable: Boxes.getTrainingPlanBox().listenable(),
         builder: (_, box, child) {
           checkIsFollowed(box);
 
@@ -181,7 +172,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                                         );
                                                 }),
                                             Text(
-                                              " • ${fitnessGoalData?.name}",
+                                              " • ${fitnessGoalData.entries.first.value}",
                                               style: AppTypography.label16MD
                                                   .copyWith(
                                                       color: AppColor
@@ -413,15 +404,16 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                         followTrainingData
                                             ?.totalWorkoutLength) {
                                       for (var i = 0;
-                                          i < Boxes.getData().length;
+                                          i < Boxes.getTrainingPlanBox().length;
                                           i++) {
-                                        if (Boxes.getData()
+                                        if (Boxes.getTrainingPlanBox()
                                                 .values
                                                 .toList()[i]
                                                 .trainingplanId ==
                                             followTrainingData!
                                                 .trainingplanId) {
-                                          Boxes.getData().deleteAt(i);
+                                          Boxes.getTrainingPlanBox()
+                                              .deleteAt(i);
                                           context.popPage();
                                         }
                                       }
@@ -746,19 +738,8 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
               const EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 16),
           child: Column(
             children: [
-              ValueListenableBuilder(
-                valueListenable: goalLoader,
-                builder: (context, value, child) {
-                  return value == true
-                      ? Center(
-                          child: BaseHelper.loadingWidget(),
-                        )
-                      : CustomRowTextChartIcon(
-                          text1: 'Goal',
-                          text2: fitnessGoalData?.name ?? "No Data",
-                        );
-                },
-              ),
+              CustomRowTextChartIcon(
+                  text1: 'Goal', text2: fitnessGoalData.entries.first.value),
               const Padding(
                 padding: EdgeInsets.only(top: 16, bottom: 16),
                 child: CustomDivider(),

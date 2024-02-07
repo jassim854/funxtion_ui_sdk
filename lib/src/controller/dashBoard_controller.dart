@@ -12,13 +12,13 @@ class DashBoardController {
       required List<OnDemandModel> audioData,
       required List<WorkoutModel> workoutData,
       required List<TrainingPlanModel> trainingPlanData,
-      required Map<int, String> fitnessGoalData}) async {
+      required Map<int, String> filterFitnessGoalData}) async {
     isLoading.value = true;
 
     await CommonController.getListCategoryTypeDataFn(
       context,
     );
-
+    await CommonController.getListGoalData(context);
     await CommonController.getOnDemandContentCategoryFn(context);
     try {
       await CategoryListController.getListTrainingPlanData(context,
@@ -66,13 +66,15 @@ class DashBoardController {
     } on RequestException catch (e) {
       BaseHelper.showSnackBar(context, e.message);
     }
-    await CommonController.getListGoalData(
-        context, 0, trainingPlanData, false, fitnessGoalData);
-    await CommonController.getListFilterOnDemandCategoryTypeFn(
+    CommonController.getFilterFitnessGoalData(context,
+        shouldBreakLoop: false,
+        trainingPlanData: trainingPlanData,
+        filterFitnessGoalData: filterFitnessGoalData);
+    CommonController.getListFilterOnDemandCategoryTypeFn(
         0, audioData, audioDataType);
-    await CommonController.getListFilterOnDemandCategoryTypeFn(
+    CommonController.getListFilterOnDemandCategoryTypeFn(
         0, onDemadDataVideo, videoDataType);
-    await CommonController.filterCategoryTypeData(workoutData, workoutDataType);
+    CommonController.filterCategoryTypeData(workoutData, workoutDataType);
     isLoading.value = false;
   }
 }
