@@ -3,8 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'package:ui_tool_kit/src/helper/boxes.dart';
-import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
+
 
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -70,8 +69,8 @@ class _DashBoardViewState extends State<DashBoardView> {
           leading: const SizedBox.shrink(),
           title: CustomSearchTextFieldWidget(
             onFieldTap: () {
-              context.navigateTo(SearchContentView());
-              print("object");
+              context.navigateTo(const SearchContentView());
+
             },
             hintText: 'Workouts, trainers, exercises',
             margin:

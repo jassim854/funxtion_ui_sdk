@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
+
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
 class Boxes {

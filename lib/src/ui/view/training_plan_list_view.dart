@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:funxtion/funxtion_sdk.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:ui_tool_kit/src/helper/boxes.dart';
+
 import 'package:ui_tool_kit/ui_tool_kit.dart';
-import '../../model/follow_trainingplan_model.dart';
+
 
 class TrainingPlanListView extends StatefulWidget {
   final int initialIndex;

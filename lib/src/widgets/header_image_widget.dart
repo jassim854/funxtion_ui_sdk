@@ -464,7 +464,7 @@ class BuildBodyWidget extends StatelessWidget {
     return i == 0 && currentListData.length > 1
         ? currentListData.entries.toList()[i + 1].key.exerciseCategoryName ==
                 currentListData.entries.toList()[i].key.exerciseCategoryName
-            ? Padding(
+            ? const Padding(
                 padding: EdgeInsets.only(top: 12, bottom: 12),
                 child: CustomDivider(
                   indent: 145,
@@ -496,21 +496,13 @@ class BuildBodyWidget extends StatelessWidget {
                     ),
                   )
                 : currentListData.entries
-                                .toList()[i]
-                                .key
-                                .exerciseCategoryName !=
-                            currentListData.entries
-                                .toList()[i - 1]
-                                .key
-                                .exerciseCategoryName &&
+                            .toList()[i]
+                            .key
+                            .exerciseCategoryName !=
                         currentListData.entries
-                                .toList()[i + 1]
-                                .key
-                                .exerciseCategoryName ==
-                            currentListData.entries
-                                .toList()[i]
-                                .key
-                                .exerciseCategoryName
+                            .toList()[i - 1]
+                            .key
+                            .exerciseCategoryName
                     ? const Padding(
                         padding: EdgeInsets.only(top: 12, bottom: 12),
                         child: CustomDivider(
@@ -520,7 +512,21 @@ class BuildBodyWidget extends StatelessWidget {
                           // endIndent: context.dynamicWidth * 0.02,
                         ),
                       )
-                    : const SizedBox.shrink();
+                    : currentListData.entries
+                                .toList()[i - 1]
+                                .key
+                                .exerciseCategoryName ==
+                            ItemType.singleExercise
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 12, bottom: 12),
+                            child: CustomDivider(
+                              indent: 145,
+
+                              // indent: context.dynamicWidth * 0.29,
+                              // endIndent: context.dynamicWidth * 0.02,
+                            ),
+                          )
+                        : const SizedBox.shrink();
   }
 
   Padding showExerciseTileWidget(

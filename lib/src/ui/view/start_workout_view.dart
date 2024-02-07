@@ -4,7 +4,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
 
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
@@ -13,7 +12,7 @@ class StartWorkoutView extends StatefulWidget {
   final Map<ExerciseDetailModel, ExerciseModel> warmUpData;
   final Map<ExerciseDetailModel, ExerciseModel> trainingData;
   final Map<ExerciseDetailModel, ExerciseModel> coolDownData;
-  final FitnessGoalModel? fitnessGoalModel;
+  final Map<int, String> fitnessGoalModel;
   final ValueNotifier<int> durationNotifier;
   final Timer? mainTimer;
   final List<EquipmentModel> equipmentData;
@@ -25,7 +24,7 @@ class StartWorkoutView extends StatefulWidget {
     required this.warmUpData,
     required this.trainingData,
     required this.coolDownData,
-    this.fitnessGoalModel,
+    required this.fitnessGoalModel,
     required this.durationNotifier,
     required this.equipmentData,
     required this.mainTimer,
@@ -413,13 +412,19 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
           if (widget.warmUpData.isEmpty &&
               widget.trainingData.isNotEmpty &&
               widget.coolDownData.isEmpty) {
-            context.multiPopPage(popPageCount: 2);
+            if (context.mounted) {
+              context.multiPopPage(popPageCount: 2);
+            }
           } else if (widget.warmUpData.isNotEmpty &&
               widget.trainingData.isEmpty &&
               widget.coolDownData.isEmpty) {
-            context.multiPopPage(popPageCount: 2);
+            if (context.mounted) {
+              context.multiPopPage(popPageCount: 2);
+            }
           } else {
-            context.multiPopPage(popPageCount: 3);
+            if (context.mounted) {
+              context.multiPopPage(popPageCount: 3);
+            }
           }
         }
         return Future.value(false);
@@ -1196,7 +1201,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
           isPlaying.value = true;
         },
         child: DoneWorkoutSheet(
-            type: widget.fitnessGoalModel?.name.toString() ?? "",
+            type: widget.fitnessGoalModel.entries.first.value,
             workoutName: widget.workoutModel.title.toString(),
             totalDuration: widget.durationNotifier.value,
             followTrainingplanModel: widget.followTrainingplanModel,

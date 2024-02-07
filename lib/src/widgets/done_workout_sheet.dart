@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ui_tool_kit/src/helper/boxes.dart';
-import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
 
 import '../../ui_tool_kit.dart';
 
@@ -248,7 +246,8 @@ class DoneWorkoutSheet extends StatelessWidget {
                                                       .putAt(i, newData);
                                                 }
                                               }
-                                              Navigator.popUntil(
+                                              if (context.mounted) {
+                                                    Navigator.popUntil(
                                                 context,
                                                 (route) => route.isFirst,
                                               );
@@ -257,6 +256,8 @@ class DoneWorkoutSheet extends StatelessWidget {
                                                 id: followTrainingplanModel!
                                                     .trainingplanId,
                                               ));
+                                              }
+                                          
                                             },
                                             childPadding:
                                                 const EdgeInsets.symmetric(
@@ -297,7 +298,8 @@ class DoneWorkoutSheet extends StatelessWidget {
                                                       .deleteAt(i);
                                                 }
                                               }
-                                              Navigator.popUntil(
+                                              if (context.mounted) {
+                                                             Navigator.popUntil(
                                                 context,
                                                 (route) => route.isFirst,
                                               );
@@ -305,6 +307,8 @@ class DoneWorkoutSheet extends StatelessWidget {
                                               context.navigateTo(
                                                   const TrainingPlanListView(
                                                       initialIndex: 0));
+                                              }
+                                 
                                             } else {
                                               Navigator.popUntil(
                                                 context,

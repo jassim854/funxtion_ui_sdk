@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
+
 
 
 import '../../ui_tool_kit.dart';
@@ -22,7 +22,7 @@ class GetReadySheetWidget extends StatelessWidget {
   final Map<ExerciseDetailModel, ExerciseModel> warmUpData;
   final Map<ExerciseDetailModel, ExerciseModel> trainingData;
   final Map<ExerciseDetailModel, ExerciseModel> coolDownData;
-  final FitnessGoalModel? fitnessGoalModel;
+  final Map<int,String> fitnessGoalModel;
   final List<EquipmentModel> equipmentData;
   final ValueNotifier<int> durationNotifier = ValueNotifier(0);
 
@@ -117,7 +117,7 @@ class GetReadySheetWidget extends StatelessWidget {
                     Expanded(
                         child: BuildCardWidget(
                             title: 'Type',
-                            subtitle: fitnessGoalModel?.name ?? ""))
+                            subtitle: fitnessGoalModel.entries.first.value))
                   ],
                 ),
               ),

@@ -2,7 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 import 'package:funxtion/funxtion_sdk.dart';
-import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
+
 
 import '../../ui_tool_kit.dart';
 
@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     checkInternet();
-
+   
     fetchData();
     getPath();
 
@@ -79,6 +79,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   fetchData() async {
+    
     if (widget.categoryName == CategoryName.dashBoard) {
       await DashBoardController.getData(context,
           audioDataType: audioDataType,
@@ -91,6 +92,7 @@ class _HomePageState extends State<HomePage> {
           trainingPlanData: trainingPlanData,
           filterFitnessGoalData: fitnessGoalData);
     }
+
   }
 
   @override
@@ -172,7 +174,8 @@ class ThreeDotLoader extends StatefulWidget {
   const ThreeDotLoader({super.key});
 
   @override
-  _ThreeDotLoaderState createState() => _ThreeDotLoaderState();
+  @override
+  State<ThreeDotLoader> createState() => _ThreeDotLoaderState();
 }
 
 class _ThreeDotLoaderState extends State<ThreeDotLoader>

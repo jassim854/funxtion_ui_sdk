@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:ui_tool_kit/src/helper/boxes.dart';
+
 // import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../ui_tool_kit.dart';
@@ -364,18 +364,9 @@ class _SearchContentViewState extends State<SearchContentView> {
         title: CustomSearchTextFieldWidget(
           onSubmitted: (p0) async {
             resultPage = true;
-            // recentSearchLocalList!.add(RecentSearchLocalModel(
-            //     recentSearch: {DateTime.now(): _searchController.text}));
-            // recentSearchLocalList!.deleteFromDisk();
-
             if (_searchController.text.isNotEmpty) {
               await recentSearchSortAddDataFn();
             }
-            // log(recentSearchLocalList!
-            //     .values
-            //     .toList()
-            //     .map((e) => e.recentSearch.entries.first.toString())
-            //     .toString());
             setState(() {});
           },
           onChange: (p0) {
@@ -410,14 +401,7 @@ class _SearchContentViewState extends State<SearchContentView> {
         actions: [
           GestureDetector(
             onTap: () {
-              context.hideKeypad();
-              resultPage = false;
-              _searchController.clear();
-              filterResultData.clear();
-              filterList.clear();
-              topMatches.clear();
-              resultData.clear();
-              setState(() {});
+              context.popPage();
             },
             child: Container(
               alignment: Alignment.center,
@@ -734,7 +718,7 @@ class _SearchContentViewState extends State<SearchContentView> {
                                 ),
                               ),
                               8.height(),
-                              CustomDivider(
+                              const CustomDivider(
                                 thickness: 1,
                               )
                             ],

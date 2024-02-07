@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:ui_tool_kit/src/helper/boxes.dart';
-import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
+
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
 class TrainingPlanDetailView extends StatefulWidget {

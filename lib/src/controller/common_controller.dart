@@ -6,6 +6,36 @@ class CommonController {
   static List<ContentProvidersCategoryOnDemandModel> categoryTypeData = [];
   static List<ContentProvidersCategoryOnDemandModel> onDemandCategoryData = [];
   static List<FitnessGoalModel> listOfFitnessGoal = [];
+  static List<EquipmentModel> equipmentListData = [];
+
+  static getListEquipmentData(context) async {
+    try {
+      await EquipmentRequest.listOfEquipment().then((value) {
+        if (value != null) {
+          List<EquipmentModel> fetchData =
+              List.from(value.map((e) => EquipmentModel.fromJson(e)));
+          equipmentListData.addAll(fetchData);
+        }
+      });
+    } on RequestException catch (e) {
+      BaseHelper.showSnackBar(context, e.message);
+    }
+  }
+
+  static getEquipmentFilterData(
+      {required List<int> equipmentIds,
+      required List<EquipmentModel> filterEquipmentData}) {
+    Set<int> newIdsList = {};
+    newIdsList.addAll(equipmentIds);
+    for (var i = 0; i < newIdsList.length; i++) {
+      for (var j = 0; j < equipmentListData.length; j++) {
+        if (newIdsList.toList()[i] == equipmentListData[j].id) {
+          filterEquipmentData.add(equipmentListData[j]);
+        }
+      }
+    }
+  }
+
   static Future getListGoalData(
     context,
   ) async {
@@ -26,6 +56,7 @@ class CommonController {
       {required bool shouldBreakLoop,
       List<TrainingPlanModel>? trainingPlanData,
       TrainingPlanModel? trainingData,
+      WorkoutModel? workoutData,
       required Map<int, String> filterFitnessGoalData}) {
     List<FitnessGoalModel> tempList = [];
     int currentI = filterFitnessGoalData.length;
@@ -67,6 +98,25 @@ class CommonController {
         }
         filterFitnessGoalData
             .addAll({currentI + j: tempList.map((e) => e.name).join(',')});
+      }
+    } else if (workoutData != null) {
+      if (workoutData.goals != null) {
+        for (var i = 0; i < workoutData.goals!.length; i++) {
+          for (var element in listOfFitnessGoal) {
+            if (element.id == workoutData.goals![i]) {
+              tempList.add(element);
+            }
+            if (shouldBreakLoop == true) {
+              break;
+            }
+          }
+          if (shouldBreakLoop == true) {
+            break;
+          }
+
+          filterFitnessGoalData
+              .addAll({0: tempList.map((e) => e.name).join(',')});
+        }
       }
     }
   }

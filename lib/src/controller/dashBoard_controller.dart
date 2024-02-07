@@ -18,58 +18,89 @@ class DashBoardController {
     await CommonController.getListCategoryTypeDataFn(
       context,
     );
-    await CommonController.getListGoalData(context);
+    if (context.mounted) {
+          await CommonController.getListGoalData(context);
+  
+    }
+if (context.mounted) {
     await CommonController.getOnDemandContentCategoryFn(context);
+}
     try {
-      await CategoryListController.getListTrainingPlanData(context,
+      if (context.mounted) {
+              await CategoryListController.getListTrainingPlanData(context,
               confirmedFilter: ValueNotifier([]), limitContentPerPage: "4")
           .then((value) {
         if (value != null && context.mounted) {
           trainingPlanData.addAll(value);
         }
       });
+      }
+
     } on RequestException catch (e) {
-      BaseHelper.showSnackBar(context, e.message);
+      if (context.mounted) {
+              BaseHelper.showSnackBar(context, e.message);
+      }
+
     }
     try {
-      await CategoryListController.getListOnDemandData(context,
+      if (context.mounted) {
+         await CategoryListController.getListOnDemandData(context,
               confirmedFilter: ValueNotifier([]), limitContentPerPage: '4')
           .then((value) async {
         if (value != null && context.mounted) {
           onDemadDataVideo.addAll(value);
         }
       });
+      }
+     
     } on RequestException catch (e) {
-      BaseHelper.showSnackBar(context, e.message);
+      if (context.mounted) {
+        BaseHelper.showSnackBar(context, e.message);
+      }
     }
 
     try {
-      await CategoryListController.getListOnDemandAudioData(context,
+      if (context.mounted) {
+              await CategoryListController.getListOnDemandAudioData(context,
               confirmedFilter: ValueNotifier([]), limitContentPerPage: "4")
           .then((value) async {
         if (value != null && context.mounted) {
           audioData.addAll(value);
         }
       });
+      }
+
     } on RequestException catch (e) {
-      BaseHelper.showSnackBar(context, e.message);
+      if (context.mounted) {
+              BaseHelper.showSnackBar(context, e.message);
+      }
+
     }
 
     try {
-      await CategoryListController.getListWorkoutData(context,
+      if (context.mounted) {
+              await CategoryListController.getListWorkoutData(context,
               confirmedFilter: ValueNotifier([]), limitContentPerPage: "4")
           .then((value) async {
         if (value != null && context.mounted) {
           workoutData.addAll(value);
         }
       });
+      }
+
     } on RequestException catch (e) {
-      BaseHelper.showSnackBar(context, e.message);
+    if (context.mounted) {
+        BaseHelper.showSnackBar(context, e.message);
     }
-    CommonController.getFilterFitnessGoalData(context,
+    
+    }
+    if (context.mounted) {
+          CommonController.getFilterFitnessGoalData(context,
         shouldBreakLoop: false,
         trainingPlanData: trainingPlanData,
         filterFitnessGoalData: filterFitnessGoalData);
+    }
+
     CommonController.getListFilterOnDemandCategoryTypeFn(
         0, audioData, audioDataType);
     CommonController.getListFilterOnDemandCategoryTypeFn(

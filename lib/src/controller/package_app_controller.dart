@@ -1,7 +1,7 @@
 
 
 
-import 'package:hive/hive.dart';
+
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';

@@ -36,11 +36,11 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
     _searchController = TextEditingController();
 
     _scrollController = ScrollController();
-    // if (widget.categoryName == CategoryName.videoClasses) {
-    // } else {
-    //   CategoryListController.getCategoryTypeDataFn(context, typeLoader);
-    // }
+
     getData(categoryName: widget.categoryName, isScroll: false);
+    if (widget.categoryName == CategoryName.workouts) {
+      getEquipmentData();
+    }
     _scrollController.addListener(
       () {
         if (isLoadMore == false &&
@@ -70,6 +70,10 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
     super.dispose();
   }
 
+  getEquipmentData() async {
+    await CommonController.getListEquipmentData(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,7 +95,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                           ),
                         ),
                       )
-                    : SizedBox.shrink(),
+                    : const SizedBox.shrink(),
                 backgroundColor: AppColor.surfaceBackgroundColor,
                 elevation: 0.0,
                 title: HeaderTitleWIdget(
@@ -354,6 +358,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
           context: context,
           builder: (_) {
             return PopScope(
+              canPop: false,
               child: FilterSheetWidget(
                   confirmedFilter: confirmedFilter,
                   onDone: (value) {
@@ -368,8 +373,6 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                     }
                   },
                   categoryName: widget.categoryName),
-              onPopInvoked: (value) {},
-              canPop: false,
             );
           },
         );

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:funxtion/funxtion_sdk.dart';
 import 'package:hive/hive.dart';
-import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
+
 
 import '../../ui_tool_kit.dart';
 

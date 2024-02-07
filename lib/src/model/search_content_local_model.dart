@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:ui_tool_kit/ui_tool_kit.dart';
 part 'search_content_local_model.g.dart';
 
 @HiveType(typeId: 1)

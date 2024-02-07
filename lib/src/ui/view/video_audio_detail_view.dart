@@ -61,11 +61,14 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
           }
           if (onDemamdModelData?.equipment?.isNotEmpty ?? false) {
             for (var i = 0; i < onDemamdModelData!.equipment!.length; i++) {
-              await CategoryDetailController.getEquipment(context,
+              if (context.mounted) {
+                        await CategoryDetailController.getEquipment(context,
                       id: onDemamdModelData?.equipment?[i].toString() ?? "")
                   .then((value) {
                 equipmentData.add(value as EquipmentModel);
               });
+              }
+      
             }
           }
 
@@ -77,7 +80,10 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
         }
       });
     } on RequestException catch (e) {
-      BaseHelper.showSnackBar(context, e.message);
+      if (context.mounted) {
+         BaseHelper.showSnackBar(context, e.message);
+      }
+     
     }
   }
 
