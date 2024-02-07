@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
+
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
 class UpNextSheetWidget extends StatelessWidget {
@@ -31,7 +31,7 @@ class UpNextSheetWidget extends StatelessWidget {
   final Map<ExerciseDetailModel, ExerciseModel> warmUpData;
   final Map<ExerciseDetailModel, ExerciseModel> trainingData;
   final Map<ExerciseDetailModel, ExerciseModel> coolDownData;
-  final FitnessGoalModel? fitnessGoalModel;
+  final Map<int,String> fitnessGoalModel;
   final List<EquipmentModel> equipmentData;
   final ValueNotifier<int> durationNotifier;
   final ValueNotifier<double> sliderWarmUp;

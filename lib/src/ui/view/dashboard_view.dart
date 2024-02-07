@@ -3,8 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'package:ui_tool_kit/src/helper/boxes.dart';
-import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
+
 
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -38,7 +37,7 @@ class _DashBoardViewState extends State<DashBoardView> {
   @override
   void initState() {
     checkData();
- 
+
     super.initState();
   }
 
@@ -65,14 +64,13 @@ class _DashBoardViewState extends State<DashBoardView> {
           surfaceTintColor: AppColor.surfaceBackgroundColor,
           elevation: 0,
           backgroundColor: AppColor.surfaceBackgroundColor,
-          // toolbarHeight: 80,
           leadingWidth: 0,
           titleSpacing: 0,
           leading: const SizedBox.shrink(),
           title: CustomSearchTextFieldWidget(
             onFieldTap: () {
-              // context.navigateTo(const SearchContentView());
-    
+              context.navigateTo(const SearchContentView());
+
             },
             hintText: 'Workouts, trainers, exercises',
             margin:
@@ -84,7 +82,7 @@ class _DashBoardViewState extends State<DashBoardView> {
               padding: const EdgeInsets.only(top: 20, bottom: 20),
               children: [
                   ValueListenableBuilder(
-                      valueListenable: Boxes.getData().listenable(),
+                      valueListenable: Boxes.getTrainingPlanBox().listenable(),
                       builder: (_, value, child) {
                         return value.isNotEmpty
                             ? Column(
@@ -96,7 +94,8 @@ class _DashBoardViewState extends State<DashBoardView> {
                                     rowText1: 'See all',
                                     columnText2: "Sweet sweet plans",
                                     seeOnTap: () {
-                                      context.navigateTo(const TrainingPlanListView(
+                                      context.navigateTo(
+                                          const TrainingPlanListView(
                                         initialIndex: 1,
                                       ));
                                     },

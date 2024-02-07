@@ -38,18 +38,7 @@ class WorkoutDetailController {
     return null;
   }
 
-  static Future<FitnessGoalModel?> getGoal(context, String id) async {
-    try {
-      final fetcheddata = await FitnessGoalRequest.fitnessGoalById(id: id);
-      if (fetcheddata != null) {
-        FitnessGoalModel data = FitnessGoalModel.fromJson(fetcheddata);
-        return data;
-      }
-    } on RequestException catch (e) {
-      BaseHelper.showSnackBar(context, e.message);
-    }
-    return null;
-  }
+
 
   static Future<BodyPartModel?> getBodyPart(context, String id) async {
     try {
@@ -68,7 +57,7 @@ class WorkoutDetailController {
       {required ValueNotifier<bool> warmUpLoader,
       required WorkoutModel? workoutData,
       required Map<ExerciseDetailModel, ExerciseModel> warmupData,
-      required List<EquipmentModel> equipmentData}) async {
+      required List<int> equipmentData}) async {
     warmUpLoader.value = true;
 
     warmupData.clear();
@@ -97,31 +86,31 @@ class WorkoutDetailController {
     warmUpLoader.value = false;
   }
 
-  static getEquipmentDataFn(
-      String id, List<EquipmentModel> equipmentData) async {
-    try {
-      await EquipmentRequest.equipmentById(id: id).then((value) {
-        if (value != null) {
-          EquipmentModel data = EquipmentModel.fromJson(value);
-          if (equipmentData.every((element) => element.name != data.name)) {
-            equipmentData.add(data);
-          }
-        }
-      });
-    } on RequestException catch (e) {
+  // static getEquipmentDataFn(
+  //     String id, List<EquipmentModel> equipmentData) async {
+  //   try {
+  //     await EquipmentRequest.equipmentById(id: id).then((value) {
+  //       if (value != null) {
+  //         EquipmentModel data = EquipmentModel.fromJson(value);
+  //         if (equipmentData.every((element) => element.name != data.name)) {
+  //           equipmentData.add(data);
+  //         }
+  //       }
+  //     });
+  //   } on RequestException catch (e) {
 
-    }
-  }
+  //   }
+  // }
 
   static getTrainingData(context,
       {required ValueNotifier<bool> trainingLoader,
       required WorkoutModel? workoutData,
       required Map<ExerciseDetailModel, ExerciseModel> trainingData,
-      required List<EquipmentModel> equipmentData}) async {
+      required List<int> equipmentIds}) async {
     trainingLoader.value = true;
 
     trainingData.clear();
-    await phasesFn(1, workoutData, context, trainingData, equipmentData);
+    await phasesFn(1, workoutData, context, trainingData, equipmentIds);
   
     trainingLoader.value = false;
   }
@@ -131,7 +120,7 @@ class WorkoutDetailController {
       WorkoutModel? workoutData,
       context,
       Map<ExerciseDetailModel, ExerciseModel> exerciseList,
-      List<EquipmentModel> equipmentData) async {
+      List<int> equipmentIds) async {
     for (var j = 0; j < workoutData!.phases![phaseIndex].items!.length; j++) {
       if (workoutData.phases![phaseIndex].items![j].type ==
           ItemType.circuitTime) {
@@ -151,9 +140,9 @@ class WorkoutDetailController {
                   .then((value) async {
                 if (value != null && shouldBreakLoop == false) {
                   ExerciseModel data = ExerciseModel.fromJson(value);
-
-                  getEquipmentDataFn(
-                      data.equipment.first.toString(), equipmentData);
+for (var i = 0; i < data.equipment.length; i++) {
+  equipmentIds.add( data.equipment[i]);
+}
 
                   exerciseList.addAll({
                     ExerciseDetailModel(
@@ -224,8 +213,9 @@ class WorkoutDetailController {
                 if (value != null) {
                   ExerciseModel data = ExerciseModel.fromJson(value);
 
-                  getEquipmentDataFn(
-                      data.equipment.first.toString(), equipmentData);
+for (var i = 0; i < data.equipment.length; i++) {
+  equipmentIds.add( data.equipment[i]);
+}
 
                   exerciseList.addAll({
                     ExerciseDetailModel(
@@ -285,8 +275,9 @@ class WorkoutDetailController {
                 if (value != null && shouldBreakLoop == false) {
                   ExerciseModel data = ExerciseModel.fromJson(value);
 
-                  getEquipmentDataFn(
-                      data.equipment.first.toString(), equipmentData);
+        for (var i = 0; i < data.equipment.length; i++) {
+  equipmentIds.add( data.equipment[i]);
+}
 
                   exerciseList.addAll({
                     ExerciseDetailModel(
@@ -351,8 +342,9 @@ class WorkoutDetailController {
               if (value != null && shouldBreakLoop == false) {
                 ExerciseModel data = ExerciseModel.fromJson(value);
 
-                getEquipmentDataFn(
-                    data.equipment.first.toString(), equipmentData);
+        for (var i = 0; i < data.equipment.length; i++) {
+  equipmentIds.add( data.equipment[i]);
+}
 
                 exerciseList.addAll({
                   ExerciseDetailModel(
@@ -409,12 +401,9 @@ class WorkoutDetailController {
               if (value != null && shouldBreakLoop == false) {
                 ExerciseModel data = ExerciseModel.fromJson(value);
 
-                getEquipmentDataFn(
-                    data.equipment.first.toString(), equipmentData);
-                // exerciseList.addAll({
-                //   "exercise $i seExercisesSets ${workoutData.phases![phaseIndex].items![j].seExercises![i].sets!.length}, notes ${workoutData.phases![phaseIndex].items![j].seExercises![i].notes}, goalTargetMetric ${workoutData.phases![phaseIndex].items![j].seExercises![i].sets?.first.goalTargets?.first.metric}, goalTargetMin ${workoutData.phases![phaseIndex].items![j].seExercises![i].sets?.first.goalTargets?.first.min}, goalTargetMax ${workoutData.phases![phaseIndex].items![j].seExercises![i].sets?.first.goalTargets?.first.max}, goalTargetValue ${workoutData.phases![phaseIndex].items![j].seExercises![i].sets?.first.goalTargets?.first.value}":
-                //       data
-                // });
+       for (var i = 0; i < data.equipment.length; i++) {
+  equipmentIds.add( data.equipment[i]);
+}
 
                 exerciseList.addAll({
                   ExerciseDetailModel(
@@ -475,9 +464,9 @@ class WorkoutDetailController {
                 .then((value) async {
               if (value != null && shouldBreakLoop == false) {
                 ExerciseModel data = ExerciseModel.fromJson(value);
-                getEquipmentDataFn(
-                    data.equipment.first.toString(), equipmentData);
-                // exerciseList.addAll({'exercise $i ssExercises   ': data});
+     for (var i = 0; i < data.equipment.length; i++) {
+  equipmentIds.add( data.equipment[i]);
+}
                 exerciseList.addAll({
                   ExerciseDetailModel(
                     exerciseCategoryName: ItemType.superSet,
@@ -520,11 +509,11 @@ class WorkoutDetailController {
       {required ValueNotifier<bool> coolDownLoader,
       required WorkoutModel? workoutData,
       required Map<ExerciseDetailModel, ExerciseModel> coolDownData,
-      required List<EquipmentModel> equipmentData}) async {
+      required List<int> equipmentIds}) async {
     coolDownLoader.value = true;
 
     coolDownData.clear();
-    await phasesFn(2, workoutData, context, coolDownData, equipmentData);
+    await phasesFn(2, workoutData, context, coolDownData, equipmentIds);
 
     
     coolDownLoader.value = false;

@@ -36,11 +36,11 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
     _searchController = TextEditingController();
 
     _scrollController = ScrollController();
-    // if (widget.categoryName == CategoryName.videoClasses) {
-    // } else {
-    //   CategoryListController.getCategoryTypeDataFn(context, typeLoader);
-    // }
+
     getData(categoryName: widget.categoryName, isScroll: false);
+    if (widget.categoryName == CategoryName.workouts) {
+      getEquipmentData();
+    }
     _scrollController.addListener(
       () {
         if (isLoadMore == false &&
@@ -51,10 +51,9 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
 
           pageNumber += 10;
           getData(
-              categoryName: widget.categoryName,
-              isScroll: true,
-              mainSearch:
-                  _searchController.text == "" ? null : _searchController.text);
+            categoryName: widget.categoryName,
+            isScroll: true,
+          );
         }
       },
     );
@@ -67,8 +66,12 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
     _scrollController.dispose();
     _searchController.dispose();
     // CategoryListController.filterCategoryTypeData.clear();
-    CategoryListController.onDemandfiltersData.clear();
+    CategoryListController.filterListData.clear();
     super.dispose();
+  }
+
+  getEquipmentData() async {
+    await CommonController.getListEquipmentData(context);
   }
 
   @override
@@ -80,7 +83,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                 surfaceTintColor: AppColor.surfaceBackgroundColor,
                 titleSpacing: 0,
                 leadingWidth: 75,
-                leading: NavigatorState().canPop()
+                leading: Navigator.of(context).canPop()
                     ? GestureDetector(
                         onTap: () {
                           context.maybePopPage();
@@ -92,7 +95,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                           ),
                         ),
                       )
-                    : SizedBox.shrink(),
+                    : const SizedBox.shrink(),
                 backgroundColor: AppColor.surfaceBackgroundColor,
                 elevation: 0.0,
                 title: HeaderTitleWIdget(
@@ -303,9 +306,9 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
           onChange: (value) {
             CategoryListController.delayedFunction(fn: () {
               getData(
-                  categoryName: widget.categoryName,
-                  isScroll: false,
-                  mainSearch: value);
+                categoryName: widget.categoryName,
+                isScroll: false,
+              );
             });
           },
           onIconTap: () {
@@ -355,6 +358,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
           context: context,
           builder: (_) {
             return PopScope(
+              canPop: false,
               child: FilterSheetWidget(
                   confirmedFilter: confirmedFilter,
                   onDone: (value) {
@@ -369,8 +373,6 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                     }
                   },
                   categoryName: widget.categoryName),
-              onPopInvoked: (value) {},
-              canPop: false,
             );
           },
         );
@@ -402,10 +404,10 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
     }
   }
 
-  void getData(
-      {required CategoryName categoryName,
-      required bool isScroll,
-      String? mainSearch}) async {
+  void getData({
+    required CategoryName categoryName,
+    required bool isScroll,
+  }) async {
     setState(() {
       isNodData = false;
 
@@ -425,7 +427,8 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
         ? await CategoryListController.getListOnDemandData(
             context,
             confirmedFilter: confirmedFilter,
-            mainSearch: mainSearch,
+            mainSearch:
+                _searchController.text == "" ? null : _searchController.text,
             pageNumber: pageNumber.toString(),
           ).then((value) {
             if (value != null && value.isNotEmpty) {
@@ -458,7 +461,9 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
             ? await CategoryListController.getListWorkoutData(
                 context,
                 confirmedFilter: confirmedFilter,
-                mainSearch: mainSearch,
+                mainSearch: _searchController.text == ""
+                    ? null
+                    : _searchController.text,
                 pageNumber: pageNumber.toString(),
               ).then((value) {
                 if (value != null && value.isNotEmpty) {
@@ -489,7 +494,9 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
             : CategoryListController.getListOnDemandAudioData(
                 context,
                 confirmedFilter: confirmedFilter,
-                mainSearch: mainSearch,
+                mainSearch: _searchController.text == ""
+                    ? null
+                    : _searchController.text,
                 pageNumber: pageNumber.toString(),
               ).then((value) {
                 if (value != null && value.isNotEmpty) {

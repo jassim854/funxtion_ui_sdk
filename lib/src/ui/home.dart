@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:funxtion/funxtion_sdk.dart';
 
+
 import '../../ui_tool_kit.dart';
 
 class UiToolKitSDK extends StatefulWidget {
@@ -59,8 +60,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     checkInternet();
-    getPath();
+   
     fetchData();
+    getPath();
 
     super.initState();
   }
@@ -72,11 +74,12 @@ class _HomePageState extends State<HomePage> {
   Future getPath() async {
     if (widget.categoryName == CategoryName.trainingPlans ||
         widget.categoryName == CategoryName.dashBoard) {
-      await PkgAppController.getPath(isInitlize: isInitlize);
+      await PkgAppController.initHive();
     }
   }
 
   fetchData() async {
+    
     if (widget.categoryName == CategoryName.dashBoard) {
       await DashBoardController.getData(context,
           audioDataType: audioDataType,
@@ -87,8 +90,9 @@ class _HomePageState extends State<HomePage> {
           audioData: onDemadDataAudio,
           workoutData: workoutData,
           trainingPlanData: trainingPlanData,
-          fitnessGoalData: fitnessGoalData);
+          filterFitnessGoalData: fitnessGoalData);
     }
+
   }
 
   @override
@@ -110,64 +114,57 @@ class _HomePageState extends State<HomePage> {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
             });
           }
-          return ValueListenableBuilder(
-              valueListenable: isInitlize,
-              builder: (_, isValue, child) {
-                return ValueListenableBuilder<bool>(
-                    valueListenable: isLoading,
-                    builder: (_, value, child) {
-                      if (value == true || isValue == false) {
-                        return Scaffold(
-                          backgroundColor: AppColor.surfaceBrandDarkColor,
-                          body: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  height: 60,
-                                  decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image: AssetImage(
-                                            AppAssets.logo,
-                                          ))),
-                                ),
-                                20.height(),
-                                const Center(child: ThreeDotLoader()),
-                              ]),
-                        );
-                      }
+          return ValueListenableBuilder<bool>(
+              valueListenable: isLoading,
+              builder: (_, value, child) {
+                if (value == true) {
+                  return Scaffold(
+                    backgroundColor: AppColor.surfaceBrandDarkColor,
+                    body: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 60,
+                            decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: AssetImage(
+                                      AppAssets.logo,
+                                    ))),
+                          ),
+                          20.height(),
+                          const Center(child: ThreeDotLoader()),
+                        ]),
+                  );
+                }
 
-                      if (value == false || isValue == true) {
-                        if (widget.categoryName == CategoryName.dashBoard) {
-                          return DashBoardView(
-                              onDemadDataVideo: onDemadDataVideo,
-                              workoutData: workoutData,
-                              onDemadDataAudio: onDemadDataAudio,
-                              trainingPlanData: trainingPlanData,
-                              workoutDataType: workoutDataType,
-                              videoDataType: videoDataType,
-                              audioDataType: audioDataType,
-                              fitnessGoalData: fitnessGoalData);
-                        } else if (widget.categoryName ==
-                            CategoryName.audioClasses) {
-                          return VideoAudioWorkoutListView(
-                              categoryName: widget.categoryName);
-                        } else if (widget.categoryName ==
-                            CategoryName.videoClasses) {
-                          return VideoAudioWorkoutListView(
-                              categoryName: widget.categoryName);
-                        } else if (widget.categoryName ==
-                            CategoryName.workouts) {
-                          return VideoAudioWorkoutListView(
-                              categoryName: widget.categoryName);
-                        } else if (widget.categoryName ==
-                            CategoryName.trainingPlans) {
-                          return const TrainingPlanListView(initialIndex: 0);
-                        }
-                      }
+                if (value == false) {
+                  if (widget.categoryName == CategoryName.dashBoard) {
+                    return DashBoardView(
+                        onDemadDataVideo: onDemadDataVideo,
+                        workoutData: workoutData,
+                        onDemadDataAudio: onDemadDataAudio,
+                        trainingPlanData: trainingPlanData,
+                        workoutDataType: workoutDataType,
+                        videoDataType: videoDataType,
+                        audioDataType: audioDataType,
+                        fitnessGoalData: fitnessGoalData);
+                  } else if (widget.categoryName == CategoryName.audioClasses) {
+                    return VideoAudioWorkoutListView(
+                        categoryName: widget.categoryName);
+                  } else if (widget.categoryName == CategoryName.videoClasses) {
+                    return VideoAudioWorkoutListView(
+                        categoryName: widget.categoryName);
+                  } else if (widget.categoryName == CategoryName.workouts) {
+                    return VideoAudioWorkoutListView(
+                        categoryName: widget.categoryName);
+                  } else if (widget.categoryName ==
+                      CategoryName.trainingPlans) {
+                    return const TrainingPlanListView(initialIndex: 0);
+                  }
+                }
 
-                      return Container();
-                    });
+                return Container();
               });
         });
   }
@@ -177,7 +174,8 @@ class ThreeDotLoader extends StatefulWidget {
   const ThreeDotLoader({super.key});
 
   @override
-  _ThreeDotLoaderState createState() => _ThreeDotLoaderState();
+  @override
+  State<ThreeDotLoader> createState() => _ThreeDotLoaderState();
 }
 
 class _ThreeDotLoaderState extends State<ThreeDotLoader>

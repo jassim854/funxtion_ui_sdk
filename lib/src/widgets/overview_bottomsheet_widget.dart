@@ -159,7 +159,7 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
                             if (widget.warmUpData.isNotEmpty &&
                                 widget.trainingData.isNotEmpty)
                               LineWidget(
-                                  height: 75,
+                                  height: 70,
                                   color: widget.trainingBody! >= 0
                                       ? AppColor.surfaceBrandDarkColor
                                       : null),
@@ -184,7 +184,7 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
                             if (widget.trainingData.isNotEmpty &&
                                 widget.coolDownData.isNotEmpty)
                               LineWidget(
-                                height: 75,
+                                height: 70,
                                 color: widget.coolDownBody! >= 0
                                     ? AppColor.borderBrandDarkColor
                                     : null,
@@ -882,7 +882,7 @@ class ProgressBarWidget extends StatelessWidget {
                 ? Column(
                     children: [
                       LineWidget(
-                        height: 96,
+                        height: 75,
                         color: workoutCompleted
                             ? AppColor.surfaceBrandDarkColor
                             : current >= i
@@ -909,7 +909,7 @@ class ProgressBarWidget extends StatelessWidget {
                                             .key
                                             .exerciseCategoryName ==
                                         ItemType.singleExercise
-                                    ? 90
+                                    ? 70
                                     : 107,
                                 color: workoutCompleted
                                     ? AppColor.surfaceBrandDarkColor

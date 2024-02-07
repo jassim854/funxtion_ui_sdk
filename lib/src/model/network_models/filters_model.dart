@@ -1,6 +1,6 @@
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
-class OnDemandFiltersModel {
+class FiltersModel {
   String? key;
   String? type;
   String? label;
@@ -10,7 +10,7 @@ class OnDemandFiltersModel {
   List<dynamic>? operands;
   String? collectionName;
 
-  OnDemandFiltersModel({
+  FiltersModel({
     this.key,
     this.type,
     this.label,
@@ -21,8 +21,8 @@ class OnDemandFiltersModel {
     this.collectionName,
   });
 
-  factory OnDemandFiltersModel.fromJson(Map<String, dynamic> json) =>
-      OnDemandFiltersModel(
+  factory FiltersModel.fromJson(Map<String, dynamic> json) =>
+      FiltersModel(
         key: json["key"],
         type: json["type"],
         label: json["label"] == null ? null : json["label"]['en'].toString(),

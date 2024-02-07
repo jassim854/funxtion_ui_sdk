@@ -37,12 +37,16 @@ class _CategoryPlayerViewState extends State<CategoryPlayerView>
     _videoPlayerController =
         VideoPlayerController.networkUrl(Uri.parse(widget.videoURL))
           ..initialize().then((_) {
-            _videoPlayerController.play();
+            if (context.mounted) {
+              _videoPlayerController.play();
 
-            setState(() {});
+              setState(() {});
+            }
           })
           ..addListener(() {
-            setState(() {});
+            if (context.mounted) {
+              setState(() {});
+            }
           });
 
     setLandScapeAutoRotation();
@@ -51,28 +55,25 @@ class _CategoryPlayerViewState extends State<CategoryPlayerView>
   @override
   void dispose() {
     super.dispose();
-
-    log('message page dispose call');
+    _videoPlayerController.dispose();
     // _gyroscopeSubscription?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       VideoController.showControls.value = false;
-      _videoPlayerController.dispose();
     });
+    log('message page dispose call');
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      if (!_videoPlayerController.value.isPlaying) {
+      if (!_videoPlayerController.value.isPlaying && context.mounted) {
         _videoPlayerController.play();
       }
-    } else if (state == AppLifecycleState.inactive) {
+    } else if (state == AppLifecycleState.inactive && context.mounted) {
       if (_videoPlayerController.value.isPlaying) {
         _videoPlayerController.pause();
       }
-    } else {
-      _videoPlayerController.play();
     }
   }
 
@@ -92,9 +93,10 @@ class _CategoryPlayerViewState extends State<CategoryPlayerView>
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (value) {
+    return WillPopScope(
+      onWillPop: () async {
         setPotrait();
+        return Future.delayed(const Duration(seconds: 1), () => true);
       },
       child: _videoPlayerController.value.isInitialized
           ? VideoPlayerWidget(videoPlayerController: _videoPlayerController)

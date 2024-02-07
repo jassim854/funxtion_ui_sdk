@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ui_tool_kit/src/helper/boxes.dart';
-import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
-
 
 import '../../ui_tool_kit.dart';
 
@@ -234,27 +231,33 @@ class DoneWorkoutSheet extends StatelessWidget {
                                                       followTrainingplanModel!
                                                           .location);
                                               for (var i = 0;
-                                                  i < Boxes.getData().length;
+                                                  i <
+                                                      Boxes.getTrainingPlanBox()
+                                                          .length;
                                                   i++) {
-                                                if (Boxes.getData()
+                                                if (Boxes.getTrainingPlanBox()
                                                         .values
                                                         .toList()[i]
                                                         .trainingplanId ==
                                                     followTrainingplanModel!
                                                         .trainingplanId) {
-                                                  await Boxes.getData()
+                                                  await Boxes
+                                                          .getTrainingPlanBox()
                                                       .putAt(i, newData);
                                                 }
                                               }
-                                              Navigator.popUntil(
+                                              if (context.mounted) {
+                                                    Navigator.popUntil(
                                                 context,
                                                 (route) => route.isFirst,
                                               );
                                               context.navigateTo(
                                                   TrainingPlanDetailView(
-                                                      id: followTrainingplanModel!
-                                                          .trainingplanId,
+                                                id: followTrainingplanModel!
+                                                    .trainingplanId,
                                               ));
+                                              }
+                                          
                                             },
                                             childPadding:
                                                 const EdgeInsets.symmetric(
@@ -280,19 +283,23 @@ class DoneWorkoutSheet extends StatelessWidget {
                                                 followTrainingplanModel!
                                                     .totalWorkoutLength) {
                                               for (var i = 0;
-                                                  i < Boxes.getData().length;
+                                                  i <
+                                                      Boxes.getTrainingPlanBox()
+                                                          .length;
                                                   i++) {
-                                                if (Boxes.getData()
+                                                if (Boxes.getTrainingPlanBox()
                                                         .values
                                                         .toList()[i]
                                                         .trainingplanId ==
                                                     followTrainingplanModel!
                                                         .trainingplanId) {
-                                                  await Boxes.getData()
+                                                  await Boxes
+                                                          .getTrainingPlanBox()
                                                       .deleteAt(i);
                                                 }
                                               }
-                                              Navigator.popUntil(
+                                              if (context.mounted) {
+                                                             Navigator.popUntil(
                                                 context,
                                                 (route) => route.isFirst,
                                               );
@@ -300,6 +307,8 @@ class DoneWorkoutSheet extends StatelessWidget {
                                               context.navigateTo(
                                                   const TrainingPlanListView(
                                                       initialIndex: 0));
+                                              }
+                                 
                                             } else {
                                               Navigator.popUntil(
                                                 context,
@@ -310,7 +319,6 @@ class DoneWorkoutSheet extends StatelessWidget {
                                                   TrainingPlanDetailView(
                                                 id: followTrainingplanModel!
                                                     .trainingplanId,
-                                              
                                               ));
                                             }
                                           },

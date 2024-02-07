@@ -4,8 +4,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:funxtion/funxtion_sdk.dart';
 import 'package:hive/hive.dart';
-import 'package:ui_tool_kit/src/helper/boxes.dart';
-import 'package:ui_tool_kit/src/model/follow_trainingplan_model.dart';
 
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -30,8 +28,9 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   bool isNodData = false;
   late ScrollController scrollController;
   WorkoutModel? workoutData;
-  FitnessGoalModel? fitnessGoalData;
+  Map<int, String> fitnessGoalData = {};
   BodyPartModel? bodyPartData;
+  List<int> equipmentIds = [];
   Map<ExerciseDetailModel, ExerciseModel> warmUpData = {};
   Map<ExerciseDetailModel, ExerciseModel> trainingData = {};
   Map<ExerciseDetailModel, ExerciseModel> coolDownData = {};
@@ -40,7 +39,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   ValueNotifier<bool> warmUpLoader = ValueNotifier(true);
   ValueNotifier<bool> trainingLoader = ValueNotifier(true);
   ValueNotifier<bool> coolDownLoader = ValueNotifier(true);
-  ValueNotifier<bool> goalLoader = ValueNotifier(true);
+
   ValueNotifier<bool> bodyPartLoader = ValueNotifier(true);
 
   ValueNotifier<bool> warmUpExpand = ValueNotifier(true);
@@ -49,13 +48,16 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   ValueNotifier<bool> trainingExpand = ValueNotifier(false);
   ValueNotifier<bool> coolDownExpand = ValueNotifier(false);
   ValueNotifier<bool> btnLoader = ValueNotifier(false);
+
   // ValueNotifier<bool> typeLoader = ValueNotifier(true);
   List<ContentProvidersCategoryOnDemandModel> categoryTypeData = [];
   List<EquipmentModel> equipmentData = [];
   Timer? _timer;
   @override
   void initState() {
-    _box = Boxes.getData();
+    fetchData();
+    _box = Boxes.getTrainingPlanBox();
+
     WorkoutDetailController.shouldBreakLoop = false;
     checkData();
     scrollController = ScrollController()
@@ -66,8 +68,6 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
           centerTitle.value = false;
         }
       });
-
-    fetchData();
 
     super.initState();
   }
@@ -102,12 +102,6 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     isLoadingNotifier = true;
     isNodData = false;
 
-    // if (CategoryListController.categoryTypeData.isEmpty) {
-    //   CategoryListController.getCategoryTypeDataFn(
-    //     context,
-    //     typeLoader,
-    //   );
-    // }
     WorkoutDetailController.getworkoutData(context, id: widget.id)
         .then((value) async {
       if (value != null &&
@@ -126,80 +120,70 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               warmUpLoader: warmUpLoader,
               warmupData: warmUpData,
               workoutData: workoutData,
-              equipmentData: equipmentData);
+              equipmentData: equipmentIds);
         }
         if (workoutData?.goals?.isNotEmpty == true &&
             WorkoutDetailController.shouldBreakLoop == false) {
-          WorkoutDetailController.getGoal(
-                  context, workoutData?.goals?.first.toString() ?? '')
-              .then((value) {
-            if (value != null &&
-                WorkoutDetailController.shouldBreakLoop == false) {
-              fitnessGoalData = value;
-              goalLoader.value = false;
-            } else {
-              goalLoader.value = false;
-            }
-          });
+          if (context.mounted) {
+            CommonController.getFilterFitnessGoalData(context,
+                shouldBreakLoop: WorkoutDetailController.shouldBreakLoop,
+                filterFitnessGoalData: fitnessGoalData,
+                workoutData: workoutData);
+          }
         }
         if (workoutData?.bodyParts?.isNotEmpty == true &&
             WorkoutDetailController.shouldBreakLoop == false) {
           bodyPartLoader.value = true;
-          if (workoutData?.goals?.isEmpty == true &&
-              WorkoutDetailController.shouldBreakLoop == false) {
-            goalLoader.value = false;
-          }
 
           try {
-            WorkoutDetailController.getBodyPart(
-                    context, workoutData?.bodyParts?.first.toString() ?? "")
-                .then((value) {
-              if (value != null &&
-                  WorkoutDetailController.shouldBreakLoop == false) {
-                bodyPartData = value;
-                bodyPartLoader.value = false;
-              } else {
-                bodyPartLoader.value = false;
-              }
-            });
+            if (context.mounted) {
+              WorkoutDetailController.getBodyPart(
+                      context, workoutData?.bodyParts?.first.toString() ?? "")
+                  .then((value) {
+                if (value != null &&
+                    WorkoutDetailController.shouldBreakLoop == false) {
+                  bodyPartData = value;
+                  bodyPartLoader.value = false;
+                } else {
+                  bodyPartLoader.value = false;
+                }
+              });
+            }
           } on RequestException catch (e) {
-            BaseHelper.showSnackBar(context, e.message);
+            if (context.mounted) {
+              BaseHelper.showSnackBar(context, e.message);
+            }
           }
         }
 
         if (workoutData?.phases?[1].items?.isNotEmpty == true &&
             WorkoutDetailController.shouldBreakLoop == false) {
-          await WorkoutDetailController.getTrainingData(context,
-              trainingLoader: trainingLoader,
-              workoutData: workoutData,
-              trainingData: trainingData,
-              equipmentData: equipmentData
-              // circuitTimeTrainingData: circuitTimeTrainingData,
-              // rftExerciseTrainingData: rftExerciseTrainingData,
-              // seExerciseTrainingData: seExerciseTrainingData,
-              // ssExerciseTrainingData: ssExerciseTrainingData,
-              );
+          if (context.mounted) {
+            await WorkoutDetailController.getTrainingData(context,
+                trainingLoader: trainingLoader,
+                workoutData: workoutData,
+                trainingData: trainingData,
+                equipmentIds: equipmentIds);
+          }
         }
         if (workoutData?.phases?[2].items?.isNotEmpty == true &&
             WorkoutDetailController.shouldBreakLoop == false) {
-          await WorkoutDetailController.getCoolDownData(context,
-              coolDownLoader: coolDownLoader,
-              workoutData: workoutData,
-              coolDownData: coolDownData,
-              equipmentData: equipmentData
-              // circuitTimeCoolDownData: circuitTimeCoolDownData,
-              // rftExerciseCoolDownData: rftExerciseCoolDownData,
-              // seExerciseCoolDownData: seExerciseCoolDownData,
-              // ssExerciseCoolDOwnData: ssExerciseCoolDOwnData,
-              );
+          if (context.mounted) {
+            await WorkoutDetailController.getCoolDownData(context,
+                coolDownLoader: coolDownLoader,
+                workoutData: workoutData,
+                coolDownData: coolDownData,
+                equipmentIds: equipmentIds);
+          }
         }
+        CommonController.getEquipmentFilterData(
+            equipmentIds: equipmentIds, filterEquipmentData: equipmentData);
         if (workoutData?.phases?[2].items?.isEmpty ?? false) {
           coolDownLoader.value = false;
         }
-        log(" warmup data $warmUpData");
-        log(" training data $trainingData");
-        log(" cool down data  $coolDownData");
-        if (WorkoutDetailController.shouldBreakLoop == false) {
+
+        if (WorkoutDetailController.shouldBreakLoop == false &&
+            context.mounted) {
           setState(() {});
         }
       } else {
@@ -623,23 +607,16 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                               ),
                             ));
                   }),
-              const Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 16),
-                child: CustomDivider(),
-              ),
-              ValueListenableBuilder(
-                valueListenable: goalLoader,
-                builder: (context, value, child) {
-                  return value == true
-                      ? Center(
-                          child: BaseHelper.loadingWidget(),
-                        )
-                      : CustomRowTextChartIcon(
-                          text1: 'Goal',
-                          text2: fitnessGoalData?.name ?? "",
-                        );
-                },
-              ),
+              if (fitnessGoalData.isNotEmpty) ...[
+                const Padding(
+                  padding: EdgeInsets.only(top: 16, bottom: 16),
+                  child: CustomDivider(),
+                ),
+                CustomRowTextChartIcon(
+                  text1: 'Goal',
+                  text2: fitnessGoalData.entries.first.value,
+                ),
+              ],
               const Padding(
                 padding: EdgeInsets.only(top: 16, bottom: 16),
                 child: CustomDivider(),

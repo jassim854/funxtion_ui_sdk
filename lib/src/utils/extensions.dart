@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 import '../../ui_tool_kit.dart';
 
 extension SpaceExtension on num {
@@ -561,6 +562,34 @@ extension ResistanceTarget on ExerciseDetailModel {
         }
       }
       return data;
+    }
+  }
+}
+
+extension ExtensionCategoryName on LocalCategoryName? {
+  CategoryName getCategoryName() {
+    if (this == LocalCategoryName.audioClasses) {
+      return CategoryName.audioClasses;
+    } else if (this == LocalCategoryName.videoClasses) {
+      return CategoryName.videoClasses;
+    } else if (this == LocalCategoryName.workouts) {
+      return CategoryName.workouts;
+    } else {
+      return CategoryName.trainingPlans;
+    }
+  }
+}
+
+extension ExtensionLocalCategoryName on CategoryName? {
+  LocalCategoryName getLocalCategoryName() {
+    if (this == CategoryName.audioClasses) {
+      return LocalCategoryName.audioClasses;
+    } else if (this == CategoryName.videoClasses) {
+      return LocalCategoryName.videoClasses;
+    } else if (this == CategoryName.workouts) {
+      return LocalCategoryName.workouts;
+    } else {
+      return LocalCategoryName.trainingPlans;
     }
   }
 }
