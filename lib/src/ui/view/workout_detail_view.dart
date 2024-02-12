@@ -261,7 +261,6 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                       workoutData?.mapImage?.url.toString() ??
                                           "",
                                   flexibleTitle: "${workoutData?.title}",
-
                                   flexibleSubtitleWidget: RichText(
                                       text: TextSpan(
                                           style: AppTypography.label16MD
@@ -279,12 +278,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                             : TextSpan(
                                                 text:
                                                     " • ${categoryTypeData.map((e) => e.name).join(',')}"),
-                                        // TextSpan(
-                                        //     text:
-                                        //         " • ${widget.listTrainingPLanData[index].level}"),
                                       ])),
-                                  // flexibleTitle2:
-                                  //     "${workoutData?.duration?.getTextAfterSymbol()} min • ${workoutData!.types!.isNotEmpty ? data.map((e) => e.name).join(',') : ''}",
                                   value: value,
                                 ),
                                 if (workoutData?.description?.isNotEmpty ??
@@ -533,79 +527,100 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                 text2: workoutData?.level.toString() ?? "",
                 isChartIcon: true,
               ),
-              const Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 16),
-                child: CustomDivider(),
-              ),
               ValueListenableBuilder<bool>(
                   valueListenable: coolDownLoader,
                   builder: (context, value, child) {
                     return value == true
                         ? Center(child: BaseHelper.loadingWidget())
-                        : CustomRowTextChartIcon(
-                            text1: 'Equipment',
-                            secondWidget: SizedBox(
-                              height: 20,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                physics: const NeverScrollableScrollPhysics(),
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                itemCount: equipmentData.length,
-                                itemBuilder: (context, index) {
-                                  if (index == 2) {
-                                    return Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text("+${equipmentData.length - 2}",
-                                            style: AppTypography.label14SM
-                                                .copyWith(
-                                              color: AppColor.textPrimaryColor,
-                                            )),
-                                        2.width(),
-                                        InkWell(
-                                          onTap: () {
-                                            showModalBottomSheet(
-                                              backgroundColor: AppColor
-                                                  .surfaceBackgroundBaseColor,
-                                              useSafeArea: true,
-                                              isScrollControlled: true,
-                                              context: context,
-                                              builder: (context) =>
-                                                  EquipmentExtendedSheet(
-                                                      title: workoutData?.title
-                                                              .toString() ??
-                                                          "",
-                                                      equipmentData:
-                                                          equipmentData),
-                                            );
+                        : equipmentData.isEmpty
+                            ? Container()
+                            : Column(
+                                children: [
+                                  const Padding(
+                                    padding:
+                                        EdgeInsets.only(top: 16, bottom: 16),
+                                    child: CustomDivider(),
+                                  ),
+                                  CustomRowTextChartIcon(
+                                      text1: 'Equipment',
+                                      secondWidget: SizedBox(
+                                        height: 20,
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          padding: EdgeInsets.zero,
+                                          shrinkWrap: true,
+                                          itemCount: equipmentData.length,
+                                          itemBuilder: (context, index) {
+                                            if (index == 2) {
+                                              return Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                      "+${equipmentData.length - 2}",
+                                                      style: AppTypography
+                                                          .label14SM
+                                                          .copyWith(
+                                                        color: AppColor
+                                                            .textPrimaryColor,
+                                                      )),
+                                                  2.width(),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      showModalBottomSheet(
+                                                        backgroundColor: AppColor
+                                                            .surfaceBackgroundBaseColor,
+                                                        useSafeArea: true,
+                                                        isScrollControlled:
+                                                            true,
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            EquipmentExtendedSheet(
+                                                                title: workoutData
+                                                                        ?.title
+                                                                        .toString() ??
+                                                                    "",
+                                                                equipmentData:
+                                                                    equipmentData),
+                                                      );
+                                                    },
+                                                    child: Transform.translate(
+                                                      offset:
+                                                          const Offset(0, -4),
+                                                      child: const Icon(
+                                                          Icons.more_horiz),
+                                                    ),
+                                                  )
+                                                ],
+                                              );
+                                            }
+                                            if (index == 1) {
+                                              return Text(
+                                                  ",${equipmentData[index].name}",
+                                                  style: AppTypography.label14SM
+                                                      .copyWith(
+                                                    color: AppColor
+                                                        .textPrimaryColor,
+                                                  ));
+                                            }
+                                            if (index == 0) {
+                                              return Text(
+                                                  equipmentData[index].name,
+                                                  style: AppTypography.label14SM
+                                                      .copyWith(
+                                                    color: AppColor
+                                                        .textPrimaryColor,
+                                                  ));
+                                            }
+                                            return Container();
                                           },
-                                          child: Transform.translate(
-                                            offset: const Offset(0, -4),
-                                            child: const Icon(Icons.more_horiz),
-                                          ),
-                                        )
-                                      ],
-                                    );
-                                  }
-                                  if (index == 1) {
-                                    return Text(",${equipmentData[index].name}",
-                                        style: AppTypography.label14SM.copyWith(
-                                          color: AppColor.textPrimaryColor,
-                                        ));
-                                  }
-                                  if (index == 0) {
-                                    return Text(equipmentData[index].name,
-                                        style: AppTypography.label14SM.copyWith(
-                                          color: AppColor.textPrimaryColor,
-                                        ));
-                                  }
-                                  return Container();
-                                },
-                              ),
-                            ));
+                                        ),
+                                      )),
+                                ],
+                              );
                   }),
               if (fitnessGoalData.isNotEmpty) ...[
                 const Padding(

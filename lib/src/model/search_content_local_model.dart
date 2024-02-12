@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 part 'search_content_local_model.g.dart';
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 2)
 class RecentSearchLocalModel extends HiveObject {
   @HiveField(0)
   Map<DateTime, String> recentSearch = {};
@@ -11,18 +11,18 @@ class RecentSearchLocalModel extends HiveObject {
   });
 }
 
-@HiveType(typeId: 2)
+@HiveType(typeId: 3)
 class RecentlyVisitedLocalModel extends HiveObject {
   @HiveField(0)
-  Map<DateTime, Resu> recentlyVisited = {};
+  Map<DateTime, LocalResult> recentlyVisited = {};
 
   RecentlyVisitedLocalModel({
     required this.recentlyVisited,
   });
 }
 
-@HiveType(typeId: 3)
-class Resu extends HiveObject {
+@HiveType(typeId: 4)
+class LocalResult extends HiveObject {
   @HiveField(0)
   LocalCategoryName? collection;
   @HiveField(1)
@@ -42,8 +42,8 @@ class Resu extends HiveObject {
   @HiveField(8)
   String? image;
 
-  Resu({
-    this.collection ,
+  LocalResult({
+    this.collection,
     this.matchScore,
     this.entityId,
     this.title,
@@ -55,7 +55,7 @@ class Resu extends HiveObject {
   });
 }
 
-@HiveType(typeId: 4)
+@HiveType(typeId: 5)
 enum LocalCategoryName {
   @HiveField(0)
   videoClasses,
@@ -65,5 +65,4 @@ enum LocalCategoryName {
   trainingPlans,
   @HiveField(3)
   audioClasses,
-
 }

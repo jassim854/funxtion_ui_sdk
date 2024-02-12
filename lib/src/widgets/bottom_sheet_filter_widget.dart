@@ -24,8 +24,7 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
   ValueNotifier<bool> filterLoader = ValueNotifier(false);
   @override
   void initState() {
-    CategoryListController.runComplexTask(
-        context, widget.categoryName, filterLoader);
+    ListController.runComplexTask(context, widget.categoryName, filterLoader);
     selectedFilter.addAll(widget.confirmedFilter.value);
 
     super.initState();
@@ -46,7 +45,7 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
               InkWell(
                 onTap: selectedFilter.isNotEmpty
                     ? () {
-                        CategoryListController.resetFilter(
+                        ListController.resetFilter(
                             context, selectedFilter, widget.confirmedFilter);
 
                         setState(() {});
@@ -91,10 +90,10 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                         child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: CategoryListController.filterListData
+                            children: ListController.filterListData
                                 .map((data) => Padding(
                                       padding: EdgeInsets.only(
-                                          top: CategoryListController
+                                          top: ListController
                                                       .filterListData.first ==
                                                   data
                                               ? 20
@@ -121,7 +120,7 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                                                       .map((e) =>
                                                           GestureDetector(
                                                               onTap: () {
-                                                                CategoryListController.addFilter(
+                                                                ListController.addFilter(
                                                                     TypeFilterModel(
                                                                         id: e
                                                                             .id,
@@ -159,7 +158,7 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                                                       .map((e) =>
                                                           GestureDetector(
                                                               onTap: () {
-                                                                CategoryListController.addFilter(
+                                                                ListController.addFilter(
                                                                     TypeFilterModel(
                                                                         type: data
                                                                             .key

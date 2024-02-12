@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:funxtion/funxtion_sdk.dart';
 
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
@@ -33,14 +36,13 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
   Map<int, String> categoryTypeData = {};
   @override
   void initState() {
+  
     _searchController = TextEditingController();
 
     _scrollController = ScrollController();
 
     getData(categoryName: widget.categoryName, isScroll: false);
-    if (widget.categoryName == CategoryName.workouts) {
-      getEquipmentData();
-    }
+
     _scrollController.addListener(
       () {
         if (isLoadMore == false &&
@@ -66,12 +68,8 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
     _scrollController.dispose();
     _searchController.dispose();
     // CategoryListController.filterCategoryTypeData.clear();
-    CategoryListController.filterListData.clear();
+    ListController.filterListData.clear();
     super.dispose();
-  }
-
-  getEquipmentData() async {
-    await CommonController.getListEquipmentData(context);
   }
 
   @override
@@ -120,22 +118,22 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                             return FilterRowWidget(
                               confirmedFilter: confirmedFilter,
                               deleteAFilterOnTap: (e) {
-                                CategoryListController.deleteAFilter(context,
+                                ListController.deleteAFilter(context,
                                     e.filter.toString(), confirmedFilter);
                                 getData(
                                     categoryName: widget.categoryName,
                                     isScroll: false);
                               },
                               hideOnTap: () {
-                                CategoryListController.hideAllFilter();
+                                ListController.hideAllFilter();
                                 setState(() {});
                               },
                               showOnTap: () {
-                                CategoryListController.showAllFiltter();
+                                ListController.showAllFiltter();
                                 setState(() {});
                               },
                               clearOnTap: () {
-                                CategoryListController.clearAppliedFilter(
+                                ListController.clearAppliedFilter(
                                     confirmedFilter);
                                 getData(
                                     categoryName: widget.categoryName,
@@ -147,7 +145,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                         if (isLoadingNotifier == false)
                           isNodData == true
                               ? const CustomErrorWidget()
-                              : CategoryListController.chekList(
+                              : ListController.chekList(
                                           categoryName: widget.categoryName,
                                           listOndemandData: listOndemandData,
                                           listWorkoutData: listWorkoutData)!
@@ -191,9 +189,8 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                                                                   .headPhoneIcon
                                                               : AppAssets
                                                                   .videoPlayIcon,
-                                                      imageUrl:
-                                                          CategoryListController
-                                                              .imageUrl(
+                                                      imageUrl: ListController
+                                                          .imageUrl(
                                                         index: index,
                                                         categoryName:
                                                             widget.categoryName,
@@ -202,9 +199,8 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                                                         listWorkoutData:
                                                             listWorkoutData,
                                                       ),
-                                                      subtitle:
-                                                          CategoryListController
-                                                              .subtitle(
+                                                      subtitle: ListController
+                                                          .subtitle(
                                                         categoryTypeData:
                                                             categoryTypeData,
                                                         onDemandCategoryAudioData:
@@ -220,8 +216,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                                                             listWorkoutData,
                                                       ),
                                                       title:
-                                                          CategoryListController
-                                                              .title(
+                                                          ListController.title(
                                                         index: index,
                                                         categoryName:
                                                             widget.categoryName,
@@ -231,7 +226,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                                                             listWorkoutData,
                                                       )),
                                                   if (index ==
-                                                          CategoryListController.chekList(
+                                                          ListController.chekList(
                                                                       categoryName:
                                                                           widget
                                                                               .categoryName,
@@ -263,8 +258,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                                                     CustomDivider(indent: 102),
                                               );
                                             },
-                                            itemCount: CategoryListController
-                                                .itemCount(
+                                            itemCount: ListController.itemCount(
                                               categoryName: widget.categoryName,
                                               listOndemandData:
                                                   listOndemandData,
@@ -304,7 +298,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
       title: CustomSearchTextFieldWidget(
           showCloseIcon: _searchController.text.isNotEmpty,
           onChange: (value) {
-            CategoryListController.delayedFunction(fn: () {
+            ListController.delayedFunction(fn: () {
               getData(
                 categoryName: widget.categoryName,
                 isScroll: false,
@@ -324,7 +318,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                   context.hideKeypad();
                   _searchController.clear();
 
-                  CategoryListController.clearAppliedFilter(confirmedFilter);
+                  ListController.clearAppliedFilter(confirmedFilter);
 
                   getData(categoryName: widget.categoryName, isScroll: false);
                 },
@@ -363,9 +357,9 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                   confirmedFilter: confirmedFilter,
                   onDone: (value) {
                     if (value.isNotEmpty ||
-                        CategoryListController.restConfirmFilterAlso == true) {
-                      CategoryListController.restConfirmFilterAlso = false;
-                      CategoryListController.confirmFilter(
+                        ListController.restConfirmFilterAlso == true) {
+                      ListController.restConfirmFilterAlso = false;
+                      ListController.confirmFilter(
                           confirmedFilter: confirmedFilter,
                           selectedFilter: value);
                       getData(
@@ -424,12 +418,12 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
     });
 
     categoryName == CategoryName.videoClasses
-        ? await CategoryListController.getListOnDemandData(
+        ? await ListController.getListOnDemandData(
             context,
             confirmedFilter: confirmedFilter,
             mainSearch:
                 _searchController.text == "" ? null : _searchController.text,
-            pageNumber: pageNumber.toString(),
+            pageNumber: pageNumber,
           ).then((value) {
             if (value != null && value.isNotEmpty) {
               nextPage = true;
@@ -458,13 +452,13 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
             }
           })
         : categoryName == CategoryName.workouts
-            ? await CategoryListController.getListWorkoutData(
+            ? await ListController.getListWorkoutData(
                 context,
                 confirmedFilter: confirmedFilter,
                 mainSearch: _searchController.text == ""
                     ? null
                     : _searchController.text,
-                pageNumber: pageNumber.toString(),
+                pageNumber: pageNumber,
               ).then((value) {
                 if (value != null && value.isNotEmpty) {
                   CommonController.filterCategoryTypeData(
@@ -491,13 +485,13 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                   });
                 }
               })
-            : CategoryListController.getListOnDemandAudioData(
+            : ListController.getListOnDemandAudioData(
                 context,
                 confirmedFilter: confirmedFilter,
                 mainSearch: _searchController.text == ""
                     ? null
                     : _searchController.text,
-                pageNumber: pageNumber.toString(),
+                pageNumber: pageNumber,
               ).then((value) {
                 if (value != null && value.isNotEmpty) {
                   int count = onDemandCategoryAudioData.length;

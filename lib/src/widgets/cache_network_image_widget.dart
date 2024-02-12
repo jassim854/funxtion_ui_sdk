@@ -12,7 +12,7 @@ CachedNetworkImage cacheNetworkWidget(BuildContext context,
 
     imageUrl: !imageUrl.contains("vixyvideo")
         ? imageUrl
-        : "$imageUrl/width/${width * 2.8}/height/${height * 2.8}/quality/1500",
+        : "$imageUrl/width/${width * 2.5}/height/${height * 2.5}/quality/1500",
 
     fit: BoxFit.fitHeight,
     errorListener: (value) {

@@ -3,12 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 
-
-
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class DashBoardView extends StatefulWidget {
+  
   final List<OnDemandModel> onDemadDataVideo;
   final List<WorkoutModel> workoutData;
   final List<OnDemandModel> onDemadDataAudio;
@@ -70,7 +69,6 @@ class _DashBoardViewState extends State<DashBoardView> {
           title: CustomSearchTextFieldWidget(
             onFieldTap: () {
               context.navigateTo(const SearchContentView());
-
             },
             hintText: 'Workouts, trainers, exercises',
             margin:
@@ -103,191 +101,197 @@ class _DashBoardViewState extends State<DashBoardView> {
                                   20.height(),
                                   Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Container(
-                                      // color: Colors.green,
-                                      alignment: Alignment.centerLeft,
-                                      child: Transform.scale(
-                                        scale: 1.2,
-                                        child: CarouselSlider(
-                                            items: value.values
-                                                .toList()
-                                                .sublist(
-                                                    0,
-                                                    value.values.length > 4
-                                                        ? 4
-                                                        : null)
-                                                .map((e) => Container(
-                                                      width: double.infinity,
-                                                      margin: EdgeInsets.only(
-                                                          left: value.values
-                                                                      .first ==
-                                                                  e
-                                                              ? 10
-                                                              : 10,
-                                                          right: 10,
-                                                          top: 20),
-                                                      decoration: BoxDecoration(
-                                                          color: AppColor
-                                                              .surfaceBrandSecondaryColor,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      16)),
-                                                      child: Column(
-                                                        children: [
-                                                          GestureDetector(
-                                                            behavior:
-                                                                HitTestBehavior
-                                                                    .deferToChild,
-                                                            onTap: () {
-                                                              context.navigateTo(
-                                                                  TrainingPlanDetailView(
-                                                                id: e
-                                                                    .trainingplanId,
-                                                              ));
-                                                            },
-                                                            child: Stack(
-                                                              alignment: Alignment
-                                                                  .bottomCenter,
-                                                              clipBehavior: Clip
-                                                                  .antiAlias,
+                                    child: Transform.scale(
+                                      scale: 1.2,
+                                      child: CarouselSlider(
+                                          items: value.values
+                                              .toList()
+                                              .sublist(
+                                                  0,
+                                                  value.values.length > 4
+                                                      ? 4
+                                                      : null)
+                                              .map((e) => Container(
+                                                    width: double.infinity,
+                                                    margin: EdgeInsets.only(
+                                                        left: value.values
+                                                                    .first ==
+                                                                e
+                                                            ? 10
+                                                            : 10,
+                                                        right: 10,
+                                                        top: 20),
+                                                    decoration: BoxDecoration(
+                                                        color: AppColor
+                                                            .surfaceBrandSecondaryColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(16)),
+                                                    child: Column(
+                                                      children: [
+                                                        GestureDetector(
+                                                          behavior:
+                                                              HitTestBehavior
+                                                                  .deferToChild,
+                                                          onTap: () {
+                                                            context.navigateTo(
+                                                                TrainingPlanDetailView(
+                                                              id: e
+                                                                  .trainingplanId,
+                                                            ));
+                                                          },
+                                                          child: Stack(
+                                                            alignment: Alignment
+                                                                .bottomCenter,
+                                                            clipBehavior:
+                                                                Clip.antiAlias,
+                                                            children: [
+                                                              SizedBox(
+                                                                width: double
+                                                                    .infinity,
+                                                                height: 190,
+                                                                child:
+                                                                    ClipRRect(
+                                                                  borderRadius: const BorderRadius
+                                                                      .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              16),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              16)),
+                                                                  child: cacheNetworkWidget(
+                                                                      height: 190,
+                                                                      width: context.dynamicWidth.toInt(),
+                                                                      context,
+                                                                      // fit: BoxFit.fill,
+                                                                      imageUrl: e.trainingPlanImg),
+                                                                ),
+                                                              ),
+                                                              Align(
+                                                                alignment: Alignment
+                                                                    .bottomLeft,
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              12,
+                                                                          right:
+                                                                              12,
+                                                                          bottom:
+                                                                              8),
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Text(e.trainingPlanTitle,
+                                                                          style: AppTypography
+                                                                              .title18LG
+                                                                              .copyWith(color: AppColor.textInvertEmphasis)),
+                                                                      4.height(),
+                                                                      FollowedBorderWidget(
+                                                                          followTrainingData:
+                                                                              e),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        if (e.workoutCount !=
+                                                            e.totalWorkoutLength)
+                                                          Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 12,
+                                                                    right: 12,
+                                                                    top: 4),
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
                                                               children: [
-                                                                SizedBox(
-                                                                  width: double
-                                                                      .infinity,
-                                                                  height: 190,
-                                                                  child:
-                                                                      ClipRRect(
-                                                                    borderRadius: const BorderRadius
-                                                                        .only(
-                                                                        topLeft:
-                                                                            Radius.circular(
-                                                                                16),
-                                                                        topRight:
-                                                                            Radius.circular(16)),
-                                                                    child: cacheNetworkWidget(
-                                                                        height: 190,
-                                                                        width: context.dynamicWidth.toInt(),
-                                                                        context,
-                                                                        // fit: BoxFit.fill,
-                                                                        imageUrl: e.trainingPlanImg),
-                                                                  ),
+                                                                Text(
+                                                                  'Next up',
+                                                                  style: AppTypography
+                                                                      .label12XSM
+                                                                      .copyWith(
+                                                                          color:
+                                                                              AppColor.textInvertSubtitle),
                                                                 ),
-                                                                Align(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .bottomLeft,
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            12,
-                                                                        right:
-                                                                            12,
-                                                                        bottom:
-                                                                            8),
-                                                                    child:
-                                                                        Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        Text(
-                                                                            e.trainingPlanTitle,
-                                                                            style: AppTypography.title18LG.copyWith(color: AppColor.textInvertEmphasis)),
-                                                                        4.height(),
-                                                                        FollowedBorderWidget(
-                                                                            followTrainingData:
-                                                                                e),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
+                                                                4.height(),
+                                                                CustomListtileWidget(
+                                                                    titleColor:
+                                                                        AppColor
+                                                                            .textInvertEmphasis,
+                                                                    subtitleColor:
+                                                                        AppColor
+                                                                            .textInvertPrimaryColor,
+                                                                    imageUrl: e
+                                                                        .workoutData[e.workoutCount == e.totalWorkoutLength
+                                                                            ? e.workoutCount -
+                                                                                1
+                                                                            : e
+                                                                                .workoutCount]
+                                                                        .workoutImg
+                                                                        .toString(),
+                                                                    title: e
+                                                                        .workoutData[e.workoutCount == e.totalWorkoutLength
+                                                                            ? e.workoutCount -
+                                                                                1
+                                                                            : e
+                                                                                .workoutCount]
+                                                                        .workoutTitle
+                                                                        .toString(),
+                                                                    subtitle: e
+                                                                        .workoutData[e.workoutCount == e.totalWorkoutLength ? e.workoutCount - 1 : e.workoutCount]
+                                                                        .workoutSubtitle
+                                                                        .toString(),
+                                                                    onTap: () {
+                                                                      context.navigateTo(
+                                                                          WorkoutDetailView(
+                                                                        id: e
+                                                                            .workoutData[e.workoutCount == e.totalWorkoutLength
+                                                                                ? e.workoutCount - 1
+                                                                                : e.workoutCount]
+                                                                            .workoutId
+                                                                            .toString(),
+                                                                        followTrainingplanModel: FollowTrainingplanModel(
+                                                                            trainingplanId: e
+                                                                                .trainingplanId,
+                                                                            workoutData: e
+                                                                                .workoutData,
+                                                                            workoutCount: e.workoutCount == e.totalWorkoutLength
+                                                                                ? e.workoutCount
+                                                                                : e.workoutCount + 1,
+                                                                            totalWorkoutLength: e.totalWorkoutLength,
+                                                                            outOfSequence: false,
+                                                                            trainingPlanImg: e.trainingPlanImg,
+                                                                            trainingPlanTitle: e.trainingPlanTitle,
+                                                                            daysPerWeek: e.daysPerWeek,
+                                                                            goalsId: e.goalsId,
+                                                                            levelName: e.levelName,
+                                                                            location: e.location),
+                                                                      ));
+                                                                    },
+                                                                    imageHeaderIcon: AppAssets.workoutHeaderIcon)
                                                               ],
                                                             ),
-                                                          ),
-                                                          if (e.workoutCount !=
-                                                              e.totalWorkoutLength)
-                                                            Container(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 12,
-                                                                      right: 12,
-                                                                      top: 4),
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                    'Next up',
-                                                                    style: AppTypography
-                                                                        .label12XSM
-                                                                        .copyWith(
-                                                                            color:
-                                                                                AppColor.textInvertSubtitle),
-                                                                  ),
-                                                                  4.height(),
-                                                                  CustomListtileWidget(
-                                                                      titleColor: AppColor
-                                                                          .textInvertEmphasis,
-                                                                      subtitleColor:
-                                                                          AppColor
-                                                                              .textInvertPrimaryColor,
-                                                                      imageUrl: e
-                                                                          .workoutData[e.workoutCount == e.totalWorkoutLength ? e.workoutCount - 1 : e.workoutCount]
-                                                                              [
-                                                                              'workoutImg']
-                                                                          .toString(),
-                                                                      title: e.workoutData[e.workoutCount == e.totalWorkoutLength ? e.workoutCount - 1 : e.workoutCount]['workoutTitle']
-                                                                          .toString(),
-                                                                      subtitle: e
-                                                                          .workoutData[e.workoutCount == e.totalWorkoutLength ? e.workoutCount - 1 : e.workoutCount][
-                                                                              'workoutSubtitle']
-                                                                          .toString(),
-                                                                      onTap:
-                                                                          () {
-                                                                        context.navigateTo(
-                                                                            WorkoutDetailView(
-                                                                          id: e
-                                                                              .workoutData[e.workoutCount == e.totalWorkoutLength ? e.workoutCount - 1 : e.workoutCount]["workoutId"]
-                                                                              .toString(),
-                                                                          followTrainingplanModel: FollowTrainingplanModel(
-                                                                              trainingplanId: e.trainingplanId,
-                                                                              workoutData: e.workoutData,
-                                                                              workoutCount: e.workoutCount == e.totalWorkoutLength ? e.workoutCount : e.workoutCount + 1,
-                                                                              totalWorkoutLength: e.totalWorkoutLength,
-                                                                              outOfSequence: false,
-                                                                              trainingPlanImg: e.trainingPlanImg,
-                                                                              trainingPlanTitle: e.trainingPlanTitle,
-                                                                              daysPerWeek: e.daysPerWeek,
-                                                                              goalsId: e.goalsId,
-                                                                              levelName: e.levelName,
-                                                                              location: e.location),
-                                                                        ));
-                                                                      },
-                                                                      imageHeaderIcon:
-                                                                          AppAssets.workoutHeaderIcon)
-                                                                ],
-                                                              ),
-                                                            )
-                                                        ],
-                                                      ),
-                                                    ))
-                                                .toList(),
-                                            options: CarouselOptions(
-                                              // aspectRatio: 4 / 3,
-                                              height: 330,
-                                              pageSnapping: true,
-                                              // viewportFraction: 0.8,
-                                              autoPlay: false,
-                                              enableInfiniteScroll: false,
-                                              // enlargeCenterPage: true
-                                              // pauseAutoPlayInFiniteScroll: true,
-                                            )),
-                                      ),
+                                                          )
+                                                      ],
+                                                    ),
+                                                  ))
+                                              .toList(),
+                                          options: CarouselOptions(
+                                            height: 330,
+                                            pageSnapping: true,
+                                            autoPlay: false,
+                                            enableInfiniteScroll: false,
+                                          )),
                                     ),
                                   ),
                                   50.height(),
@@ -327,9 +331,6 @@ class _DashBoardViewState extends State<DashBoardView> {
                                           : 10,
                                       right: 10,
                                       top: 20),
-                                  // decoration: BoxDecoration(
-                                  //     // color: AppColor.surfaceBrandSecondaryColor,
-                                  //     borderRadius: BorderRadius.circular(16)),
                                   child: GestureDetector(
                                     behavior: HitTestBehavior.deferToChild,
                                     onTap: () {

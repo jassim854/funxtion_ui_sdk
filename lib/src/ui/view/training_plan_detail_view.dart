@@ -39,7 +39,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
   // Map<int, String> typeData = {};
   ValueNotifier<bool> typeLoader = ValueNotifier(false);
   Map<int, String> categoryFilterTypeData = {};
-  List<Map<String, String>> workoutLocalData = [];
+  List<LocalWorkout> workoutLocalData = [];
 
   @override
   void initState() {
@@ -91,13 +91,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
 
   addWorkoutData() {
     for (var i = 0; i < listSheduleWorkoutData.length; i++) {
-      workoutLocalData.add({
-        "workoutTitle": listSheduleWorkoutData[i].title.toString(),
-        "workoutSubtitle":
-            "${listSheduleWorkoutData[i].duration} • ${categoryFilterTypeData[i]} • ${listSheduleWorkoutData[i].level.toString()}",
-        "workoutId": listSheduleWorkoutData[i].id.toString(),
-        "workoutImg": listSheduleWorkoutData[i].mapImage!.url
-      });
+      workoutLocalData.add(LocalWorkout(workoutTitle:  listSheduleWorkoutData[i].title.toString(), workoutSubtitle:  "${listSheduleWorkoutData[i].duration} • ${categoryFilterTypeData[i]} • ${listSheduleWorkoutData[i].level.toString()}", workoutId:  listSheduleWorkoutData[i].id.toString(), workoutImg: listSheduleWorkoutData[i].mapImage!.url));
     }
   }
 
@@ -346,7 +340,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                           ),
                           2.height(),
                           Text(
-                              "${followTrainingData?.workoutData[followTrainingData!.workoutCount]['workoutTitle'].toString()}",
+                              "${followTrainingData?.workoutData[followTrainingData!.workoutCount].workoutTitle.toString()}",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTypography.title14XS
@@ -424,7 +418,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                           id: followTrainingData?.workoutData[
                                                       followTrainingData!
                                                           .workoutCount]
-                                                  ['workoutId'] ??
+                                             .workoutId ??
                                               '',
                                           followTrainingplanModel:
                                               FollowTrainingplanModel(
