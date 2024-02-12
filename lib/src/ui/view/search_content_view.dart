@@ -656,6 +656,7 @@ class _SearchContentViewState extends State<SearchContentView> {
                                   _searchController.text =
                                       e.recentSearch.values.first;
                                   await recentSearchSortAddDataFn();
+                                  resultPage = true;
                                   await getdata(
                                       isScroll: false,
                                       text: e.recentSearch.values.first);
@@ -831,8 +832,12 @@ class _SearchContentViewState extends State<SearchContentView> {
             string1: topMatches,
             string2: _searchController,
             onTap: (p0) async {
+              context.hideKeypad();
               _searchController.text = p0;
-              getdata(isScroll: false, text: _searchController.text);
+              await recentSearchSortAddDataFn();
+              resultPage = true;
+
+              await getdata(isScroll: false, text: _searchController.text);
             },
           )
         ],
