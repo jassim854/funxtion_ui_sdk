@@ -19,40 +19,40 @@ class DashBoardController {
       context,
     );
     if (context.mounted) {
-          await CommonController.getListGoalData(context);
-  
+      await CommonController.getListGoalData(context);
     }
-if (context.mounted) {
-    await CommonController.getOnDemandContentCategoryFn(context);
-}
+    if (context.mounted) {
+      await CommonController.getOnDemandContentCategoryFn(context);
+    }
     try {
       if (context.mounted) {
-              await CategoryListController.getListTrainingPlanData(context,
-              confirmedFilter: ValueNotifier([]), limitContentPerPage: "4")
-          .then((value) {
-        if (value != null && context.mounted) {
-          trainingPlanData.addAll(value);
-        }
-      });
+        await ListController.getListTrainingPlanData(context,
+                pageNumber:0,
+                confirmedFilter: ValueNotifier([]),
+                limitContentPerPage: 4)
+            .then((value) {
+          if (value != null && context.mounted) {
+            trainingPlanData.addAll(value);
+          }
+        });
       }
-
     } on RequestException catch (e) {
       if (context.mounted) {
-              BaseHelper.showSnackBar(context, e.message);
+        BaseHelper.showSnackBar(context, e.message);
       }
-
     }
     try {
       if (context.mounted) {
-         await CategoryListController.getListOnDemandData(context,
-              confirmedFilter: ValueNotifier([]), limitContentPerPage: '4')
-          .then((value) async {
-        if (value != null && context.mounted) {
-          onDemadDataVideo.addAll(value);
-        }
-      });
+        await ListController.getListOnDemandData(context,
+                pageNumber: 0,
+                confirmedFilter: ValueNotifier([]),
+                limitContentPerPage: 4)
+            .then((value) async {
+          if (value != null && context.mounted) {
+            onDemadDataVideo.addAll(value);
+          }
+        });
       }
-     
     } on RequestException catch (e) {
       if (context.mounted) {
         BaseHelper.showSnackBar(context, e.message);
@@ -61,44 +61,44 @@ if (context.mounted) {
 
     try {
       if (context.mounted) {
-              await CategoryListController.getListOnDemandAudioData(context,
-              confirmedFilter: ValueNotifier([]), limitContentPerPage: "4")
-          .then((value) async {
-        if (value != null && context.mounted) {
-          audioData.addAll(value);
-        }
-      });
+        await ListController.getListOnDemandAudioData(context,
+                pageNumber: 0,
+                confirmedFilter: ValueNotifier([]),
+                limitContentPerPage: 4)
+            .then((value) async {
+          if (value != null && context.mounted) {
+            audioData.addAll(value);
+          }
+        });
       }
-
     } on RequestException catch (e) {
       if (context.mounted) {
-              BaseHelper.showSnackBar(context, e.message);
+        BaseHelper.showSnackBar(context, e.message);
       }
-
     }
 
     try {
       if (context.mounted) {
-              await CategoryListController.getListWorkoutData(context,
-              confirmedFilter: ValueNotifier([]), limitContentPerPage: "4")
-          .then((value) async {
-        if (value != null && context.mounted) {
-          workoutData.addAll(value);
-        }
-      });
+        await ListController.getListWorkoutData(context,
+                pageNumber: 0,
+                confirmedFilter: ValueNotifier([]),
+                limitContentPerPage:4)
+            .then((value) async {
+          if (value != null && context.mounted) {
+            workoutData.addAll(value);
+          }
+        });
       }
-
     } on RequestException catch (e) {
-    if (context.mounted) {
+      if (context.mounted) {
         BaseHelper.showSnackBar(context, e.message);
-    }
-    
+      }
     }
     if (context.mounted) {
-          CommonController.getFilterFitnessGoalData(context,
-        shouldBreakLoop: false,
-        trainingPlanData: trainingPlanData,
-        filterFitnessGoalData: filterFitnessGoalData);
+      CommonController.getFilterFitnessGoalData(context,
+          shouldBreakLoop: false,
+          trainingPlanData: trainingPlanData,
+          filterFitnessGoalData: filterFitnessGoalData);
     }
 
     CommonController.getListFilterOnDemandCategoryTypeFn(
@@ -106,6 +106,9 @@ if (context.mounted) {
     CommonController.getListFilterOnDemandCategoryTypeFn(
         0, onDemadDataVideo, videoDataType);
     CommonController.filterCategoryTypeData(workoutData, workoutDataType);
+    if (CommonController.equipmentListData.isEmpty) {
+      CommonController.getListEquipmentData(context);
+    }
     isLoading.value = false;
   }
 }

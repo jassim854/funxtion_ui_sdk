@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-
-
 import '../../ui_tool_kit.dart';
 
 class GetReadySheetWidget extends StatelessWidget {
@@ -22,7 +20,7 @@ class GetReadySheetWidget extends StatelessWidget {
   final Map<ExerciseDetailModel, ExerciseModel> warmUpData;
   final Map<ExerciseDetailModel, ExerciseModel> trainingData;
   final Map<ExerciseDetailModel, ExerciseModel> coolDownData;
-  final Map<int,String> fitnessGoalModel;
+  final Map<int, String> fitnessGoalModel;
   final List<EquipmentModel> equipmentData;
   final ValueNotifier<int> durationNotifier = ValueNotifier(0);
 

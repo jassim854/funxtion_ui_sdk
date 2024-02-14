@@ -1,16 +1,23 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:funxtion/funxtion_sdk.dart';
 
-
 import '../../ui_tool_kit.dart';
+import 'package:dio/dio.dart';
 
 class UiToolKitSDK extends StatefulWidget {
+  final String? contentPackageId;
+  final Function(List<FollowTrainingplanModel>, Dio)? readWriteTrainingPlan;
   final String token;
   final CategoryName categoryName;
   const UiToolKitSDK(
-      {super.key, required this.token, required this.categoryName});
+      {super.key,
+      required this.token,
+      this.contentPackageId,
+      required this.categoryName,
+      this.readWriteTrainingPlan});
 
   @override
   State<UiToolKitSDK> createState() => _UiToolKitSDKState();
@@ -20,7 +27,7 @@ class _UiToolKitSDKState extends State<UiToolKitSDK> {
   @override
   void initState() {
     setToken();
-
+    setPackageIdFn();
     super.initState();
   }
 
@@ -28,18 +35,27 @@ class _UiToolKitSDKState extends State<UiToolKitSDK> {
     BearerToken.setToken = widget.token;
   }
 
+  setPackageIdFn() {
+    ContentPackage.setContentPackageId = widget.contentPackageId;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(categoryName: widget.categoryName),
+      home: HomePage(
+        categoryName: widget.categoryName,
+        readWriteTrainingPlan: widget.readWriteTrainingPlan,
+      ),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
   final CategoryName categoryName;
-  const HomePage({super.key, required this.categoryName});
+  final Function(List<FollowTrainingplanModel>, Dio)? readWriteTrainingPlan;
+  const HomePage(
+      {super.key, required this.categoryName, this.readWriteTrainingPlan});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -59,12 +75,10 @@ class _HomePageState extends State<HomePage> {
   ConnectivityResult? isInternet;
   @override
   void initState() {
+    super.initState();
     checkInternet();
-   
     fetchData();
     getPath();
-
-    super.initState();
   }
 
   checkInternet() async {
@@ -74,12 +88,12 @@ class _HomePageState extends State<HomePage> {
   Future getPath() async {
     if (widget.categoryName == CategoryName.trainingPlans ||
         widget.categoryName == CategoryName.dashBoard) {
-      await PkgAppController.initHive();
+      await HiveLocalController.openTrainingBox();
+      readWriteTrainingPlanFn();
     }
   }
 
   fetchData() async {
-    
     if (widget.categoryName == CategoryName.dashBoard) {
       await DashBoardController.getData(context,
           audioDataType: audioDataType,
@@ -92,7 +106,18 @@ class _HomePageState extends State<HomePage> {
           trainingPlanData: trainingPlanData,
           filterFitnessGoalData: fitnessGoalData);
     }
+  }
 
+  readWriteTrainingPlanFn() async {
+    if (widget.readWriteTrainingPlan != null) {
+      NetworkHelper networkHelper = NetworkHelper();
+      try {
+        await widget.readWriteTrainingPlan!(
+            Boxes.getTrainingPlanBox().values.toList(), networkHelper.dio);
+      } on DioException catch (e) {
+        BaseHelper.showSnackBar(context, e.message);
+      }
+    }
   }
 
   @override

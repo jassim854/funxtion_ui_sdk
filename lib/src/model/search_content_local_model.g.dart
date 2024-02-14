@@ -9,7 +9,7 @@ part of 'search_content_local_model.dart';
 class RecentSearchLocalModelAdapter
     extends TypeAdapter<RecentSearchLocalModel> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
   RecentSearchLocalModel read(BinaryReader reader) {
@@ -44,7 +44,7 @@ class RecentSearchLocalModelAdapter
 class RecentlyVisitedLocalModelAdapter
     extends TypeAdapter<RecentlyVisitedLocalModel> {
   @override
-  final int typeId = 2;
+  final int typeId = 3;
 
   @override
   RecentlyVisitedLocalModel read(BinaryReader reader) {
@@ -53,7 +53,7 @@ class RecentlyVisitedLocalModelAdapter
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return RecentlyVisitedLocalModel(
-      recentlyVisited: (fields[0] as Map).cast<DateTime, Resu>(),
+      recentlyVisited: (fields[0] as Map).cast<DateTime, LocalResult>(),
     );
   }
 
@@ -76,17 +76,17 @@ class RecentlyVisitedLocalModelAdapter
           typeId == other.typeId;
 }
 
-class ResuAdapter extends TypeAdapter<Resu> {
+class LocalResultAdapter extends TypeAdapter<LocalResult> {
   @override
-  final int typeId = 3;
+  final int typeId = 4;
 
   @override
-  Resu read(BinaryReader reader) {
+  LocalResult read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Resu(
+    return LocalResult(
       collection: fields[0] as LocalCategoryName?,
       matchScore: fields[1] as double?,
       entityId: fields[2] as String?,
@@ -100,7 +100,7 @@ class ResuAdapter extends TypeAdapter<Resu> {
   }
 
   @override
-  void write(BinaryWriter writer, Resu obj) {
+  void write(BinaryWriter writer, LocalResult obj) {
     writer
       ..writeByte(9)
       ..writeByte(0)
@@ -129,14 +129,14 @@ class ResuAdapter extends TypeAdapter<Resu> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ResuAdapter &&
+      other is LocalResultAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
 
 class LocalCategoryNameAdapter extends TypeAdapter<LocalCategoryName> {
   @override
-  final int typeId = 4;
+  final int typeId = 5;
 
   @override
   LocalCategoryName read(BinaryReader reader) {

@@ -6,7 +6,7 @@ class FollowTrainingplanModel extends HiveObject {
   @HiveField(0)
   String trainingplanId;
   @HiveField(1)
-  List<Map<String, String>> workoutData = [];
+  List<LocalWorkout> workoutData = [];
 
   @HiveField(2)
   int workoutCount;
@@ -41,8 +41,26 @@ class FollowTrainingplanModel extends HiveObject {
     required this.location,
   });
 
-  // @override
-  // String toString() {
-  //   return 'trainingplan id : $trainingplanId ,current workout no : $workoutCount , total workout no : $totalWorkoutLength ';
-  // }
+  @override
+  String toString() {
+    return 'trainingPlan id : $trainingplanId  trainingPlanTitle : $trainingPlanTitle , workoutData : $workoutData  , next workout no : $workoutCount , total workout no : $totalWorkoutLength , trainingPlanImg : $trainingPlanImg';
+  }
+}
+
+@HiveType(typeId: 1)
+class LocalWorkout {
+  @HiveField(0)
+  final String workoutTitle;
+  @HiveField(1)
+  final String workoutSubtitle;
+  @HiveField(2)
+  final String workoutId;
+  @HiveField(3)
+  final String workoutImg;
+
+  LocalWorkout(
+      {required this.workoutTitle,
+      required this.workoutSubtitle,
+      required this.workoutId,
+      required this.workoutImg});
 }

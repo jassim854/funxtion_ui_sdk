@@ -81,9 +81,7 @@ class FilterRowWidget extends StatelessWidget {
                               Wrap(
                                   spacing: 8,
                                   runSpacing: 8,
-                                  children: CategoryListController
-                                              .isShowFilter ==
-                                          false
+                                  children: ListController.isShowFilter == false
                                       ? confirmedFilter.value
                                           .sublist(0, 2)
                                           .map((e) => FilterContainer(
@@ -128,8 +126,7 @@ class FilterRowWidget extends StatelessWidget {
                                                   )))
                                         ]),
                               confirmedFilter.value.length > 2 &&
-                                      CategoryListController.isShowFilter ==
-                                          false
+                                      ListController.isShowFilter == false
                                   ? Container(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 12, vertical: 9),

@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-// import 'package:hive_flutter/hive_flutter.dart';
-
 import '../../../ui_tool_kit.dart';
 
 class SearchContentView extends StatefulWidget {
@@ -17,7 +15,6 @@ class SearchContentView extends StatefulWidget {
 }
 
 class _SearchContentViewState extends State<SearchContentView> {
-  // final bool isSubmit
   late TextEditingController _searchController;
   late ScrollController _scrollController;
   late FocusNode _focusNode;
@@ -74,45 +71,8 @@ class _SearchContentViewState extends State<SearchContentView> {
   }
 
   openBoxes() async {
-    // isHive = false;
-    // setState(() {});
-    // await Hive.deleteBoxFromDisk("recentlyVisited");
-
-    await Hive.initFlutter();
-    if (!Hive.isAdapterRegistered(3)) {
-      Hive.registerAdapter(ResuAdapter());
-    }
-    if (!Hive.isAdapterRegistered(4)) {
-      Hive.registerAdapter(LocalCategoryNameAdapter());
-    }
-    if (!Hive.isAdapterRegistered(1)) {
-      Hive.registerAdapter(RecentSearchLocalModelAdapter());
-    }
-    if (!Hive.isBoxOpen("recentSearch")) {
-      await Hive.openBox<RecentSearchLocalModel>("recentSearch");
-    }
-    if (!Hive.isAdapterRegistered(2)) {
-      Hive.registerAdapter(
-        RecentlyVisitedLocalModelAdapter(),
-      );
-    }
-
-    if (!Hive.isBoxOpen("recentlyVisited")) {
-      await Hive.openBox<RecentlyVisitedLocalModel>("recentlyVisited");
-    }
+    await HiveLocalController.openSearchBox();
     getLocalInstance();
-    log(recentSearchLocalList?.values
-            .toList()
-            .map((e) => e.recentSearch.entries.first.toString())
-            .toString() ??
-        "");
-    log(recentlyVisitedLocalList?.values
-            .toList()
-            .map((e) => e.recentlyVisited.entries.first.value.title)
-            .toString() ??
-        "");
-    // isHive = true;
-    // setState(() {});
   }
 
   getLocalInstance() {
@@ -178,7 +138,6 @@ class _SearchContentViewState extends State<SearchContentView> {
   ];
 
   void updateSuggestions(String input) {
-    // Filter suggestions based on user input
     List<String> filteredSuggestions = suggestions
         .where((e) =>
             e.toLowerCase().trim().startsWith(input.toLowerCase().trim()))
@@ -187,7 +146,6 @@ class _SearchContentViewState extends State<SearchContentView> {
         ? filteredSuggestions.sublist(0, 4)
         : filteredSuggestions;
 
-    // Update the state with filtered suggestions
     setState(() {});
   }
 
@@ -197,6 +155,7 @@ class _SearchContentViewState extends State<SearchContentView> {
     if (isScroll == false) {
       resultData.clear();
       filterResultData.clear();
+      filterList.clear();
       pageNumber = 0;
     }
 
@@ -218,16 +177,9 @@ class _SearchContentViewState extends State<SearchContentView> {
         nextPage = true;
         isLoadMore = false;
         searchContentData = data;
-        for (var i = 0; i < searchContentData!.cursors!.length; i++) {
-          if (filterList.any((element) =>
-              element.entries.first.key ==
-              searchContentData!.cursors![i].collection!)) {
-            log(searchContentData!.cursors![i].collection!.toString());
-          } else {
-            filterList.add({searchContentData!.cursors![i].collection!: false});
-          }
-        }
+
         if (data.results?.isNotEmpty ?? false) {
+          addCategoryFn(data.results?.toList() as List<Result>);
           if (filterList
               .any((element) => element.entries.first.value == true)) {
             onFiltertapFn();
@@ -248,6 +200,16 @@ class _SearchContentViewState extends State<SearchContentView> {
     setState(() {
       isLoadingNotifier = false;
     });
+  }
+
+  addCategoryFn(List<Result> listResultData) {
+    for (var i = 0; i < listResultData.length; i++) {
+      if (filterList.any((element) =>
+          element.entries.first.key == listResultData[i].collection)) {
+      } else {
+        filterList.add({listResultData[i].collection!: false});
+      }
+    }
   }
 
   recentSearchSortAddDataFn() async {
@@ -293,9 +255,7 @@ class _SearchContentViewState extends State<SearchContentView> {
     for (var i = 0;
         i < (recentSearchList.length > 4 ? 4 : recentSearchList.length);
         i++) {
-      log("message ${recentSearchList[i].recentSearch.entries.first}");
       await recentSearchLocalList!.put(i, recentSearchList[i]);
-      log("new data ${recentSearchLocalList!.getAt(i)?.recentSearch}");
     }
   }
 
@@ -315,7 +275,7 @@ class _SearchContentViewState extends State<SearchContentView> {
     }
   }
 
-  recnetlyVisiteSortAddDataFn(Resu localResultData) async {
+  recnetlyVisiteSortAddDataFn(LocalResult localResultData) async {
     if (recentlyVisitedLocalList!.values.isNotEmpty) {
       if (recentlyVisitedLocalList!.values.any((element) =>
           element.recentlyVisited.containsValue(localResultData))) {
@@ -351,7 +311,6 @@ class _SearchContentViewState extends State<SearchContentView> {
 
   @override
   Widget build(BuildContext context) {
-    // log(recentSearchLocalList.values.toList().toString());
     return Scaffold(
       backgroundColor: AppColor.textInvertPrimaryColor,
       appBar: AppBar(
@@ -374,12 +333,13 @@ class _SearchContentViewState extends State<SearchContentView> {
             if (p0 == "") {
               topMatches.clear();
               resultData.clear();
+              filterResultData.clear();
               setState(() {});
             } else {
-              CategoryListController.delayedFunction(fn: () {
+              ListController.delayedFunction(fn: () async {
                 if (p0 != "") {
                   updateSuggestions(p0);
-                  getdata(isScroll: false, text: _searchController.text);
+                  await getdata(isScroll: false, text: _searchController.text);
                 }
               });
             }
@@ -519,7 +479,7 @@ class _SearchContentViewState extends State<SearchContentView> {
                                                     CustomListtileWidget(
                                                         onTap: () {
                                                           recnetlyVisiteSortAddDataFn(
-                                                              Resu(
+                                                              LocalResult(
                                                             collection:
                                                                 filterResultData[
                                                                         index]
@@ -690,14 +650,17 @@ class _SearchContentViewState extends State<SearchContentView> {
                           child: Column(
                             children: [
                               GestureDetector(
-                                onTap: () {
-                                  updateSuggestions(
-                                      e.recentSearch.values.first);
+                                onTap: () async {
+                                  context.hideKeypad();
+
                                   _searchController.text =
                                       e.recentSearch.values.first;
-                                  getdata(
+                                  await recentSearchSortAddDataFn();
+                                  resultPage = true;
+                                  await getdata(
                                       isScroll: false,
                                       text: e.recentSearch.values.first);
+                                  resultPage = true;
                                 },
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -868,9 +831,13 @@ class _SearchContentViewState extends State<SearchContentView> {
           StringComparator(
             string1: topMatches,
             string2: _searchController,
-            onTap: (p0) {
+            onTap: (p0) async {
+              context.hideKeypad();
               _searchController.text = p0;
-              getdata(isScroll: false, text: _searchController.text);
+              await recentSearchSortAddDataFn();
+              resultPage = true;
+
+              await getdata(isScroll: false, text: _searchController.text);
             },
           )
         ],

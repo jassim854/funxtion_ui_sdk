@@ -6,28 +6,27 @@ import 'package:flutter/material.dart';
 import 'package:funxtion/funxtion_sdk.dart';
 import 'package:hive/hive.dart';
 
-
 import '../../ui_tool_kit.dart';
 
-class CategoryListController {
+class ListController {
   static Future<List<OnDemandModel>?> getListOnDemandData(context,
       {String? mainSearch,
-      String? limitContentPerPage,
-      String? pageNumber,
+      int? limitContentPerPage,
+      required int pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
     try {
       final fetcheddata = await OnDemandRequest.listOnDemand(
         queryParameters: {
+          "filter[where][type][eq]": 'virtual-class',
+          "filter[offset]": pageNumber,
+          "filter[limit]": limitContentPerPage ?? 10,
           if (checkfilter('duration', confirmedFilter.value))
             "filter[where][duration][in]":
                 searchFilter('duration', confirmedFilter.value),
-          "filter[limit]": limitContentPerPage ?? '10',
           if (mainSearch != null) "filter[where][q][contains]": mainSearch,
           if (checkfilter('level', confirmedFilter.value))
             "filter[where][level][in]":
                 searchFilter('level', confirmedFilter.value),
-          "filter[offset]": pageNumber ?? 0,
-          "filter[where][type][eq]": 'virtual-class',
           if (checkfilter('categories', confirmedFilter.value))
             "filter[where][categories][in]":
                 searchFilter('categories', confirmedFilter.value),
@@ -53,23 +52,23 @@ class CategoryListController {
 
   static Future<List<OnDemandModel>?> getListOnDemandAudioData(context,
       {String? mainSearch,
-      String? limitContentPerPage,
-      String? pageNumber,
+      int? limitContentPerPage,
+      required int pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
     try {
       // log(" level query ${searchFilter('level', confirmedFilter.value)}");
       final fetcheddata = await OnDemandRequest.listOnDemand(
         queryParameters: {
+          "filter[where][type][eq]": 'audio-workout',
+          "filter[limit]": limitContentPerPage ?? 10,
+          "filter[offset]": pageNumber,
           if (checkfilter('duration', confirmedFilter.value))
             "filter[where][duration][in]":
                 searchFilter('duration', confirmedFilter.value),
-          "filter[limit]": limitContentPerPage ?? '10',
           if (mainSearch != null) "filter[where][q][contains]": mainSearch,
           if (checkfilter('level', confirmedFilter.value))
             "filter[where][level][in]":
                 searchFilter('level', confirmedFilter.value),
-          "filter[offset]": pageNumber ?? 0,
-          "filter[where][type][eq]": 'audio-workout',
           if (checkfilter('categories', confirmedFilter.value))
             "filter[where][categories][in]":
                 searchFilter('categories', confirmedFilter.value),
@@ -95,14 +94,14 @@ class CategoryListController {
 
   static Future<List<WorkoutModel>?> getListWorkoutData(context,
       {String? mainSearch,
-      String? limitContentPerPage,
-      String? pageNumber,
+      int? limitContentPerPage,
+      required int pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
     try {
       final fetcheddata = await WorkoutRequest.listOfWorkout(
         queryParameters: {
-          "filter[limit]": limitContentPerPage ?? '10',
-          "filter[offset]": pageNumber ?? "0",
+          "filter[limit]": limitContentPerPage ?? 10,
+          "filter[offset]": pageNumber,
           if (mainSearch != null) "filter[where][q][contains]": mainSearch,
           if (checkfilter('goals', confirmedFilter.value))
             "filter[where][goals][in]":
@@ -138,14 +137,14 @@ class CategoryListController {
 
   static Future<List<TrainingPlanModel>?> getListTrainingPlanData(context,
       {String? mainSearch,
-      String? limitContentPerPage,
-      String? pageNumber,
+      int? limitContentPerPage,
+      required int pageNumber,
       required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
     try {
       final fetcheddata = await TrainingPlanRequest.listOfTrainingPlan(
         queryParameters: {
-          "filter[limit]": limitContentPerPage ?? '10',
-          "filter[offset]": pageNumber ?? '0',
+          "filter[limit]": limitContentPerPage ?? 10,
+          "filter[offset]": pageNumber,
           if (mainSearch != null) "filter[where][q][contains]": mainSearch,
           if (checkfilter('goals', confirmedFilter.value))
             "filter[where][goals][in]":
@@ -431,10 +430,10 @@ class CategoryListController {
     required Map<int, String> onDemandCategoryAudioData,
   }) {
     return categoryName == CategoryName.videoClasses
-        ? "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min • ${onDemandCategoryVideoData[index] == "" ? "" : "${onDemandCategoryVideoData[index]} • "}${listOndemandData[index].level.toString()}"
+        ? "${listOndemandData[index].duration} min • ${onDemandCategoryVideoData[index] == "" ? "" : "${onDemandCategoryVideoData[index]} • "}${listOndemandData[index].level.toString()}"
         : categoryName == CategoryName.workouts
-            ? "${listWorkoutData[index].duration!.substring(listWorkoutData[index].duration!.indexOf('-') + 1)} min • ${categoryTypeData[index] == "" ? "" : "${categoryTypeData[index]} • "}${listWorkoutData[index].level.toString()}"
-            : "${listOndemandData[index].duration.substring(listOndemandData[index].duration.indexOf('-') + 1)} min •${onDemandCategoryAudioData[index] == "" ? "" : "${onDemandCategoryAudioData[index]} • "}${listOndemandData[index].level}";
+            ? "${listWorkoutData[index].duration} min • ${categoryTypeData[index] == "" ? "" : "${categoryTypeData[index]} • "}${listWorkoutData[index].level.toString()}"
+            : "${listOndemandData[index]} min • ${onDemandCategoryAudioData[index] == "" ? "" : "${onDemandCategoryAudioData[index]} • "}${listOndemandData[index].level}";
   }
 
   static String imageUrl({

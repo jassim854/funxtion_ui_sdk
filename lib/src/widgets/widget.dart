@@ -30,4 +30,6 @@ export 'package:ui_tool_kit/src/widgets/start_workout_header_widget.dart';
 export 'package:ui_tool_kit/src/widgets/bottom_search_row_widget.dart';
 export 'package:ui_tool_kit/src/widgets/row_text_widget.dart';
 export 'package:ui_tool_kit/src/widgets/alert_dialog_box_widget.dart';
+export 'package:ui_tool_kit/src/widgets/training_plan_tabs_widget.dart';
+export 'package:ui_tool_kit/src/widgets/follow_subtitle_widget.dart';
 
