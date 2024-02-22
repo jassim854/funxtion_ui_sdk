@@ -41,7 +41,7 @@ class DoneWorkoutSheet extends StatelessWidget {
                       color: Colors.grey,
                     ),
                     Text(
-                      "You’ve completed",
+                     context.loc.completeText,
                       style: AppTypography.label14SM
                           .copyWith(color: AppColor.textSubTitleColor),
                     )
@@ -64,10 +64,10 @@ class DoneWorkoutSheet extends StatelessWidget {
                   child: BuildCardWidget(
                       checkNum: false,
                       subtitle: totalDuration.mordernDurationTextWidget,
-                      title: 'Total Duration'),
+                      title: context.loc.totalDurationText),
                 ),
                 20.width(),
-                Expanded(child: BuildCardWidget(title: 'Type', subtitle: type))
+                Expanded(child: BuildCardWidget(title:context.loc.typeText, subtitle: type))
               ],
             ),
           ),
@@ -110,7 +110,7 @@ class DoneWorkoutSheet extends StatelessWidget {
                                                 color: Colors.grey,
                                               ),
                                               Text(
-                                                "You’ve completed",
+                                              context.loc.completeText,
                                                 style: AppTypography.label14SM
                                                     .copyWith(
                                                         color: AppColor
@@ -119,7 +119,7 @@ class DoneWorkoutSheet extends StatelessWidget {
                                             ],
                                           )
                                         : Text(
-                                            'Progress update',
+                                           context.loc.progressUpdateText,
                                             style: AppTypography.label14SM
                                                 .copyWith(
                                                     color: AppColor
@@ -147,7 +147,7 @@ class DoneWorkoutSheet extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Workouts completed",
+                                     context.loc.workoutCompletedText,
                                       style: AppTypography.label14SM.copyWith(
                                           color: AppColor.textSubTitleColor),
                                     ),
@@ -179,8 +179,8 @@ class DoneWorkoutSheet extends StatelessWidget {
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                       color: AppColor.surfaceBackgroundColor),
-                                  child: const Text(
-                                      'You have completed the training plan and it will be removed from your followed training plans. If you wish to follow it again you can click “Start again” below.'),
+                                  child:  Text(
+                                 context.loc.completedFollowPlan ),
                                 ),
                               const Spacer(),
                               Padding(
@@ -263,7 +263,7 @@ class DoneWorkoutSheet extends StatelessWidget {
                                                 const EdgeInsets.symmetric(
                                                     vertical: 20),
                                             child: Text(
-                                              'Start again',
+                                              context.loc.startAgainText,
                                               style: AppTypography.label18LG
                                                   .copyWith(
                                                       color: AppColor
@@ -323,7 +323,7 @@ class DoneWorkoutSheet extends StatelessWidget {
                                             }
                                           },
                                           child: Text(
-                                            'Done',
+                                        context.loc.doneText,
                                             style: AppTypography.label18LG
                                                 .copyWith(
                                                     color: AppColor
@@ -345,7 +345,7 @@ class DoneWorkoutSheet extends StatelessWidget {
                   }
                 },
                 child: Text(
-                  "Done",
+                context.loc.doneText,
                   style: AppTypography.label18LG
                       .copyWith(color: AppColor.textInvertEmphasis),
                 )),

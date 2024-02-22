@@ -1,0 +1,114 @@
+{
+  "hintSearchText": "تمارين، مدربين، تمارين",
+  "yourTrainingPlan": "{length, plural, =1{خطة التدريب الخاصة بك} other{خطط التدريب الخاصة بك}}",
+  "@yourTrainingPlan": {
+    "description": "رسالة جمع",
+    "placeholders": {
+      "length": {
+        "type": "num"
+      }
+    }
+  },
+  "seeAll": "عرض الكل",
+  "recentTitle": "{title, select, video{فيديوهات حديثة} training{خطط تدريب حديثة} workout{تمارين حديثة} search{بحوث حديثة} visit{الزيارات الأخيرة} audio{فصول صوتية} other{لم يتم العثور على أي شيء}}",
+  "@recent": {
+    "description": "نوع رسالة العنوان الأخيرة",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "recentSubtitle": "{title, select, training{خطط رائعة} workout{محتوى جديد لك} other{لم يتم العثور على أي شيء}}",
+  "@recentSubtitle": {
+    "description": "أي نوع من رسالة العنوان الفرعي الأخيرة",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "nextUp": "التالي",
+  "whatLookingFor": "ما الذي تبحث عنه؟",
+  "titleText": "{title, select, video{فيديوهات} training{خطط التدريب} workout{تمارين} audio{فصول صوتية} other{لم يتم العثور على أي شيء}}",
+  "@titleText": {
+    "description": "العنوان",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "cancelText": "إلغاء",
+  "clearText": "مسح",
+  "hintSearchText2": "اليوغا، HIIT، الهواء",
+  "levelText": "المستوى",
+  "instructorText": "المدرب",
+  "equipmentText": "المعدات",
+  "buttonText": "{title, select, play{تشغيل الصف} startWorkout{بدء التمرين} letsGo{لنذهب} previous{السابق} nextWorkout{التمرين التالي} startFollow{بدء المتابعة} other{لم يتم العثور على أي شيء}}",
+  "@buttonText": {
+    "description": "عنوان الزر",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "resetText": "إعادة تعيين",
+  "filterText": "تصفية",
+  "doneText": "تم",
+  "goalText": "الهدف",
+  "bodyPartText": "أجزاء الجسم",
+  "alertBoxTitle": "بدء التمرين خارج التسلسل؟",
+  "alertBoxBody": "سيتم وضع علامة على أي تمارين غير مكتملة مدرجة قبل هذا التمرين على أنها مكتملة.",
+  "alertBoxButton1": "إلغاء",
+  "alertBoxButton2": "بدء التمرين",
+  "alertBoxTitle2": "الخروج من التمرين؟",
+  "alertBoxBody2": "لن تتمكن من استئناف التمرين.",
+  "alertBox2Button2": "الخروج",
+  "alertBoxTitle3": "إلغاء متابعة خطة التدريب؟",
+  "alertBoxBody3": "إذا قمت بإلغاء متابعة خطة التدريب، سيتم إزالة جميع التقدم.",
+  "alertBox3Button2": "إلغاء المتابعة",
+  "phaseTitle": "{title, select, warmUp{الإحماء} training{التدريب} coolDown{تهدئة} other{لم يتم العثور}}",
+  "workoutText": "تمرين",
+  "getReadyForText": "استعد لـ",
+  "getReadyText": "استعد!",
+  "durationText": "المدة",
+  "typeText": "النوع",
+  "whatYouNeedText": "ما ستحتاجه",
+  "upNext": "التالي",
+  "roundText": "دائري",
+  "exerciseText": "التمرين",
+  "overviewText": "نظرة عامة",
+  "trainerNotesText": "ملاحظات المدرب",
+  "repsText": "المرات",
+  "timeText": "الزمن",
+  "trainingAll": "الكل",
+  "trainingFollow": "متابعة",
+  "workoutPluraText": "{length, plural, =1{تمرين} other{تمارين}}",
+  "@workoutPluraText": {
+    "description": "رسالة جمع",
+    "placeholders": {
+      "length": {
+        "type": "num"
+      }
+    }
+  },
+  "followingText": "متابعة",
+  "nextText": "التالي",
+  "completeText": "لقد أكملت",
+  "totalDurationText": "المدة الكلية",
+  "progressUpdateText": "تحديث التقدم",
+  "completedFollowPlan": "لقد أكملت خطة التدريب وسيتم إزالتها من الخطط المتابعة الخاصة بك. إذا كنت ترغب في متابعتها مرة أخرى يمكنك النقر على 'ابدأ من جديد' أدناه.",
+  "startAgainText": "ابدأ من جديد",
+  "unFollowTrainingPlanText": "إلغاء متابعة خطة التدريب",
+  "scheduleText": "الجدول",
+  "nothingToLoadText": "لا يوجد شيء للتحميل",
+  "minText": "دقيقة",
+  "workoutOverviewText": "نظرة عامة على التمرين",
+  "workoutCompletedText": "تمت المجموعة",
+  "popupText": "{title, select, show{عرض المعلومات} here{اذهب هنا} other{غير موجود}}",
+"@popupText": {
+"description": "نص منبثق"},
+"itemTypeInfo": "{title, select, single{يمكن دمج التمارين في مجموعات متعددة مع مقاييس مختلفة متصلة بها.} circuit{الدائرة الزمنية هي مجموعة من التمارين المُنفَذة مع فترة عمل-راحة محددة. يمكن أن يحتوي كل جولة على فترة عمل-راحة مختلفة و/أو تمارين مختلفة.} reps{الدائرة المبنية على التكرار هي مجموعة من التمارين المُنفَذة مع فترات راحة قصيرة بينها لعدد محدد من التكرارات. يمكن أن تحتوي كل جولة على عدد مختلف من التكرارات وفترة الراحة و/أو التمارين.} ss{مفهوم السوبيرسيت هو أداء تمرينين متتاليين، تليهما راحة قصيرة (ولكن ليس دائمًا).} rft{اختصار RFT لـ 'جولات لمدة زمنية'. يحتاج المشاركون إلى إكمال عدد معين من الجولات والتكرارات في أقرب وقت ممكن. جولة هي تسلسل من جميع التمارين. الوقت الذي يستغرقه المشاركون لإكمال العدد المحدد من الجولات هو درجتهم.} amrap{اختصار AMRAP لـ 'كم عدد التكرارات الممكنة'. يحتاج المشاركون إلى إكمال أكبر عدد ممكن من التكرارات للتمرين المعطى في فترة زمنية محددة. عدد الرمات التامة من التكرارات هو درجة المشارك.} enom{اختصار EMOM لـ 'كل دقيقة في الدقيقة'. في هذا النوع من التمرين، يجب على المشارك أن يكمل التمارين في بداية كل دقيقة لعدد محدد من الدقائق. يمكن أن تحتوي كل دقيقة على تمارين مختلفة بقيم مختلفة.} other{غير موجود}}"
+}

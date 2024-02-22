@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -607,7 +609,6 @@ class BuildBodyWidget extends StatelessWidget {
           ),
           showTrailing == true
               ? PopupMenuButton(
-                  // iconSize: 16,
                   onSelected: (value) {
                     if (value == 1) {
                       showModalBottomSheet(
@@ -641,7 +642,7 @@ class BuildBodyWidget extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Show info',
+                            Text(context.loc.popupText("show"),
                                 style: AppTypography.label16MD.copyWith(
                                   color: AppColor.textEmphasisColor,
                                 )),
@@ -654,7 +655,7 @@ class BuildBodyWidget extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Go here',
+                            Text(context.loc.popupText("here"),
                                 style: AppTypography.label16MD.copyWith(
                                   color: AppColor.textEmphasisColor,
                                 )),
@@ -668,7 +669,22 @@ class BuildBodyWidget extends StatelessWidget {
                     AppAssets.horizontalVertIcon,
                     color: AppColor.surfaceBrandDarkColor,
                   ))
-              : const SizedBox.shrink(),
+              : InkWell(
+                  onTap: () {
+                    if (EveentTriggered.workout_preview_exercise_info != null) {
+                      EveentTriggered.workout_preview_exercise_info!(
+                          dataList.values.toList()[index].name);
+                    }
+                    showModalBottomSheet(
+                        isDismissible: false,
+                        isScrollControlled: true,
+                        useSafeArea: true,
+                        backgroundColor: AppColor.surfaceBackgroundBaseColor,
+                        context: context,
+                        builder: (context) => DetailWorkoutBottomSheet(
+                            exerciseModel: dataList.values.toList()[index]));
+                  },
+                  child: SvgPicture.asset(AppAssets.infoIcon)),
         ],
       ),
     );
@@ -981,7 +997,12 @@ class _BuildHeader2State extends State<BuildHeader2> {
                   ],
                 ),
                 InkWell(
-                    onTap: widget.onExpand,
+                    onTap: () {
+                      if (EveentTriggered.workout_preview_expanded != null) {
+                        EveentTriggered.workout_preview_expanded!(widget.title);
+                      }
+                      widget.onExpand!();
+                    },
                     child: ValueListenableBuilder(
                       valueListenable: widget.expandValueListenable,
                       builder: (_, value, child) {

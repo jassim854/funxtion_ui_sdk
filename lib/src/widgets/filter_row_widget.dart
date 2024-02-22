@@ -48,8 +48,8 @@ class FilterContainer extends StatelessWidget {
 }
 
 class FilterRowWidget extends StatelessWidget {
-  ValueNotifier<List<TypeFilterModel>> confirmedFilter;
-  Function(TypeFilterModel value) deleteAFilterOnTap;
+  ValueNotifier<List<SelectedFilterModel>> confirmedFilter;
+  Function(SelectedFilterModel value) deleteAFilterOnTap;
   VoidCallback hideOnTap;
   VoidCallback showOnTap;
   VoidCallback clearOnTap;
@@ -85,7 +85,7 @@ class FilterRowWidget extends StatelessWidget {
                                       ? confirmedFilter.value
                                           .sublist(0, 2)
                                           .map((e) => FilterContainer(
-                                                e: e.filter.toString(),
+                                                e: e.filterName.toString(),
                                                 onIconTap: () {
                                                   deleteAFilterOnTap(e);
                                                 },
@@ -98,7 +98,7 @@ class FilterRowWidget extends StatelessWidget {
                                               i++)
                                             FilterContainer(
                                               e: confirmedFilter
-                                                  .value[i].filter,
+                                                  .value[i].filterName,
                                               onIconTap: () {
                                                 deleteAFilterOnTap(
                                                     confirmedFilter.value[i]);
@@ -148,7 +148,7 @@ class FilterRowWidget extends StatelessWidget {
                             ]
                           : confirmedFilter.value
                               .map((e) => FilterContainer(
-                                    e: e.filter.toString(),
+                                    e: e.filterName.toString(),
                                     onIconTap: () {
                                       deleteAFilterOnTap(e);
                                     },

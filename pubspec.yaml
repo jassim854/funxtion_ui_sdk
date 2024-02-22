@@ -10,22 +10,23 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   funxtion: 
     path: /Users/pro/Desktop/Flutter Packages/funxtion_sdk/
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   flutter_svg: ^2.0.5
   cached_network_image: ^3.2.3
-
   intl: ^0.18.1
-
-
   sliver_tools: ^0.2.12
   video_player: ^2.7.2
 
   carousel_slider: ^4.2.1
   connectivity_plus: ^4.0.2
   dio: ^5.4.0
+  smooth_video_progress: ^0.0.4
+
 
   
   
@@ -41,6 +42,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+
   # flutter_gen: ^5.4.0
 
 # For information on the generic Dart part of this file, see the

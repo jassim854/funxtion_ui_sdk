@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:funxtion/funxtion_sdk.dart';
@@ -28,7 +30,6 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
   void initState() {
     scrollController = ScrollController()
       ..addListener(() {
-     
         if (scrollController.offset > 155) {
           centerTitle.value = true;
         } else if (scrollController.offset < 160) {
@@ -46,29 +47,28 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
       isNodData = false;
     });
     try {
-      await CategoryDetailController.getOnDemandData(context, id: widget.id)
+      await VideoDetailController.getOnDemandData(context, id: widget.id)
           .then((value) async {
         if (value != null) {
           isLoadingNotifier = false;
           onDemamdModelData = value;
           onDemandCategoryFilterData =
-              CategoryDetailController.getOnDemandCategoryData(value);
+              VideoDetailController.getOnDemandCategoryData(value);
 
           if (onDemamdModelData?.instructorId.toString() != "null") {
-            instructorModelData = await CategoryDetailController.getInstructor(
+            instructorModelData = await VideoDetailController.getInstructor(
                 context,
                 id: onDemamdModelData?.instructorId.toString() ?? "");
           }
           if (onDemamdModelData?.equipment?.isNotEmpty ?? false) {
             for (var i = 0; i < onDemamdModelData!.equipment!.length; i++) {
               if (context.mounted) {
-                        await CategoryDetailController.getEquipment(context,
-                      id: onDemamdModelData?.equipment?[i].toString() ?? "")
-                  .then((value) {
-                equipmentData.add(value as EquipmentModel);
-              });
+                await VideoDetailController.getEquipment(context,
+                        id: onDemamdModelData?.equipment?[i].toString() ?? "")
+                    .then((value) {
+                  equipmentData.add(value as EquipmentModel);
+                });
               }
-      
             }
           }
 
@@ -81,82 +81,83 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
       });
     } on RequestException catch (e) {
       if (context.mounted) {
-         BaseHelper.showSnackBar(context, e.message);
+        BaseHelper.showSnackBar(context, e.message);
       }
-     
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: isLoadingNotifier == true
-            ? const LoaderStackWidget()
-            : isNodData == true
-                ? const CustomErrorWidget()
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                
-                      Expanded(
-                        child: ValueListenableBuilder(
-                            valueListenable: centerTitle,
-                            builder: (_, value, child) {
-                              return CustomScrollView(
-                                physics: const BouncingScrollPhysics(),
-                                controller: scrollController,
-                                slivers: [
-                                  SliverAppBarWidget(
-                                    appBarTitle:
-                                        "${onDemamdModelData?.title.trim()}",
-                                    backGroundImg: onDemamdModelData
-                                            ?.mapImage?.url
-                                            .toString() ??
-                                        "",
-                                    flexibleTitle:
-                                        "${onDemamdModelData?.title.trim()}",
+    return Scaffold(
+      body: isLoadingNotifier == true
+          ? const LoaderStackWidget()
+          : isNodData == true
+              ? const CustomErrorWidget()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: ValueListenableBuilder(
+                          valueListenable: centerTitle,
+                          builder: (_, value, child) {
+                            return CustomScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              controller: scrollController,
+                              slivers: [
+                                SliverAppBarWidget(
+                                  appBarTitle:
+                                      "${onDemamdModelData?.title.trim()}",
+                                  backGroundImg: onDemamdModelData
+                                          ?.mapImage?.url
+                                          .toString() ??
+                                      "",
+                                  flexibleTitle:
+                                      "${onDemamdModelData?.title.trim()}",
 
-                                    flexibleSubtitleWidget: Text(
-                                      "${onDemamdModelData?.duration} min • $onDemandCategoryFilterData",
-                                      style: AppTypography.label16MD.copyWith(
-                                          color:
-                                              AppColor.textInvertPrimaryColor),
-                                    ),
-                                    onStackChild: Align(
-                                      alignment: Alignment.center,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          playOnTap(context);
-                                        },
-                                        child: SvgPicture.asset(
-                                          AppAssets.playArrowIcon,
-                                          height: 38,
-                                          color: AppColor.textInvertEmphasis,
-                                        ),
+                                  flexibleSubtitleWidget: Text(
+                                    "${onDemamdModelData?.duration} ${context.loc.minText} • $onDemandCategoryFilterData",
+                                    style: AppTypography.label16MD.copyWith(
+                                        color: AppColor.textInvertPrimaryColor),
+                                  ),
+                                  onStackChild: Align(
+                                    alignment: Alignment.center,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        playOnTap(context);
+                                      },
+                                      child: SvgPicture.asset(
+                                        AppAssets.playArrowIcon,
+                                        height: 38,
+                                        color: AppColor.textInvertEmphasis,
                                       ),
                                     ),
-                                    // flexibleTitle2:
-                                    //     "${workoutData?.duration?.getTextAfterSymbol()} min • ${workoutData!.types!.isNotEmpty ? data.map((e) => e.name).join(',') : ''}",
-                                    value: value,
                                   ),
-                                  descriptionWidget(),
-                                  cardWidget(),
-                                ],
-                              );
-                            }),
-                      ),
-                    ],
-                  ),
-        bottomNavigationBar: isLoadingNotifier == true && isNodData == false
-            ? null
-            : bottomWidget(),
-      ),
+                                  // flexibleTitle2:
+                                  //     "${workoutData?.duration?.getTextAfterSymbol()} min • ${workoutData!.types!.isNotEmpty ? data.map((e) => e.name).join(',') : ''}",
+                                  value: value,
+                                ),
+                                descriptionWidget(),
+                                cardWidget(),
+                              ],
+                            );
+                          }),
+                    ),
+                  ],
+                ),
+      bottomNavigationBar: isLoadingNotifier == true && isNodData == false
+          ? null
+          : bottomWidget(),
     );
   }
 
   void playOnTap(BuildContext context) {
-    return context.navigateTo(CategoryPlayerView(
+    if (EveentTriggered.video_class_cta_pressed != null) {
+      EveentTriggered.video_class_cta_pressed!(
+          onDemamdModelData?.title.toString() ?? "",
+          onDemamdModelData?.mapVideo?.url ?? "");
+    }
+    return context.navigateTo(VideoPlayerView(
+        title: onDemamdModelData?.title.toString() ?? "",
         videoURL: onDemamdModelData?.mapVideo?.url ?? "",
         thumbNail: onDemamdModelData?.mapImage?.url ?? ""));
   }
@@ -184,19 +185,22 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
               const EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 16),
           child: Column(
             children: [
-              CustomRowTextChartIcon(
-                level: onDemamdModelData?.level.toString() ?? "No data",
-                text1: 'Level',
-                text2: onDemamdModelData?.level.toString() ?? "No data",
-                isChartIcon: true,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 16),
-                child: CustomDivider(),
-              ),
-              CustomRowTextChartIcon(
-                  text1: 'Instructor',
-                  text2: instructorModelData?.name.toString() ?? "No data"),
+              if (onDemamdModelData?.level.toString() != "")
+                CustomRowTextChartIcon(
+                  level: onDemamdModelData?.level.toString(),
+                  text1: context.loc.levelText,
+                  text2: onDemamdModelData?.level.toString(),
+                  isChartIcon: true,
+                ),
+              if (instructorModelData?.name.toString() != "") ...[
+                const Padding(
+                  padding: EdgeInsets.only(top: 16, bottom: 16),
+                  child: CustomDivider(),
+                ),
+                CustomRowTextChartIcon(
+                    text1: context.loc.instructorText,
+                    text2: instructorModelData?.name.toString()),
+              ],
               if (onDemamdModelData?.type != 'audio-workout' &&
                   onDemamdModelData!.equipment?.isNotEmpty == true) ...[
                 const Padding(
@@ -204,7 +208,7 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
                   child: CustomDivider(),
                 ),
                 CustomRowTextChartIcon(
-                    text1: 'Equipment',
+                    text1: context.loc.equipmentText,
                     secondWidget: SizedBox(
                       height: 20,
                       child: ListView.builder(
@@ -299,7 +303,7 @@ class _VideoAudioDetailViewState extends State<VideoAudioDetailView> {
                 ),
                 4.height(),
                 Text(
-                  "${onDemamdModelData?.duration} min",
+                  "${onDemamdModelData?.duration} ${context.loc.minText}",
                   style: AppTypography.paragraph12SM
                       .copyWith(color: AppColor.textPrimaryColor),
                 ),

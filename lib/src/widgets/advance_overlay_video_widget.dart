@@ -1,10 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/svg.dart';
+import 'package:smooth_video_progress/smooth_video_progress.dart';
+
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 import 'package:video_player/video_player.dart';
 
 class AdvancedOverlayWidget extends StatefulWidget {
+  final String title, videoUrl;
   final VideoPlayerController controller;
   final VoidCallback onClickedFullScreen;
 
@@ -15,6 +20,8 @@ class AdvancedOverlayWidget extends StatefulWidget {
     required this.controller,
     required this.onClickedFullScreen,
     required this.isPortrait,
+    required this.title,
+    required this.videoUrl,
   });
 
   @override
@@ -73,7 +80,7 @@ class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
           left: 12,
           bottom: 28,
           child: Text(
-            "${VideoController.getPosition(widget.controller)}/${VideoController.getVideoDuration(widget.controller)}",
+            "${VideoDetailController.getPosition(widget.controller)}/${VideoDetailController.getVideoDuration(widget.controller)}",
             style: AppTypography.label14SM
                 .copyWith(color: AppColor.surfaceBackgroundBaseColor),
           ),
@@ -98,13 +105,44 @@ class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
   }
 
   Widget buildIndicator() => Container(
-        margin: const EdgeInsets.all(8).copyWith(right: 0),
-        height: 16,
-        child: VideoProgressIndicator(
-          widget.controller,
-          allowScrubbing: true,
+      margin: const EdgeInsets.all(8).copyWith(right: 0),
+      height: 16,
+      child: SmoothVideoProgress(
+        controller: widget.controller,
+        builder: (context, position, duration, child) => SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            trackHeight: 6.0,
+            trackShape: CustomTrackShape(),
+            activeTrackColor: AppColor.redColor,
+            inactiveTrackColor: AppColor.textInvertEmphasis,
+            thumbShape: const RoundSliderThumbShape(
+              enabledThumbRadius: 8.0,
+              pressedElevation: 2.0,
+            ),
+            thumbColor: AppColor.redColor,
+            overlayColor: AppColor.redColor.withOpacity(0.2),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 32.0),
+          ),
+          child: Slider(
+            onChangeStart: (_) => widget.controller.pause(),
+            onChangeEnd: (_) => widget.controller.play(),
+            onChanged: (value) {
+              if (EveentTriggered.video_class_player_scrub != null) {
+                EveentTriggered.video_class_player_scrub!(
+                    widget.title,
+                    widget.videoUrl,
+                    VideoDetailController.getPosition(widget.controller),
+                    VideoDetailController.getDestinationPosition(value));
+              }
+
+              widget.controller.seekTo(Duration(milliseconds: value.toInt()));
+            },
+            value: position.inMilliseconds.toDouble(),
+            min: 0,
+            max: duration.inMilliseconds.toDouble(),
+          ),
         ),
-      );
+      ));
 
   Widget buildSpeed() => PopupMenuButton<double>(
         initialValue: widget.controller.value.playbackSpeed,
@@ -131,7 +169,7 @@ class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
             child: IconButton(
                 iconSize: 40,
                 onPressed: () {
-                  VideoController.showControls.value = true;
+                  VideoDetailController.showControls.value = true;
 
                   widget.controller.pause();
                 },
@@ -147,7 +185,7 @@ class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
                   Future.delayed(
                     const Duration(milliseconds: 250),
                     () {
-                      VideoController.showControls.value = false;
+                      VideoDetailController.showControls.value = false;
                     },
                   );
                 },
@@ -156,5 +194,22 @@ class _AdvancedOverlayWidgetState extends State<AdvancedOverlayWidget> {
                   color: AppColor.textInvertEmphasis,
                 )),
           );
+  }
+}
+
+class CustomTrackShape extends RoundedRectSliderTrackShape {
+  @override
+  Rect getPreferredRect({
+    required RenderBox parentBox,
+    Offset offset = Offset.zero,
+    required SliderThemeData sliderTheme,
+    bool isEnabled = false,
+    bool isDiscrete = false,
+  }) {
+    final trackHeight = sliderTheme.trackHeight;
+    final trackLeft = offset.dx;
+    final trackTop = offset.dy + (parentBox.size.height - trackHeight!) / 2;
+    final trackWidth = parentBox.size.width;
+    return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
   }
 }

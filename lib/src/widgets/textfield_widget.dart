@@ -10,7 +10,7 @@ class CustomSearchTextFieldWidget extends StatelessWidget {
       this.showCloseIcon,
       this.onChange,
       this.onIconTap,
-      this.hintText = 'Yoga, HIIT, cardio',
+     required this.hintText ,
       this.onSubmitted,
       this.margin =
           const EdgeInsets.only(top: 10, left: 20, right: 8, bottom: 12),
@@ -20,7 +20,7 @@ class CustomSearchTextFieldWidget extends StatelessWidget {
   void Function()? onIconTap;
   void Function(String)? onChange;
   TextEditingController? searchController;
-  String hintText;
+ final String hintText;
   EdgeInsetsGeometry? margin;
   void Function()? onFieldTap;
   void Function(String)? onSubmitted;

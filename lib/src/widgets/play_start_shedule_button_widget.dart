@@ -17,20 +17,22 @@ class PlayButtonWidget extends StatelessWidget {
       height: 50,
       child: CustomElevatedButton(
           onPressed: onPressed,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SvgPicture.asset(
-                AppAssets.playArrowIcon,
-                color: AppColor.textInvertEmphasis,
-              ),
-              5.width(),
-              Text(
-                'Play class',
-                style: AppTypography.label18LG
-                    .copyWith(color: AppColor.textInvertEmphasis),
-              )
-            ],
+          child: FittedBox(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SvgPicture.asset(
+                  AppAssets.playArrowIcon,
+                  color: AppColor.textInvertEmphasis,
+                ),
+                5.width(),
+                Text(
+                  context.loc.buttonText("play"),
+                  style: AppTypography.label18LG
+                      .copyWith(color: AppColor.textInvertEmphasis),
+                )
+              ],
+            ),
           )),
     );
   }
@@ -54,7 +56,7 @@ class StartButtonWidget extends StatelessWidget {
           elevation: 0,
           btnColor: btnColor ?? AppColor.buttonTertiaryColor,
           onPressed: onPressed,
-          child: btnChild),
+          child: FittedBox(child: btnChild)),
     );
   }
 }
@@ -74,12 +76,14 @@ class SheduletButtonWidget extends StatelessWidget {
           elevation: 0,
           btnColor: AppColor.buttonPrimaryColor,
           onPressed: onPressed,
-          child: child ??
-              Text(
-                text.toString(),
-                style: AppTypography.label16MD
-                    .copyWith(color: AppColor.textInvertEmphasis),
-              )),
+          child: FittedBox(
+            child: child ??
+                Text(
+                  text.toString(),
+                  style: AppTypography.label16MD
+                      .copyWith(color: AppColor.textInvertEmphasis),
+                ),
+          )),
     );
   }
 }

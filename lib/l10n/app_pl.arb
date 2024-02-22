@@ -1,0 +1,118 @@
+
+{
+  "hintSearchText": "Ćwiczenia, trenerzy, ćwiczenia",
+  "yourTrainingPlan": "{length, plural,  =1{Twój Plan Treningowy} other{Twoje Plany Treningowe}}",
+  "@yourTrainingPlan": {
+    "description": "Wiadomość w liczbie mnogiej",
+    "placeholders": {
+      "length": {
+        "type": "num"
+      }
+    }
+  },
+  "seeAll": "Zobacz wszystkie",
+  "recentTitle": "{title, select, video{Ostatnie Lekcje Wideo} training{Ostatnie Plany Treningowe} workout{Ostatnie Ćwiczenia} search{Ostatnie Wyszukiwania} visit{Ostatnio Odwiedzone} audio{Lekcje Audio} other{Nie Znaleziono Żadnych}}",
+  "@recent": {
+    "description": "Rodzaj ostatniego tytułu wiadomości",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "recentSubtitle": "{title, select, training{Słodkie Plany} workout{Świeża Zawartość dla Ciebie} other{Nie Znaleziono Żadnych}}",
+  "@recentSubtitle": {
+    "description": "Rodzaj ostatniego podtytułu wiadomości",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "nextUp": "Następny",
+  "whatLookingFor": "Czego Szukasz?",
+  "titleText": "{title, select, video{Lekcje Wideo} training{Plany Treningowe} workout{Ćwiczenia} audio{Lekcje Audio} other{Nie Znaleziono Żadnych}}",
+  "@titleText": {
+    "description": "Tytuł",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "cancelText": "Anuluj",
+  "clearText": "Wyczyść",
+  "hintSearchText2": "Joga, HIIT, cardio",
+  "levelText": "Poziom",
+  "instructorText": "Instruktor",
+  "equipmentText": "Wyposażenie",
+  "buttonText": "{title, select, play{Odtwórz Lekcję} startWorkout{Rozpocznij Trening} letsGo{Zaczynamy} previous{Poprzedni} nextWorkout{Następne Ćwiczenie} startFollow{Zacznij Śledzić} other{Nie Znaleziono Żadnych}}",
+  "@buttonText": {
+    "description": "Tytuł Przycisku",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "resetText": "Resetuj",
+  "filterText": "Filtruj",
+  "doneText": "Gotowe",
+  "goalText": "Cel",
+  "bodyPartText": "Części Ciała",
+  "alertBoxTitle": "Rozpocząć Trening Poza Kolejnością?",
+  "alertBoxBody": "Wszelkie Niekompletne Treningi Wymienione Przed Tym Zostaną Oznaczone Jako Zakończone.",
+  "alertBoxButton1": "Anuluj",
+  "alertBoxButton2": "Rozpocznij Trening",
+  "alertBoxTitle2": "Zakończyć Trening?",
+  "alertBoxBody2": "Nie Będziesz Mógł Wznowić Treningu.",
+  "alertBox2Button2": "Zakończ",
+  "alertBoxTitle3": "Zatrzymać Obserwację Planu Treningowego?",
+  "alertBoxBody3": "Jeśli Zatrzymasz Obserwację Planu Treningowego, Cały Postęp Zostanie Usunięty.",
+  "alertBox3Button2": "Zatrzymaj",
+  "phaseTitle": "{title, select, warmUp{Rozgrzewka} training{Trening} coolDown{Schładzanie} other{Nie Znaleziono}}",
+  "workoutText": "Trening",
+  "getReadyForText": "Przygotuj Się Na",
+  "getReadyText": "Przygotuj Się!",
+  "durationText": "Czas Trwania",
+  "typeText": "Typ",
+  "whatYouNeedText": "Czego Będziesz Potrzebować",
+  "upNext": "Następne",
+  "roundText": "Rundy",
+  "exerciseText": "Ćwiczenie",
+  "overviewText": "Przegląd",
+  "trainerNotesText": "Notatki Trenera",
+  "repsText": "Powtórzenia",
+  "timeText": "Czas",
+  "trainingAll": "Wszystkie",
+  "trainingFollow": "Śledzone",
+  "workoutPluraText": "{length, plural,  =1{Ćwiczenie} other{Ćwiczenia}}",
+  "@workoutPluraText": {
+    "description": "Wiadomość w liczbie mnogiej",
+    "placeholders": {
+      "length": {
+        "type": "num"
+      }
+    }
+  },
+  "followingText": "Śledzenie",
+  "nextText": "Następne",
+  "completeText": "Ukończyłeś",
+  "totalDurationText": "Całkowity Czas Trwania",
+  "progressUpdateText": "Aktualizacja Postępu",
+  "completedFollowPlan": "Zakończyłeś Plan Treningowy i Zostanie On Usunięty. Jeśli Chcesz Zacząć Go Ponownie, Kliknij „Rozpocznij Ponownie” Poniżej.",
+  "startAgainText": "Rozpocznij Ponownie",
+  "unFollowTrainingPlanText": "Zatrzymaj Obserwację Planu Treningowego",
+  "scheduleText": "Harmonogram",
+  "nothingToLoadText": "Nic do Załadowania",
+  "minText": "min",
+  "workoutOverviewText": "Przegląd Treningu",
+  "workoutCompletedText": "Treningi Ukończone",
+  "popupText": "{title, select, show{Pokaż Informacje} here{Tutaj} other{Nie Znaleziono}}",
+  "@popupText": {
+    "description":
+
+ "Tekst na Popupie"
+  },
+  "itemTypeInfo": "{title, select, single{Ćwiczenia można Łączyć w Wiele Zestawów z Różnymi Metrykami Połączonymi Z Nimi.} circuit{Obwód Czasowy to Kombinacja Ćwiczeń Wykonywanych w Określonym Interwale Pracy-i-Odpoczynku. Każda Runda Może Mieć Inny Interwał Pracy-i-Odpoczynku i/lub Inne Ćwiczenia.} reps{Obwód Oparty na Powtórzeniach to Kombinacja Ćwiczeń Wykonywanych z Krótkimi Przerwami Między Nimi przez Określoną Liczbę Powtórzeń. Każda Runda Może Mieć Inną Liczbę Powtórzeń, Interwał Odpoczynku i/lub Inne Ćwiczenia.} ss{Koncepcja Supersetu Polega na Wykonaniu 2 Ćwiczeń Bezpośrednio Po Sobie, Po Czym Następuje Krótka Przerwa (Ale Nie Zawsze).} rft{RFT to Skrót Od 'Rounds for Time'. Uczestnicy Muszą Ukończyć Określoną Liczbę Rund i Powtórzeń Jak Najszybciej. Runda To Sekwencja Wszystkich Ćwiczeń. Czas, W Jakim Uczestnicy Ukończą Określoną Liczbę Rund, Jest Ich Wynikiem.} amrap{AMRAP to Skrót Od 'As Many Reps As Possible'. Uczestnicy Muszą Wykonać Jak Najwięcej Powtórzeń Danej Sekwencji Ćwiczeń W Określonym Czasie. Całkowita Liczba Wykonanych Powtórzeń Jest Wynikiem Uczestnika.} enom{EMOM to Skrót Od 'Every Minute on the Minute'. W Tego Typu Treningu Uczestnik Musi Wykonać Ćwiczenia na Początku Każdej Minuty Przez Określoną Liczbę Minut. Każda Minuta Może Mieć Różne Ćwiczenia z Różnymi Wartościami.} other{Nie Znaleziono}}",
+}

@@ -244,11 +244,11 @@ class HeaderTitleWIdget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       categoryName == CategoryName.videoClasses
-          ? "Video Classes"
+          ? context.loc.titleText("video")
           : categoryName == CategoryName.workouts
-              ? "Workouts"
+              ? context.loc.titleText("workout")
               : categoryName == CategoryName.audioClasses
-                  ? "Audio Classes"
+                  ? context.loc.titleText("audio")
                   : '',
       style:
           AppTypography.label18LG.copyWith(color: AppColor.textEmphasisColor),

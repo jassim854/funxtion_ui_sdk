@@ -7,7 +7,6 @@ import 'package:ui_tool_kit/ui_tool_kit.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class DashBoardView extends StatefulWidget {
-  
   final List<OnDemandModel> onDemadDataVideo;
   final List<WorkoutModel> workoutData;
   final List<OnDemandModel> onDemadDataAudio;
@@ -70,7 +69,7 @@ class _DashBoardViewState extends State<DashBoardView> {
             onFieldTap: () {
               context.navigateTo(const SearchContentView());
             },
-            hintText: 'Workouts, trainers, exercises',
+            hintText: context.loc.hintSearchText,
             margin:
                 const EdgeInsets.only(top: 10, left: 24, right: 24, bottom: 10),
           )),
@@ -86,11 +85,11 @@ class _DashBoardViewState extends State<DashBoardView> {
                             ? Column(
                                 children: [
                                   RowEndToEndTextWidget(
-                                    columnText1: value.values.length > 1
-                                        ? "Your Training Plans"
-                                        : "Your Training Plan",
-                                    rowText1: 'See all',
-                                    columnText2: "Sweet sweet plans",
+                                    columnText1: context.loc
+                                        .yourTrainingPlan(value.length),
+                                    rowText1: context.loc.seeAll,
+                                    columnText2:
+                                        context.loc.recentSubtitle("training"),
                                     seeOnTap: () {
                                       context.navigateTo(
                                           const TrainingPlanListView(
@@ -312,8 +311,8 @@ class _DashBoardViewState extends State<DashBoardView> {
                           context.navigateTo(const VideoAudioWorkoutListView(
                               categoryName: CategoryName.videoClasses));
                         },
-                        columnText1: "Recent Video Classes",
-                        rowText1: "See all"),
+                        columnText1: context.loc.recentTitle("video"),
+                        rowText1: context.loc.seeAll),
                   ),
                   Transform.scale(
                     scale: 1.2,
@@ -409,14 +408,14 @@ class _DashBoardViewState extends State<DashBoardView> {
                       top: 45,
                     ),
                     child: RowEndToEndTextWidget(
-                        columnText1: "Recent Training Plan",
+                        columnText1: context.loc.recentTitle("training"),
                         seeOnTap: () {
                           context.navigateTo(const TrainingPlanListView(
                             initialIndex: 0,
                           ));
                         },
-                        columnText2: "Sweet sweet plans",
-                        rowText1: "See all"),
+                        columnText2: context.loc.recentSubtitle("training"),
+                        rowText1: context.loc.seeAll),
                   ),
                   Transform.scale(
                     scale: 1.2,
@@ -428,9 +427,6 @@ class _DashBoardViewState extends State<DashBoardView> {
                                   width: double.infinity,
                                   margin: const EdgeInsets.only(
                                       left: 10, right: 10, top: 20),
-                                  // decoration: BoxDecoration(
-                                  //     // color: AppColor.surfaceBrandSecondaryColor,
-                                  //     borderRadius: BorderRadius.circular(16)),
                                   child: GestureDetector(
                                     behavior: HitTestBehavior.deferToChild,
                                     onTap: () {
@@ -473,7 +469,7 @@ class _DashBoardViewState extends State<DashBoardView> {
                                                             .textInvertEmphasis),
                                               ),
                                               Text(
-                                                "${e.value.daysTotal} workouts • ${widget.fitnessGoalData.entries.toList()[e.key].value} • ${e.value.level}",
+                                                "${e.value.daysTotal} ${context.loc.workoutPluraText(e.value.daysTotal!)} • ${widget.fitnessGoalData.entries.toList()[e.key].value} • ${e.value.level}",
                                                 style: AppTypography
                                                     .paragraph14MD
                                                     .copyWith(
@@ -501,13 +497,13 @@ class _DashBoardViewState extends State<DashBoardView> {
                           // pauseAutoPlayInFiniteScroll: true,
                         )),
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(
                       top: 40,
                     ),
                     child: RowEndToEndTextWidget(
-                        columnText1: "What Are You Looking For?",
-                        rowText1: "See all"),
+                        columnText1: context.loc.whatLookingFor,
+                        rowText1: context.loc.seeAll),
                   ),
                   Container(
                     margin: const EdgeInsets.only(top: 16, left: 20, right: 20),
@@ -515,17 +511,23 @@ class _DashBoardViewState extends State<DashBoardView> {
                       children: [
                         Row(
                           children: [
-                            const DashBoardButtonWidget(text: 'Video Classes'),
+                            DashBoardButtonWidget(
+                                index: 1, text: context.loc.titleText("video")),
                             16.width(),
-                            const DashBoardButtonWidget(text: 'Workouts')
+                            DashBoardButtonWidget(
+                                index: 2,
+                                text: context.loc.titleText("workout"))
                           ],
                         ),
                         16.height(),
                         Row(
                           children: [
-                            const DashBoardButtonWidget(text: 'Training Plans'),
+                            DashBoardButtonWidget(
+                                index: 3,
+                                text: context.loc.titleText("training")),
                             16.width(),
-                            const DashBoardButtonWidget(text: 'Audio Classes')
+                            DashBoardButtonWidget(
+                                index: 4, text: context.loc.titleText("audio"))
                           ],
                         )
                       ],
@@ -540,9 +542,9 @@ class _DashBoardViewState extends State<DashBoardView> {
                         context.navigateTo(const VideoAudioWorkoutListView(
                             categoryName: CategoryName.workouts));
                       },
-                      columnText1: "Recent Workouts",
-                      rowText1: "See all",
-                      columnText2: "Some fresh content for you.",
+                      columnText1: context.loc.recentTitle('workout'),
+                      rowText1: context.loc.seeAll,
+                      columnText2: context.loc.recentSubtitle('workout'),
                     ),
                   ),
                   20.height(),
@@ -639,8 +641,8 @@ class _DashBoardViewState extends State<DashBoardView> {
                         context.navigateTo(const VideoAudioWorkoutListView(
                             categoryName: CategoryName.audioClasses));
                       },
-                      columnText1: "Audio Classes",
-                      rowText1: "See all",
+                      columnText1: context.loc.recentTitle("audio"),
+                      rowText1: context.loc.seeAll,
                     ),
                   ),
                   20.height(),
@@ -732,7 +734,9 @@ class _DashBoardViewState extends State<DashBoardView> {
 
 class DashBoardButtonWidget extends StatelessWidget {
   final String text;
-  const DashBoardButtonWidget({super.key, required this.text});
+  final int index;
+  const DashBoardButtonWidget(
+      {super.key, required this.text, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -742,13 +746,13 @@ class DashBoardButtonWidget extends StatelessWidget {
           elevation: 0,
           btnColor: AppColor.buttonTertiaryColor,
           onPressed: () {
-            text.contains('Video')
+            index == 1
                 ? context.navigateTo(const VideoAudioWorkoutListView(
                     categoryName: CategoryName.videoClasses))
-                : text.contains('Workout')
+                : index == 2
                     ? context.navigateTo(const VideoAudioWorkoutListView(
                         categoryName: CategoryName.workouts))
-                    : text.contains('Training')
+                    : index == 3
                         ? context.navigateTo(const TrainingPlanListView(
                             initialIndex: 0,
                           ))
@@ -759,11 +763,11 @@ class DashBoardButtonWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SvgPicture.asset(
-                text.contains('Video')
+                index == 1
                     ? AppAssets.videoPlayIcon
-                    : text.contains('Workout')
+                    : index == 2
                         ? AppAssets.workoutHeaderIcon
-                        : text.contains('Training')
+                        : index == 3
                             ? AppAssets.calendarIcon
                             : AppAssets.headPhoneIcon,
                 color: AppColor.buttonSecondaryColor,

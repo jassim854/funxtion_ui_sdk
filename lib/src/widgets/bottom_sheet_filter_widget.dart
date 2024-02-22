@@ -6,8 +6,8 @@ import 'package:ui_tool_kit/ui_tool_kit.dart';
 
 class FilterSheetWidget extends StatefulWidget {
   CategoryName categoryName;
-  ValueNotifier<List<TypeFilterModel>> confirmedFilter;
-  void Function(List<TypeFilterModel> selectedFilter) onDone;
+  ValueNotifier<List<SelectedFilterModel>> confirmedFilter;
+  void Function(List<SelectedFilterModel> selectedFilter) onDone;
 
   FilterSheetWidget(
       {super.key,
@@ -20,7 +20,7 @@ class FilterSheetWidget extends StatefulWidget {
 }
 
 class _FilterSheetWidgetState extends State<FilterSheetWidget> {
-  List<TypeFilterModel> selectedFilter = [];
+  List<SelectedFilterModel> selectedFilter = [];
   ValueNotifier<bool> filterLoader = ValueNotifier(false);
   @override
   void initState() {
@@ -51,7 +51,7 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                         setState(() {});
                       }
                     : null,
-                child: Text('Reset',
+                child: Text(context.loc.resetText,
                     style: selectedFilter.isNotEmpty
                         ? AppTypography.label14SM
                             .copyWith(color: AppColor.linkPrimaryColor)
@@ -59,7 +59,7 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                             .copyWith(color: AppColor.linkDisableColor)),
               ),
               Text(
-                'Filter',
+                context.loc.filterText,
                 style: AppTypography.label18LG
                     .copyWith(color: AppColor.textEmphasisColor),
               ),
@@ -68,7 +68,7 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                   context.popPage();
                   widget.onDone(selectedFilter);
                 },
-                child: Text('Done',
+                child: Text(context.loc.doneText,
                     style: AppTypography.label14SM
                         .copyWith(color: AppColor.linkPrimaryColor)),
               ),
@@ -121,13 +121,13 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                                                           GestureDetector(
                                                               onTap: () {
                                                                 ListController.addFilter(
-                                                                    TypeFilterModel(
-                                                                        id: e
+                                                                    SelectedFilterModel(
+                                                                        filterId: e
                                                                             .id,
-                                                                        type: data
+                                                                        filterType: data
                                                                             .key
                                                                             .toString(),
-                                                                        filter: e
+                                                                        filterName: e
                                                                             .label
                                                                             .toString()),
                                                                     selectedFilter,
@@ -159,11 +159,11 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
                                                           GestureDetector(
                                                               onTap: () {
                                                                 ListController.addFilter(
-                                                                    TypeFilterModel(
-                                                                        type: data
+                                                                    SelectedFilterModel(
+                                                                        filterType: data
                                                                             .key
                                                                             .toString(),
-                                                                        filter: e
+                                                                        filterName: e
                                                                             .toString()),
                                                                     selectedFilter,
                                                                     widget
@@ -204,13 +204,13 @@ class _FilterSheetWidgetState extends State<FilterSheetWidget> {
 
 Widget levelContainer(BuildContext context,
     {required IconTextModel e,
-    required List<TypeFilterModel> selectedFilter,
+    required List<SelectedFilterModel> selectedFilter,
     required String type}) {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
         border: selectedFilter.any((element) {
-          return element.filter == e.text && element.type == type;
+          return element.filterName == e.text && element.filterType == type;
         })
             ? Border.all(color: AppColor.buttonPrimaryColor, width: 1)
             : Border.all(color: AppColor.borderOutlineColor, width: 1),
@@ -223,7 +223,8 @@ Widget levelContainer(BuildContext context,
             ? SvgPicture.asset(
                 e.imageName.toString(),
                 color: selectedFilter.any((element) {
-                  return element.filter == e.text && element.type == type;
+                  return element.filterName == e.text &&
+                      element.filterType == type;
                 })
                     ? AppColor.buttonPrimaryColor
                     : AppColor.textEmphasisColor,
@@ -234,7 +235,7 @@ Widget levelContainer(BuildContext context,
           e.text,
           style: AppTypography.label14SM.copyWith(
               color: selectedFilter.any((element) {
-            return element.filter == e.text && element.type == type;
+            return element.filterName == e.text && element.filterType == type;
           })
                   ? AppColor.buttonPrimaryColor
                   : AppColor.textEmphasisColor),

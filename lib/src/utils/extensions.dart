@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ui_tool_kit/l10n/app_localizations.dart';
+
 
 
 import '../../ui_tool_kit.dart';
@@ -144,7 +146,7 @@ extension HMSextension on int {
 }
 
 extension HeaderTitle on Map<ExerciseDetailModel, ExerciseModel> {
-  String currentHeaderTitle(int index) => entries
+  String currentHeaderTitle( int index) => entries
               .toList()[index]
               .key
               .exerciseCategoryName ==
@@ -168,29 +170,7 @@ extension HeaderTitle on Map<ExerciseDetailModel, ExerciseModel> {
                               ? "Enom"
                               : '';
 
-  String infoHeader(int index) => entries
-              .toList()[index]
-              .key
-              .exerciseCategoryName ==
-          ItemType.singleExercise
-      ? "Exercises can be combined into multiple sets with different metrics connected to it."
-      : entries.toList()[index].key.exerciseCategoryName == ItemType.circuitTime
-          ? 'A time-based circuit is a combination of exercises performed with a prescribed work-rest interval. Each round can have a different work-rest interval and/or different exercises'
-          : entries.toList()[index].key.exerciseCategoryName == ItemType.rft
-              ? "RFT is short for 'rounds for time'. Participants need to complete the set amount of rounds and reps as soon as possible. A round is a sequence of all exercises. The time it takes the participants to complete the set number of rounds is their score"
-              : entries.toList()[index].key.exerciseCategoryName ==
-                      ItemType.superSet
-                  ? "The concept of a superset is to perform 2 exercises back to back, followed by a short rest (but not always)."
-                  : entries.toList()[index].key.exerciseCategoryName ==
-                          ItemType.circuitRep
-                      ? "A repetition-based circuit is a combination of exercises performed with short rest periods between them for a set number of repetitions. Each round can have a different number of reps, rest interval, and/or exercises."
-                      : entries.toList()[index].key.exerciseCategoryName ==
-                              ItemType.amrap
-                          ? "AMRAP is short for 'as many reps as possible'. Participants need to complete as many repetitions of the given exercise sequence in a set amount of time. The total number of repetitions completed is the participant's score."
-                          : entries.toList()[index].key.exerciseCategoryName ==
-                                  ItemType.enom
-                              ? " EMOM is short for 'every minute on the minute'. In this type of workout, the participant has to complete the exercises at the start of every minute for a set number of minutes. Each minute can have different exercises with different values."
-                              : '';
+
   String currentHeaderSubTitle({
     required int index,
     required Map<ExerciseDetailModel, ExerciseModel> seExercise,
@@ -592,4 +572,7 @@ extension ExtensionLocalCategoryName on CategoryName? {
       return LocalCategoryName.trainingPlans;
     }
   }
+}
+extension LocalizedBuildContext on BuildContext {
+  AppLocalizations get loc => AppLocalizations.of(this)!;
 }

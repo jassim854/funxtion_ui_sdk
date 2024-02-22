@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:funxtion/funxtion_sdk.dart';
@@ -9,11 +8,12 @@ import 'package:hive/hive.dart';
 import '../../ui_tool_kit.dart';
 
 class ListController {
-  static Future<List<OnDemandModel>?> getListOnDemandData(context,
+  static Future<List<OnDemandModel>?> getListOnDemandData(BuildContext context,
       {String? mainSearch,
       int? limitContentPerPage,
       required int pageNumber,
-      required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
+      required ValueNotifier<List<SelectedFilterModel>>
+          confirmedFilter}) async {
     try {
       final fetcheddata = await OnDemandRequest.listOnDemand(
         queryParameters: {
@@ -24,7 +24,7 @@ class ListController {
             "filter[where][duration][in]":
                 searchFilter('duration', confirmedFilter.value),
           if (mainSearch != null) "filter[where][q][contains]": mainSearch,
-          if (checkfilter('level', confirmedFilter.value))
+          if (checkfilter("level", confirmedFilter.value))
             "filter[where][level][in]":
                 searchFilter('level', confirmedFilter.value),
           if (checkfilter('categories', confirmedFilter.value))
@@ -54,7 +54,8 @@ class ListController {
       {String? mainSearch,
       int? limitContentPerPage,
       required int pageNumber,
-      required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
+      required ValueNotifier<List<SelectedFilterModel>>
+          confirmedFilter}) async {
     try {
       // log(" level query ${searchFilter('level', confirmedFilter.value)}");
       final fetcheddata = await OnDemandRequest.listOnDemand(
@@ -96,7 +97,8 @@ class ListController {
       {String? mainSearch,
       int? limitContentPerPage,
       required int pageNumber,
-      required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
+      required ValueNotifier<List<SelectedFilterModel>>
+          confirmedFilter}) async {
     try {
       final fetcheddata = await WorkoutRequest.listOfWorkout(
         queryParameters: {
@@ -139,7 +141,8 @@ class ListController {
       {String? mainSearch,
       int? limitContentPerPage,
       required int pageNumber,
-      required ValueNotifier<List<TypeFilterModel>> confirmedFilter}) async {
+      required ValueNotifier<List<SelectedFilterModel>>
+          confirmedFilter}) async {
     try {
       final fetcheddata = await TrainingPlanRequest.listOfTrainingPlan(
         queryParameters: {
@@ -173,7 +176,7 @@ class ListController {
   }
 
   static List<FollowTrainingplanModel> searchFilterLocal(
-    ValueNotifier<List<TypeFilterModel>> confirmedFilter,
+    ValueNotifier<List<SelectedFilterModel>> confirmedFilter,
     Box<FollowTrainingplanModel> box,
   ) {
     List<FollowTrainingplanModel> result = [];
@@ -202,10 +205,11 @@ class ListController {
     return result;
   }
 
-  static bool checkfilter(String type, List<TypeFilterModel>? confirmedFilter) {
+  static bool checkfilter(
+      String type, List<SelectedFilterModel>? confirmedFilter) {
     if (confirmedFilter != null) {
       for (var element in confirmedFilter) {
-        if (element.type == type) {
+        if (element.filterType.toLowerCase() == type) {
           return true;
         }
       }
@@ -214,16 +218,16 @@ class ListController {
   }
 
   static String? searchFilter(
-      String type, List<TypeFilterModel>? confirmedFilter) {
+      String type, List<SelectedFilterModel>? confirmedFilter) {
     List<String> filters = [];
 
     if (confirmedFilter != null) {
       for (var element in confirmedFilter) {
-        if (element.type == type) {
-          if (element.id.toString() != "null") {
-            filters.add(element.id.toString());
+        if (element.filterType.toLowerCase() == type) {
+          if (element.filterId.toString() != "null") {
+            filters.add(element.filterId.toString());
           } else {
-            filters.add(element.filter);
+            filters.add(element.filterName);
           }
         }
       }
@@ -301,22 +305,24 @@ class ListController {
     return filterListData;
   }
 
-  static void deleteAFilter(
-      context, String e, ValueNotifier<List<TypeFilterModel>> confirmedFilter) {
-    confirmedFilter.value.removeWhere((element) => element.filter == e);
+  static void deleteAFilter(context, String e,
+      ValueNotifier<List<SelectedFilterModel>> confirmedFilter) {
+    confirmedFilter.value.removeWhere((element) => element.filterName == e);
   }
 
   static void addFilter(
-      TypeFilterModel value,
-      List<TypeFilterModel> selectedFilter,
-      ValueNotifier<List<TypeFilterModel>> confirmedFilter) {
+      SelectedFilterModel value,
+      List<SelectedFilterModel> selectedFilter,
+      ValueNotifier<List<SelectedFilterModel>> confirmedFilter) {
     if (selectedFilter.any((element) =>
-        element.filter == value.filter && element.type == value.type)) {
+        element.filterName == value.filterName &&
+        element.filterType == value.filterType)) {
       if (confirmedFilter.value.isNotEmpty) {
         // restConfirmFilterAlso = true;
       }
       selectedFilter.removeWhere((element) =>
-          element.filter == value.filter && element.type == value.type);
+          element.filterName == value.filterName &&
+          element.filterType == value.filterType);
 
       return;
     } else {
@@ -336,8 +342,8 @@ class ListController {
   }
 
   static bool restConfirmFilterAlso = false;
-  static void resetFilter(context, List<TypeFilterModel> selectedFilter,
-      ValueNotifier<List<TypeFilterModel>> confirmedFilter) {
+  static void resetFilter(context, List<SelectedFilterModel> selectedFilter,
+      ValueNotifier<List<SelectedFilterModel>> confirmedFilter) {
     if (confirmedFilter.value.isNotEmpty) {
       restConfirmFilterAlso = true;
       confirmedFilter.value.clear();
@@ -347,15 +353,15 @@ class ListController {
   }
 
   static void clearAppliedFilter(
-      ValueNotifier<List<TypeFilterModel>> confirmedFilter) {
+      ValueNotifier<List<SelectedFilterModel>> confirmedFilter) {
     confirmedFilter.value.clear();
 
     hideAllFilter();
   }
 
   static void confirmFilter({
-    required ValueNotifier<List<TypeFilterModel>> confirmedFilter,
-    required List<TypeFilterModel> selectedFilter,
+    required ValueNotifier<List<SelectedFilterModel>> confirmedFilter,
+    required List<SelectedFilterModel> selectedFilter,
   }) {
     confirmedFilter.value = selectedFilter;
   }
@@ -420,7 +426,8 @@ class ListController {
             : listOndemandData[index].title.toString();
   }
 
-  static String subtitle({
+  static String subtitle(
+    BuildContext context, {
     required int index,
     required CategoryName categoryName,
     required List<OnDemandModel> listOndemandData,
@@ -430,10 +437,10 @@ class ListController {
     required Map<int, String> onDemandCategoryAudioData,
   }) {
     return categoryName == CategoryName.videoClasses
-        ? "${listOndemandData[index].duration} min • ${onDemandCategoryVideoData[index] == "" ? "" : "${onDemandCategoryVideoData[index]} • "}${listOndemandData[index].level.toString()}"
+        ? "${listOndemandData[index].duration} ${context.loc.minText} • ${onDemandCategoryVideoData[index] == "" ? "" : "${onDemandCategoryVideoData[index]} • "}${listOndemandData[index].level.toString()}"
         : categoryName == CategoryName.workouts
-            ? "${listWorkoutData[index].duration} min • ${categoryTypeData[index] == "" ? "" : "${categoryTypeData[index]} • "}${listWorkoutData[index].level.toString()}"
-            : "${listOndemandData[index]} min • ${onDemandCategoryAudioData[index] == "" ? "" : "${onDemandCategoryAudioData[index]} • "}${listOndemandData[index].level}";
+            ? "${listWorkoutData[index].duration} ${context.loc.minText} • ${categoryTypeData[index] == "" ? "" : "${categoryTypeData[index]} • "}${listWorkoutData[index].level.toString()}"
+            : "${listOndemandData[index].duration} ${context.loc.minText} • ${onDemandCategoryAudioData[index] == "" ? "" : "${onDemandCategoryAudioData[index]} • "}${listOndemandData[index].level}";
   }
 
   static String imageUrl({

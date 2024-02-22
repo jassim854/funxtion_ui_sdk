@@ -1,7 +1,7 @@
 library model;
 
 export 'package:ui_tool_kit/src/model/icon_text_model.dart';
-export 'package:ui_tool_kit/src/model/type_filter_model.dart';
+export 'package:ui_tool_kit/src/model/selected_filter_model.dart';
 export 'package:ui_tool_kit/src/model/week_name_model.dart';
 export 'package:ui_tool_kit/src/model/network_models/model_helper/model_helper.dart';
 export 'package:ui_tool_kit/src/model/network_models/content_package_items_model.dart';

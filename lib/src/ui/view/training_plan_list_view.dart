@@ -42,8 +42,8 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
   bool isLoadingNotifier = false;
   // final ValueNotifier<int> _length = ValueNotifier(1);
 
-  ValueNotifier<List<TypeFilterModel>> confirmedFilter = ValueNotifier([]);
-  ValueNotifier<List<TypeFilterModel>> followedConfirmedFilter =
+  ValueNotifier<List<SelectedFilterModel>> confirmedFilter = ValueNotifier([]);
+  ValueNotifier<List<SelectedFilterModel>> followedConfirmedFilter =
       ValueNotifier([]);
   // ValueNotifier<bool> isSubtitleLoading = ValueNotifier(false);
 
@@ -171,14 +171,14 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
                                               BorderRadius.circular(10)),
                                       tabs: [
                                         Text(
-                                          'All',
+                                         context.loc.trainingAll,
                                           style: AppTypography.label14SM
                                               .copyWith(
                                                   color: AppColor
                                                       .textEmphasisColor),
                                         ),
                                         Text(
-                                          'Followed',
+                                       context.loc.trainingFollow,
                                           style: AppTypography.label14SM
                                               .copyWith(
                                                   color: AppColor
@@ -246,7 +246,7 @@ class _VideoAudioClassesListViewState extends State<TrainingPlanListView>
 
   Text titleWidget() {
     return Text(
-      "Training Plans",
+   context.loc.titleText("training"),
       style:
           AppTypography.label18LG.copyWith(color: AppColor.textEmphasisColor),
     );

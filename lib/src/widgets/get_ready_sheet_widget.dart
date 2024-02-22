@@ -28,17 +28,17 @@ class GetReadySheetWidget extends StatelessWidget {
   String? getReadytitle;
   Map<ExerciseDetailModel, ExerciseModel> currentListData = {};
   final FollowTrainingplanModel? followTrainingplanModel;
-  initFn() {
+  initFn(BuildContext context) {
     if (warmUpData.isEmpty && trainingData.isNotEmpty) {
-      getReadytitle = 'Training';
+      getReadytitle = context.loc.phaseTitle("training");
 
       currentListData = trainingData;
     } else if (trainingData.isEmpty && coolDownData.isNotEmpty) {
-      getReadytitle = 'Cool Down';
+      getReadytitle = context.loc.phaseTitle("coolDown");
 
       currentListData = coolDownData;
     } else {
-      getReadytitle = 'Warmup';
+      getReadytitle = context.loc.phaseTitle("warmUp");
 
       currentListData = warmUpData;
     }
@@ -71,7 +71,7 @@ class GetReadySheetWidget extends StatelessWidget {
                     Container(
                         alignment: Alignment.center,
                         child: Text(
-                          "Workout",
+                          context.loc.workoutText,
                           style: AppTypography.label18LG
                               .copyWith(color: AppColor.textEmphasisColor),
                         )),
@@ -89,7 +89,7 @@ class GetReadySheetWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Get ready for',
+                context.loc.getReadyForText,
                       style: AppTypography.label14SM
                           .copyWith(color: AppColor.textSubTitleColor),
                     ),
@@ -109,12 +109,12 @@ class GetReadySheetWidget extends StatelessWidget {
                     Expanded(
                       child: BuildCardWidget(
                           subtitle: workoutModel.duration.toString(),
-                          title: 'Duration'),
+                          title: context.loc.durationText),
                     ),
                     20.width(),
                     Expanded(
                         child: BuildCardWidget(
-                            title: 'Type',
+                            title: context.loc.typeText,
                             subtitle: fitnessGoalModel.entries.first.value))
                   ],
                 ),
@@ -133,7 +133,7 @@ class GetReadySheetWidget extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(
                             left: 16, top: 12, bottom: 12, right: 16),
-                        child: Text("What you'll need",
+                        child: Text(context.loc.whatYouNeedText,
                             style: AppTypography.label14SM
                                 .copyWith(color: AppColor.textPrimaryColor)),
                       ),
@@ -217,7 +217,7 @@ class GetReadySheetWidget extends StatelessWidget {
                   followTrainingplanModel: followTrainingplanModel,
                 ));
               } else {
-                initFn();
+                initFn(context);
                 showModalBottomSheet(
                   useSafeArea: true,
                   isScrollControlled: true,
@@ -248,7 +248,7 @@ class GetReadySheetWidget extends StatelessWidget {
               }
             },
             child: Text(
-              "Let's go",
+              context.loc.buttonText("letsGo"),
               style: AppTypography.label18LG
                   .copyWith(color: AppColor.textInvertEmphasis),
             )),

@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:funxtion/funxtion_sdk.dart';
 
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
@@ -29,14 +26,14 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
   bool isNodData = false;
 
   bool isLoadingNotifier = false;
-  ValueNotifier<List<TypeFilterModel>> confirmedFilter = ValueNotifier([]);
-  // ValueNotifier<bool> typeLoader = ValueNotifier(true);
+  ValueNotifier<List<SelectedFilterModel>> confirmedFilter = ValueNotifier([]);
+
   Map<int, String> onDemandCategoryVideoData = {};
   Map<int, String> onDemandCategoryAudioData = {};
   Map<int, String> categoryTypeData = {};
   @override
   void initState() {
-  
+    eventsTriggeredFn();
     _searchController = TextEditingController();
 
     _scrollController = ScrollController();
@@ -70,6 +67,25 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
     // CategoryListController.filterCategoryTypeData.clear();
     ListController.filterListData.clear();
     super.dispose();
+  }
+
+  eventsTriggeredFn() {
+    if (widget.categoryName == CategoryName.videoClasses) {
+      if (EveentTriggered.screen_viewed != null) {
+        EveentTriggered.screen_viewed!(
+            "VideoAudioWorkoutListView", "MS 2 Video Classes");
+      }
+    } else if (widget.categoryName == CategoryName.workouts) {
+      if (EveentTriggered.screen_viewed != null) {
+        EveentTriggered.screen_viewed!(
+            "VideoAudioWorkoutListView", "MS 3 Workout");
+      }
+    } else if (widget.categoryName == CategoryName.audioClasses) {
+      if (EveentTriggered.screen_viewed != null) {
+        EveentTriggered.screen_viewed!(
+            "VideoAudioWorkoutListView", "MS 6 Audio");
+      }
+    }
   }
 
   @override
@@ -119,7 +135,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                               confirmedFilter: confirmedFilter,
                               deleteAFilterOnTap: (e) {
                                 ListController.deleteAFilter(context,
-                                    e.filter.toString(), confirmedFilter);
+                                    e.filterName.toString(), confirmedFilter);
                                 getData(
                                     categoryName: widget.categoryName,
                                     isScroll: false);
@@ -201,6 +217,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                                                       ),
                                                       subtitle: ListController
                                                           .subtitle(
+                                                        context,
                                                         categoryTypeData:
                                                             categoryTypeData,
                                                         onDemandCategoryAudioData:
@@ -242,7 +259,8 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                                                               .all(8.0)
                                                           .copyWith(top: 12),
                                                       child: Text(
-                                                        "Nothing to load",
+                                                        context.loc
+                                                            .nothingToLoadText,
                                                         style: AppTypography
                                                             .label14SM,
                                                       ),
@@ -296,6 +314,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
       titleSpacing: 0,
       leading: const SizedBox.shrink(),
       title: CustomSearchTextFieldWidget(
+          hintText: context.loc.hintSearchText2,
           showCloseIcon: _searchController.text.isNotEmpty,
           onChange: (value) {
             ListController.delayedFunction(fn: () {
@@ -325,7 +344,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                 child: Container(
                   alignment: Alignment.center,
                   margin: const EdgeInsets.only(right: 20),
-                  child: Text('Cancel',
+                  child: Text(context.loc.cancelText,
                       style: AppTypography.label14SM.copyWith(
                         color: AppColor.textEmphasisColor,
                       )),
@@ -398,7 +417,7 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
     }
   }
 
-  void getData({
+  Future getData({
     required CategoryName categoryName,
     required bool isScroll,
   }) async {
@@ -426,6 +445,16 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
             pageNumber: pageNumber,
           ).then((value) {
             if (value != null && value.isNotEmpty) {
+              if (EveentTriggered.video_class_searched != null &&
+                  _searchController.text != "") {
+                EveentTriggered.video_class_searched!(
+                    _searchController.text, value.length);
+              }
+              if (EveentTriggered.video_class_filtered != null &&
+                  confirmedFilter.value.isNotEmpty) {
+                EveentTriggered.video_class_filtered!(
+                    confirmedFilter.value.length, confirmedFilter.value);
+              }
               nextPage = true;
               isLoadMore = false;
 
@@ -461,6 +490,16 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                 pageNumber: pageNumber,
               ).then((value) {
                 if (value != null && value.isNotEmpty) {
+                  if (EveentTriggered.workouts_searched != null &&
+                      _searchController.text != "") {
+                    EveentTriggered.workouts_searched!(
+                        _searchController.text, value.length);
+                  }
+                  if (EveentTriggered.workouts_filtered != null &&
+                      confirmedFilter.value.isNotEmpty) {
+                    EveentTriggered.workouts_filtered!(
+                        confirmedFilter.value.length, confirmedFilter.value);
+                  }
                   CommonController.filterCategoryTypeData(
                       value, categoryTypeData);
 
@@ -494,6 +533,16 @@ class _VideoAudioWorkoutListViewState extends State<VideoAudioWorkoutListView> {
                 pageNumber: pageNumber,
               ).then((value) {
                 if (value != null && value.isNotEmpty) {
+                         if (EveentTriggered.audio_class_searched != null &&
+                  _searchController.text != "") {
+                EveentTriggered.audio_class_searched!(
+                    _searchController.text, value.length);
+              }
+              if (EveentTriggered.audio_class_filtered != null &&
+                  confirmedFilter.value.isNotEmpty) {
+                EveentTriggered.audio_class_filtered!(
+                    confirmedFilter.value.length, confirmedFilter.value);
+              }
                   int count = onDemandCategoryAudioData.length;
                   CommonController.getListFilterOnDemandCategoryTypeFn(
                       count, value, onDemandCategoryAudioData);

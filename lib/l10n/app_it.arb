@@ -1,0 +1,115 @@
+{
+  "hintSearchText": "Allenamenti, istruttori, esercizi",
+  "yourTrainingPlan": "{length, plural, =1{Il tuo piano di allenamento} other{I tuoi piani di allenamento}}",
+  "@yourTrainingPlan": {
+    "description": "Un messaggio plurale",
+    "placeholders": {
+      "length": {
+        "type": "num"
+      }
+    }
+  },
+  "seeAll": "Vedi tutto",
+  "recentTitle": "{title, select, video{Classi video recenti} training{Piani di allenamento recenti} workout{Allenamenti recenti} search{Ricerche recenti} visit{Visitati di recente} audio{Classi audio} other{nessun elemento trovato}}",
+  "@recent": {
+    "description": "Che tipo di messaggio di titolo recente",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "recentSubtitle": "{title, select, training{Piani dolci dolci} workout{Qualche contenuto fresco per te} other{nessun elemento trovato}}",
+  "@recentSubtitle": {
+    "description": "Che tipo di messaggio di sottotitolo recente",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "nextUp": "Prossimo",
+  "whatLookingFor": "Cosa stai cercando?",
+  "titleText": "{title, select, video{Classi video} training{Piani di allenamento} workout{Allenamenti} audio{Classi audio} other{nessun elemento trovato}}",
+  "@titleText": {
+    "description": "Titolo",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "cancelText": "Annulla",
+  "clearText": "Cancella",
+  "hintSearchText2": "Yoga, HIIT, cardio",
+  "levelText": "Livello",
+  "instructorText": "Istruttore",
+  "equipmentText": "Attrezzatura",
+  "buttonText": "{title, select, play{Riproduci classe} startWorkout{Inizia allenamento} letsGo{Andiamo} previous{Prec} nextWorkout{Prossimo allenamento} startFollow{Inizia a seguire} other{nessun elemento trovato}}",
+  "@buttonText": {
+    "description": "Titolo del pulsante",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "resetText": "Ripristina",
+  "filterText": "Filtra",
+  "doneText": "Fatto",
+  "goalText": "Obiettivo",
+  "bodyPartText": "Parti del corpo",
+  "alertBoxTitle": "Iniziare l'allenamento fuori sequenza?",
+  "alertBoxBody": "Eventuali allenamenti incompleti elencati prima di questo verranno contrassegnati come completati.",
+  "alertBoxButton1": "Annulla",
+  "alertBoxButton2": "Inizia allenamento",
+  "alertBoxTitle2": "Abbandonare l'allenamento?",
+  "alertBoxBody2": "Non sarà possibile riprendere l'allenamento.",
+  "alertBox2Button2": "Abbandona",
+  "alertBoxTitle3": "Annullare il piano di allenamento?",
+  "alertBoxBody3": "Se annulli il piano di allenamento, tutti i progressi verranno rimossi",
+  "alertBox3Button2": "Annulla",
+  "phaseTitle": "{title, select, warmUp{Riscaldamento} training{Allenamento} coolDown{Raffreddamento} other{nessun elemento trovato}}",
+  "workoutText": "Allenamento",
+  "getReadyForText": "Preparati per",
+  "getReadyText": "Preparati!",
+  "durationText": "Durata",
+  "typeText": "Tipo",
+  "whatYouNeedText": "Cosa ti serve",
+  "upNext": "Prossimo",
+  "roundText": "Girare",
+  "exerciseText": "ESERCIZIO",
+  "overviewText": "Panoramica",
+  "trainerNotesText": "Note dell'istruttore",
+  "repsText": "RIPETIZIONI",
+  "timeText": "TEMPO",
+  "trainingAll": "Tutto",
+  "trainingFollow": "Seguito",
+  "workoutPluraText": "{length, plural, =1{allenamento} other{allenamenti}}",
+  "@workoutPluraText": {
+    "description": "Un messaggio plurale",
+    "placeholders": {
+      "length": {
+        "type": "num"
+      }
+    }
+  },
+  "followingText": "Seguito",
+  "nextText": "Avanti",
+  "completeText": "Hai completato",
+  "totalDurationText": "Durata totale",
+  "progressUpdateText": "Aggiornamento progressi",
+  "completedFollowPlan": "Hai completato il piano di allenamento e verrà rimosso dai tuoi piani di allenamento seguiti. Se desideri seguirlo di nuovo, puoi cliccare su \"Inizia di nuovo\" qui sotto.",
+  "startAgainText": "Inizia di nuovo",
+  "unFollowTrainingPlanText": "Non seguire il piano di allenamento",
+  "scheduleText": "Programma",
+  "nothingToLoadText": "Niente da caricare",
+  "minText": "min",
+  "workoutOverviewText": "Panoramica dell'allenamento",
+  "workoutCompletedText": "Allenamenti completati",
+  "popupText": "{title, select, show{Mostra informazioni} here{Vai qui} other{non trovato}}",
+"@popupText": {
+"description": "Un testo del popup"
+},
+"itemTypeInfo": "{title, select, single{Gli esercizi possono essere combinati in più serie con metriche diverse ad esse collegate.} circuit{Un circuito basato sul tempo è una combinazione di esercizi eseguiti con un intervallo di lavoro-riposo prescritto. Ogni round può avere un intervallo di lavoro-riposo e/o esercizi diversi.} reps{Un circuito basato sulle ripetizioni è una combinazione di esercizi eseguiti con brevi periodi di riposo tra di essi per un numero prefissato di ripetizioni. Ogni round può avere un numero diverso di ripetizioni, intervallo di riposo e/o esercizi.} ss{Il concetto di superset consiste nel eseguire 2 esercizi di seguito, seguiti da un breve riposo (ma non sempre).} rft{RFT è l'abbreviazione di 'rounds for time'. I partecipanti devono completare il numero prefissato di round e ripetizioni il prima possibile. Un round è una sequenza di tutti gli esercizi. Il tempo impiegato dai partecipanti per completare il numero prefissato di round è il loro punteggio.} amrap{AMRAP è l'abbreviazione di 'as many reps as possible'. I partecipanti devono completare il maggior numero di ripetizioni possibile della sequenza di esercizi data in un determinato periodo di tempo. Il numero totale di ripetizioni completate è il punteggio del partecipante.} enom{EMOM è l'abbreviazione di 'every minute on the minute'. In questo tipo di allenamento, il partecipante deve completare gli esercizi all'inizio di ogni minuto per un numero prefissato di minuti. Ogni minuto può avere esercizi diversi con valori diversi.} other{non trovato}}"
+}

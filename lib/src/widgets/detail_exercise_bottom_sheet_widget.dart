@@ -54,9 +54,9 @@ class DetailWorkoutBottomSheet extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(26),
                     child: cacheNetworkWidget(
-   height: 100,
-                width: context.dynamicWidth.toInt(),
-                      context,
+                        height: 100,
+                        width: context.dynamicWidth.toInt(),
+                        context,
                         imageUrl: exerciseModel.mapGif?.url ?? ""),
                   ),
                 ),

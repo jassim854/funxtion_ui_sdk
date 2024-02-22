@@ -8,7 +8,7 @@ class BottomSearchWIdget extends StatefulWidget {
   final void Function(String) searchDelayFn;
   final void Function() requestCall;
 
-  final ValueNotifier<List<TypeFilterModel>> confirmedFilter;
+  final ValueNotifier<List<SelectedFilterModel>> confirmedFilter;
   final CategoryName categoryName;
   const BottomSearchWIdget({
     super.key,
@@ -30,6 +30,7 @@ class _BottomSearchWIdgetState extends State<BottomSearchWIdget> {
       children: [
         Expanded(
             child: CustomSearchTextFieldWidget(
+                hintText: context.loc.hintSearchText2,
                 showCloseIcon: widget.searchController.text.isNotEmpty,
                 onChange: (value) {
                   widget.searchDelayFn(value);

@@ -3,9 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:ui_tool_kit/ui_tool_kit.dart';
 
 class HeaderExerciseInfoSheet extends StatelessWidget {
-  final String title, infoHeader;
-  const HeaderExerciseInfoSheet(
-      {super.key, required this.title, required this.infoHeader});
+  final String title;
+  const HeaderExerciseInfoSheet({
+    super.key,
+    required this.title,
+  });
+
+  String headerInfo(BuildContext context) {
+    return title == "Single Exercise"
+        ? context.loc.itemTypeInfo("single")
+        : title == "Circuit Time"
+            ? context.loc.itemTypeInfo("circuit")
+            : title == "RFT Exercises"
+                ? context.loc.itemTypeInfo("rft")
+                : title == "Super Set"
+                    ? context.loc.itemTypeInfo("ss")
+                    : title == "Circuit Repetition"
+                        ? context.loc.itemTypeInfo("reps")
+                        : title == "AmRap"
+                            ? context.loc.itemTypeInfo("amrap")
+                            : title == "Enom"
+                                ? context.loc.itemTypeInfo("enom")
+                                : '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +74,7 @@ class HeaderExerciseInfoSheet extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(16),
           child: Text(
-            infoHeader,
+            headerInfo(context),
             style: AppTypography.paragraph16LG
                 .copyWith(color: AppColor.textPrimaryColor),
           ),

@@ -86,7 +86,7 @@ class UpNextSheetWidget extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 24, top: 40),
-              child: Text('Up next',
+              child: Text(context.loc.upNext,
                   style: AppTypography.label14SM
                       .copyWith(color: AppColor.textSubTitleColor)),
             ),
@@ -111,7 +111,7 @@ class UpNextSheetWidget extends StatelessWidget {
                     Padding(
                       padding:
                           const EdgeInsets.only(left: 16, top: 12, bottom: 12),
-                      child: Text("Equipment",
+                      child: Text(context.loc.equipmentText,
                           style: AppTypography.label14SM
                               .copyWith(color: AppColor.textPrimaryColor)),
                     ),
@@ -177,7 +177,7 @@ class UpNextSheetWidget extends StatelessWidget {
                       context.popPage(result: false);
                     }
                   },
-                  child: Text('Prev',
+                  child: Text(context.loc.buttonText("previous"),
                       style: AppTypography.label16MD
                           .copyWith(color: AppColor.textSubTitleColor))),
             )),
@@ -201,7 +201,7 @@ class UpNextSheetWidget extends StatelessWidget {
                             followTrainingplanModel: followTrainingplanModel,
                           ));
                   },
-                  child: Text("Let's go",
+                  child: Text(context.loc.buttonText('letsGo'),
                       style: AppTypography.label16MD
                           .copyWith(color: AppColor.textInvertEmphasis))),
             ))

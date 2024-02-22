@@ -14,7 +14,7 @@ class FirstTabWidget extends StatefulWidget {
   final bool isLoadMore;
   final bool isNodData;
   final List<TrainingPlanModel> listTrainingPLanData;
-  final ValueNotifier<List<TypeFilterModel>> confirmedFilter;
+  final ValueNotifier<List<SelectedFilterModel>> confirmedFilter;
   final ScrollController scrollControllerPage1;
   final Map<int, String> fitnessGoalData;
 
@@ -65,8 +65,10 @@ class _FirstTabWidgetState extends State<FirstTabWidget> {
                         return FilterRowWidget(
                           confirmedFilter: widget.confirmedFilter,
                           deleteAFilterOnTap: (e) {
-                            ListController.deleteAFilter(context,
-                                e.filter.toString(), widget.confirmedFilter);
+                            ListController.deleteAFilter(
+                                context,
+                                e.filterName.toString(),
+                                widget.confirmedFilter);
                             widget.requestCall();
                           },
                           hideOnTap: () {
@@ -209,7 +211,7 @@ class SecondTabWidget extends StatefulWidget {
 
   final ScrollController scrollControllerPage2;
   final TextEditingController searchControllerPage2;
-  final ValueNotifier<List<TypeFilterModel>> followedConfirmedFilter;
+  final ValueNotifier<List<SelectedFilterModel>> followedConfirmedFilter;
   List<FollowTrainingplanModel> followTrainingData;
 
   final bool isNodData;
@@ -293,7 +295,7 @@ class _SecondTabWidgetState extends State<SecondTabWidget> {
                           deleteAFilterOnTap: (e) {
                             ListController.deleteAFilter(
                                 context,
-                                e.filter.toString(),
+                                e.filterName.toString(),
                                 widget.followedConfirmedFilter);
                             widget.followTrainingData.clear();
                             widget.followTrainingData =

@@ -1,19 +1,25 @@
+import 'dart:ui';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:funxtion/funxtion_sdk.dart';
+import 'package:ui_tool_kit/l10n/app_localizations.dart';
 
 import '../../ui_tool_kit.dart';
 import 'package:dio/dio.dart';
 
 class UiToolKitSDK extends StatefulWidget {
+  final Locale? locale;
   final String? contentPackageId;
   final Function(List<FollowTrainingplanModel>, Dio)? readWriteTrainingPlan;
   final String token;
   final CategoryName categoryName;
   const UiToolKitSDK(
       {super.key,
+      this.locale,
       required this.token,
       this.contentPackageId,
       required this.categoryName,
@@ -26,9 +32,22 @@ class UiToolKitSDK extends StatefulWidget {
 class _UiToolKitSDKState extends State<UiToolKitSDK> {
   @override
   void initState() {
+    if (EveentTriggered.app_open != null) {
+      EveentTriggered.app_open!();
+    }
+    setLocale();
     setToken();
     setPackageIdFn();
     super.initState();
+  }
+
+  setLocale() {
+    if (widget.locale != null) {
+      AppLanguage.setLanguageCode = widget.locale?.languageCode;
+    } else {
+      AppLanguage.setLanguageCode =
+          PlatformDispatcher.instance.locale.languageCode;
+    }
   }
 
   setToken() {
@@ -42,11 +61,28 @@ class _UiToolKitSDKState extends State<UiToolKitSDK> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: widget.locale,
       debugShowCheckedModeBanner: false,
       home: HomePage(
         categoryName: widget.categoryName,
         readWriteTrainingPlan: widget.readWriteTrainingPlan,
       ),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate
+      ],
+      localeResolutionCallback:
+          (Locale? locale, Iterable<Locale> supportedLocales) {
+        for (Locale supportedLocale in supportedLocales) {
+          if (supportedLocale.languageCode == locale?.languageCode) {
+            return supportedLocale;
+          }
+        }
+        return supportedLocales.first;
+      },
+      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 }
@@ -165,6 +201,9 @@ class _HomePageState extends State<HomePage> {
 
                 if (value == false) {
                   if (widget.categoryName == CategoryName.dashBoard) {
+                    if (EveentTriggered.session_start != null) {
+                      EveentTriggered.session_start!();
+                    }
                     return DashBoardView(
                         onDemadDataVideo: onDemadDataVideo,
                         workoutData: workoutData,

@@ -270,7 +270,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                           children: [
                                         TextSpan(
                                             text:
-                                                "${workoutData?.duration} min"),
+                                                "${workoutData?.duration} ${context.loc.minText}"),
                                         value == true
                                             ? WidgetSpan(
                                                 child:
@@ -293,7 +293,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                     padding: const EdgeInsets.only(
                                         left: 25, bottom: 8),
                                     child: Text(
-                                      'Workout Overview',
+                                      context.loc.workoutOverviewText,
                                       style: AppTypography.title18LG.copyWith(
                                           color: AppColor.textEmphasisColor),
                                     ),
@@ -303,7 +303,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                         ?.phases?.first.items?.isNotEmpty !=
                                     false) ...[
                                   phasesBodyWidget(
-                                      title: "Warmup",
+                                      title: context.loc.phaseTitle('warmUp'),
                                       expandNotifier: warmUpExpand,
                                       loaderNotifier: warmUpLoader,
                                       dataList: warmUpData),
@@ -319,7 +319,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                       ),
                                     ),
                                   phasesBodyWidget(
-                                      title: "Training",
+                                      title: context.loc.phaseTitle("training"),
                                       expandNotifier: trainingExpand,
                                       loaderNotifier: trainingLoader,
                                       dataList: trainingData),
@@ -338,7 +338,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                       ),
                                     ),
                                   phasesBodyWidget(
-                                      title: "CoolDown",
+                                      title: context.loc.phaseTitle("coolDown"),
                                       expandNotifier: coolDownExpand,
                                       loaderNotifier: coolDownLoader,
                                       dataList: coolDownData),
@@ -380,7 +380,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                               .copyWith(color: AppColor.textEmphasisColor),
                         ),
                         4.height(),
-                        Text("${workoutData?.duration} min",
+                        Text("${workoutData?.duration} ${context.loc.minText}",
                             style: AppTypography.paragraph12SM
                                 .copyWith(color: AppColor.textPrimaryColor))
                       ],
@@ -398,7 +398,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                         ),
                         4.height(),
                         Text(
-                            "Workout ${widget.followTrainingplanModel?.workoutCount}/${widget.followTrainingplanModel?.totalWorkoutLength} ",
+                            "${context.loc.workoutText} ${widget.followTrainingplanModel?.workoutCount}/${widget.followTrainingplanModel?.totalWorkoutLength} ",
                             style: AppTypography.paragraph12SM
                                 .copyWith(color: AppColor.textPrimaryColor))
                       ],
@@ -416,11 +416,10 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                 context: context,
                                 builder: (context) {
                                   return ShowAlertDialogWidget(
-                                    title: 'Start workout out of sequence?',
-                                    body:
-                                        'Any incomplete workouts listed before this one will be marked as complete.',
-                                    btnText1: 'Cancel',
-                                    btnText2: 'Start Workout',
+                                    title: context.loc.alertBoxTitle,
+                                    body: context.loc.alertBoxBody,
+                                    btnText1: context.loc.alertBoxButton1,
+                                    btnText2: context.loc.alertBoxButton2,
                                     color: AppColor.linkPrimaryColor,
                                   );
                                 },
@@ -440,7 +439,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                         ? BaseHelper.loadingWidget()
                         : FittedBox(
                             child: Text(
-                              'Start Workout',
+                              context.loc.alertBoxButton2,
                               style: AppTypography.label16MD.copyWith(
                                   color: widget.followTrainingplanModel
                                               ?.outOfSequence ==
@@ -495,6 +494,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
           title: title,
           expandHeaderValueListenable: expandNotifier,
           onTap: () {
+            log("${title}");
             expandNotifier.value = !expandNotifier.value;
           },
         ),
@@ -521,12 +521,13 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               const EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 16),
           child: Column(
             children: [
-              CustomRowTextChartIcon(
-                level: workoutData?.level.toString() ?? "",
-                text1: 'Level',
-                text2: workoutData?.level.toString() ?? "",
-                isChartIcon: true,
-              ),
+              if (workoutData?.level.toString() != null)
+                CustomRowTextChartIcon(
+                  level: workoutData?.level.toString(),
+                  text1: context.loc.levelText,
+                  text2: workoutData?.level.toString(),
+                  isChartIcon: true,
+                ),
               ValueListenableBuilder<bool>(
                   valueListenable: coolDownLoader,
                   builder: (context, value, child) {
@@ -542,7 +543,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                     child: CustomDivider(),
                                   ),
                                   CustomRowTextChartIcon(
-                                      text1: 'Equipment',
+                                      text1: context.loc.equipmentText,
                                       secondWidget: SizedBox(
                                         height: 20,
                                         child: ListView.builder(
@@ -628,7 +629,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                   child: CustomDivider(),
                 ),
                 CustomRowTextChartIcon(
-                  text1: 'Goal',
+                  text1: context.loc.goalText,
                   text2: fitnessGoalData.entries.first.value,
                 ),
               ],
@@ -638,15 +639,17 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               ),
               ValueListenableBuilder(
                 valueListenable: bodyPartLoader,
-                builder: (context, value, child) {
+                builder: (_, value, child) {
                   return value == true
                       ? Center(
                           child: BaseHelper.loadingWidget(),
                         )
-                      : CustomRowTextChartIcon(
-                          text1: 'Bodyparts',
-                          text2: bodyPartData?.name ?? "",
-                        );
+                      : bodyPartData == null
+                          ? Container()
+                          : CustomRowTextChartIcon(
+                              text1: context.loc.bodyPartText,
+                              text2: bodyPartData?.name ?? "",
+                            );
                 },
               ),
             ],

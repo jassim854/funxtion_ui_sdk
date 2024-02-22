@@ -91,7 +91,12 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
 
   addWorkoutData() {
     for (var i = 0; i < listSheduleWorkoutData.length; i++) {
-      workoutLocalData.add(LocalWorkout(workoutTitle:  listSheduleWorkoutData[i].title.toString(), workoutSubtitle:  "${listSheduleWorkoutData[i].duration} • ${categoryFilterTypeData[i]} • ${listSheduleWorkoutData[i].level.toString()}", workoutId:  listSheduleWorkoutData[i].id.toString(), workoutImg: listSheduleWorkoutData[i].mapImage!.url));
+      workoutLocalData.add(LocalWorkout(
+          workoutTitle: listSheduleWorkoutData[i].title.toString(),
+          workoutSubtitle:
+              "${listSheduleWorkoutData[i].duration} • ${categoryFilterTypeData[i]} • ${listSheduleWorkoutData[i].level.toString()}",
+          workoutId: listSheduleWorkoutData[i].id.toString(),
+          workoutImg: listSheduleWorkoutData[i].mapImage!.url));
     }
   }
 
@@ -156,7 +161,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                                               .loadingWidget(),
                                                         )
                                                       : Text(
-                                                          '${listSheduleWorkoutData.length} ${listSheduleWorkoutData.length > 1 ? "workouts" : "workout"}',
+                                                          '${listSheduleWorkoutData.length} ${context.loc.workoutPluraText(listSheduleWorkoutData.length)}',
                                                           style: AppTypography
                                                               .label16MD
                                                               .copyWith(
@@ -241,16 +246,17 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                               child: InkWell(
                                                 onTap: () async {
                                                   await showDialog(
-                                                    // barrierDismissible: false,
                                                     context: context,
-                                                    builder: (context) {
-                                                      return const ShowAlertDialogWidget(
-                                                        body:
-                                                            'If you unfollow the training plan all progress will be removed',
-                                                        btnText1: 'Cancel',
-                                                        btnText2: 'Unfollow',
-                                                        title:
-                                                            'Unfollow training plan?',
+                                                    builder: (_) {
+                                                      return ShowAlertDialogWidget(
+                                                        body: context
+                                                            .loc.alertBoxBody3,
+                                                        btnText1: context.loc
+                                                            .alertBoxButton1,
+                                                        btnText2: context.loc
+                                                            .alertBox3Button2,
+                                                        title: context
+                                                            .loc.alertBoxTitle3,
                                                       );
                                                     },
                                                   ).then((value) {
@@ -270,7 +276,8 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        'Unfollow training plan',
+                                                        context.loc
+                                                            .unFollowTrainingPlanText,
                                                         style: AppTypography
                                                             .label16MD
                                                             .copyWith(
@@ -307,7 +314,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12, top: 35, left: 20),
       child: Text(
-        'Schedule',
+        context.loc.scheduleText,
         style:
             AppTypography.title18LG.copyWith(color: AppColor.textEmphasisColor),
       ),
@@ -334,7 +341,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                         if (followTrainingData?.workoutCount !=
                             followTrainingData?.totalWorkoutLength) ...[
                           Text(
-                            "Next up",
+                            context.loc.nextUp,
                             style: AppTypography.paragraph12SM
                                 .copyWith(color: AppColor.textPrimaryColor),
                           ),
@@ -388,8 +395,8 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                         ? SheduletButtonWidget(
                             text: followTrainingData?.workoutCount ==
                                     followTrainingData?.totalWorkoutLength
-                                ? "Done"
-                                : 'Next Workout',
+                                ? context.loc.doneText
+                                : context.loc.buttonText('nextWorkout'),
                             onPressed: value == true
                                 ? null
                                 : () {
@@ -415,10 +422,11 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                           followTrainingData!.workoutCount + 1;
 
                                       context.navigateTo(WorkoutDetailView(
-                                          id: followTrainingData?.workoutData[
+                                          id: followTrainingData
+                                                  ?.workoutData[
                                                       followTrainingData!
                                                           .workoutCount]
-                                             .workoutId ??
+                                                  .workoutId ??
                                               '',
                                           followTrainingplanModel:
                                               FollowTrainingplanModel(
@@ -450,7 +458,7 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
                                 ? BaseHelper.loadingWidget()
                                 : null)
                         : SheduletButtonWidget(
-                            text: "Start Following",
+                            text: context.loc.buttonText("startFollow"),
                             onPressed: value == true
                                 ? null
                                 : () {
@@ -731,18 +739,22 @@ class _WorkoutDetailViewState extends State<TrainingPlanDetailView> {
               const EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 16),
           child: Column(
             children: [
-              CustomRowTextChartIcon(
-                  text1: 'Goal', text2: fitnessGoalData.entries.first.value),
-              const Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 16),
-                child: CustomDivider(),
-              ),
-              CustomRowTextChartIcon(
-                level: trainingPlanData?.level.toString() ?? "",
-                text1: 'Level',
-                text2: trainingPlanData?.level.toString() ?? "",
-                isChartIcon: true,
-              ),
+              if (fitnessGoalData.isNotEmpty)
+                CustomRowTextChartIcon(
+                    text1: context.loc.goalText,
+                    text2: fitnessGoalData.entries.first.value),
+              if (trainingPlanData != null) ...[
+                const Padding(
+                  padding: EdgeInsets.only(top: 16, bottom: 16),
+                  child: CustomDivider(),
+                ),
+                CustomRowTextChartIcon(
+                  level: trainingPlanData?.level.toString() ?? "",
+                  text1: context.loc.levelText,
+                  text2: trainingPlanData?.level.toString() ?? "",
+                  isChartIcon: true,
+                ),
+              ]
             ],
           ),
         ),

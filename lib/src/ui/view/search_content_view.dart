@@ -37,6 +37,10 @@ class _SearchContentViewState extends State<SearchContentView> {
   List<Map<CategoryName, bool>> filterList = [];
   @override
   void initState() {
+    if (EveentTriggered.screen_viewed != null) {
+      EveentTriggered.screen_viewed!(
+          "SearchContentView", "MS 5 Search & Content View");
+    }
     openBoxes();
     _searchController = TextEditingController();
     _scrollController = ScrollController();
@@ -179,13 +183,14 @@ class _SearchContentViewState extends State<SearchContentView> {
         searchContentData = data;
 
         if (data.results?.isNotEmpty ?? false) {
+          resultData.addAll(data.results as List<Result>);
+          filterResultData.addAll(data.results as List<Result>);
           addCategoryFn(data.results?.toList() as List<Result>);
           if (filterList
               .any((element) => element.entries.first.value == true)) {
+            filterResultData.clear();
             onFiltertapFn();
           }
-          resultData.addAll(data.results as List<Result>);
-          filterResultData.addAll(data.results as List<Result>);
         } else if (data.results?.isEmpty ?? false) {
           nextPage = false;
         }
@@ -356,7 +361,7 @@ class _SearchContentViewState extends State<SearchContentView> {
           showCloseIcon: _searchController.text.isNotEmpty,
           focusNode: _focusNode,
           searchController: _searchController,
-          hintText: 'Workouts, trainers, exercises',
+          hintText: context.loc.hintSearchText,
         ),
         actions: [
           GestureDetector(
@@ -366,7 +371,7 @@ class _SearchContentViewState extends State<SearchContentView> {
             child: Container(
               alignment: Alignment.center,
               margin: const EdgeInsets.only(right: 20),
-              child: Text('Cancel',
+              child: Text(context.loc.cancelText,
                   style: AppTypography.label14SM.copyWith(
                     color: AppColor.textEmphasisColor,
                   )),
@@ -403,6 +408,7 @@ class _SearchContentViewState extends State<SearchContentView> {
                                   };
                                   filterList.insert(0, updatedValue);
                                   filterResultData.clear();
+                                  nextPage = true;
                                   onFiltertapFn();
                                   setState(() {});
                                 }
@@ -415,6 +421,7 @@ class _SearchContentViewState extends State<SearchContentView> {
                                 filterList.insert(
                                     filterList.length, updatedValue);
                                 filterResultData.clear();
+                                nextPage = true;
                                 if (filterList.any((element) =>
                                     element.entries.first.value == true)) {
                                   onFiltertapFn();
@@ -568,7 +575,8 @@ class _SearchContentViewState extends State<SearchContentView> {
                                                                 .copyWith(
                                                                     top: 12),
                                                         child: Text(
-                                                          "Nothing to load",
+                                                          context.loc
+                                                              .nothingToLoadText,
                                                           style: AppTypography
                                                               .label14SM,
                                                         ),
@@ -629,8 +637,8 @@ class _SearchContentViewState extends State<SearchContentView> {
                       await recentSearchLocalList!.clear();
                       setState(() {});
                     },
-                    columnText1: "Recent Searches",
-                    rowText1: "Clear"),
+                    columnText1: context.loc.recentTitle("search"),
+                    rowText1: context.loc.clearText),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Wrap(
@@ -703,8 +711,8 @@ class _SearchContentViewState extends State<SearchContentView> {
                       recentlyVisitedLocalList?.clear();
                       setState(() {});
                     },
-                    columnText1: "Recently Visited",
-                    rowText1: "Clear"),
+                    columnText1: context.loc.recentTitle("visit"),
+                    rowText1: context.loc.clearText),
                 12.height(),
                 Expanded(
                   child: Container(
@@ -762,7 +770,7 @@ class _SearchContentViewState extends State<SearchContentView> {
                               index,
                               context),
                           subtitle:
-                              '${recentlyVisitedLocalList!.values.toList()[index].recentlyVisited.values.first.duration} min • ${recentlyVisitedLocalList!.values.toList()[index].recentlyVisited.values.first.categories?.map((e) => e).join(',')} • ${recentlyVisitedLocalList!.values.toList()[index].recentlyVisited.values.first.level}',
+                              '${recentlyVisitedLocalList!.values.toList()[index].recentlyVisited.values.first.duration} ${context.loc.minText} • ${recentlyVisitedLocalList!.values.toList()[index].recentlyVisited.values.first.categories?.map((e) => e).join(',')} • ${recentlyVisitedLocalList!.values.toList()[index].recentlyVisited.values.first.level}',
                         );
                       },
                       separatorBuilder: (context, index) {
@@ -811,8 +819,15 @@ class _SearchContentViewState extends State<SearchContentView> {
   void onFiltertapFn() {
     for (var element in filterList) {
       if (element.entries.first.value == true) {
-        filterResultData.addAll(
-            resultData.where((a) => a.collection == element.entries.first.key));
+        if (searchContentData!.cursors!
+            .any((e) => e.collection == element.entries.first.key)) {
+          filterResultData.addAll(resultData
+              .where((a) => a.collection == element.entries.first.key));
+        } else {
+          nextPage = false;
+          filterResultData.addAll(resultData
+              .where((a) => a.collection == element.entries.first.key));
+        }
       }
     }
   }

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:developer';
+import 'dart:ffi';
 
 import 'dart:ui';
 
@@ -41,7 +43,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
   ValueNotifier<double> sliderTraining = ValueNotifier(0);
   ValueNotifier<double> sliderCoolDown = ValueNotifier(0);
 
-  ExerciseModel? data;
+  ExerciseModel? exerciseData;
 
   BorderRadiusGeometry? _border = BorderRadius.circular(20);
   EdgeInsetsGeometry? padding = const EdgeInsets.all(8);
@@ -86,7 +88,20 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
   @override
   void initState() {
     super.initState();
+
+    if (EveentTriggered.workout_started != null) {
+      EveentTriggered.workout_started!(
+          widget.workoutModel.title.toString(),
+          widget.durationNotifier.value.mordernDurationTextWidget,
+          widget.followTrainingplanModel != null
+              ? widget.followTrainingplanModel?.trainingPlanTitle
+              : null);
+    }
+    log(
+      widget.durationNotifier.value.mordernDurationTextWidget,
+    );
     pageController = PageController(initialPage: 0);
+
     getCurrentExerciseViewFn(pageController.initialPage);
   }
 
@@ -192,12 +207,12 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
       {required int index,
       required currentPageIndex,
       required Map<ExerciseDetailModel, ExerciseModel> currentBlock}) {
-    data = currentBlock.entries.toList()[index].value;
+    exerciseData = currentBlock.entries.toList()[index].value;
 
     currentExerciseInBlock = index + 1;
     totalExerciseInBlock = currentBlock.length;
-    title = currentBlock.currentHeaderTitle(index);
-    infoHeader = currentBlock.infoHeader(index);
+    itemTypeTitle = currentBlock.currentHeaderTitle(index);
+
     trainerNotes = currentBlock.entries.toList()[index].key.exerciseNotes ?? "";
     if (currentBlock.entries.toList()[index].key.exerciseCategoryName ==
         ItemType.singleExercise) {
@@ -380,8 +395,8 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
   String trainerNotes = '';
   int totalExerciseInBlock = 1;
   int currentExerciseInBlock = 1;
-  String title = '';
-  String infoHeader = '';
+  String itemTypeTitle = '';
+
   double _height = 40;
   double _width = 40;
   ValueNotifier<int> timeNotifier = ValueNotifier(0);
@@ -400,12 +415,15 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
         bool sholdPop = await showAdaptiveDialog(
           barrierDismissible: false,
           context: context,
-          builder: (context) {
-            return const ShowAlertDialogWidget(
-                title: "Quit workout?",
-                body: "You will not be able to resume the workout.",
-                btnText1: "Cancel",
-                btnText2: "Quit");
+          builder: (_) {
+            if (EveentTriggered.workout_cancelled!=null) {
+              EveentTriggered.workout_cancelled!(widget.workoutModel.title.toString(),widget.workoutModel.id.toString());
+            }
+            return ShowAlertDialogWidget(
+                title: context.loc.alertBoxTitle2,
+                body: context.loc.alertBoxBody2,
+                btnText1: context.loc.alertBoxButton1,
+                btnText2: context.loc.alertBox2Button2);
           },
         );
         if (sholdPop == true) {
@@ -449,6 +467,11 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                 sliderWarmUp: sliderWarmUp,
                 actionWidget: InkWell(
                     onTap: () async {
+                      if (EveentTriggered.workout_player_overview != null) {
+                        EveentTriggered.workout_player_overview!(
+                            widget.workoutModel.title.toString(),
+                            widget.workoutModel.id.toString());
+                      }
                       isPlaying.value = false;
                       await showModalBottomSheet(
                         backgroundColor: AppColor.surfaceBackgroundBaseColor,
@@ -471,6 +494,9 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                 widget.trainingData.length -
                                 widget.warmUpData.length,
                             goHereTapCoolDown: (index) async {
+                              String current =
+                                  exerciseData?.name.toString() ?? "";
+
                               context.maybePopPage();
                               await pageController.animateToPage(
                                   index +
@@ -482,11 +508,20 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                               getCurrentExerciseViewFn(
                                   pageController.page!.toInt());
                               setState(() {});
+                              if (EveentTriggered
+                                      .workout_player_overview_navigate !=
+                                  null) {
+                                EveentTriggered
+                                        .workout_player_overview_navigate!(
+                                    current,
+                                    exerciseData?.name.toString() ?? "",
+                                    widget.workoutModel.id.toString(),
+                                    widget.workoutModel.title.toString());
+                              }
                             },
                             goHereTapTraining: (index) async {
-                              if (workoutCountDownTimer?.isActive ?? false) {
-                                workoutCountDownTimer?.cancel();
-                              }
+                              String current =
+                                  exerciseData?.name.toString() ?? "";
                               context.maybePopPage();
                               await pageController.animateToPage(
                                   index + widget.warmUpData.length,
@@ -496,8 +531,21 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                               getCurrentExerciseViewFn(
                                   pageController.page!.toInt());
                               setState(() {});
+                              if (EveentTriggered
+                                      .workout_player_overview_navigate !=
+                                  null) {
+                                EveentTriggered
+                                        .workout_player_overview_navigate!(
+                                    current,
+                                    exerciseData?.name.toString() ?? "",
+                                    widget.workoutModel.id.toString(),
+                                    widget.workoutModel.title.toString());
+                              }
+                              log("${current} ${exerciseData?.name.toString() ?? ""} ${widget.workoutModel.id.toString()} ${widget.workoutModel.title.toString()}");
                             },
                             goHereTapWarmUp: (index) async {
+                              String current =
+                                  exerciseData?.name.toString() ?? "";
                               context.maybePopPage();
                               await pageController.animateToPage(index,
                                   duration: const Duration(milliseconds: 100),
@@ -506,6 +554,16 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                               getCurrentExerciseViewFn(
                                   pageController.page!.toInt());
                               setState(() {});
+                              if (EveentTriggered
+                                      .workout_player_overview_navigate !=
+                                  null) {
+                                EveentTriggered
+                                        .workout_player_overview_navigate!(
+                                    current,
+                                    exerciseData?.name.toString() ?? "",
+                                    widget.workoutModel.id.toString(),
+                                    widget.workoutModel.title.toString());
+                              }
                             },
                           ),
                         ),
@@ -525,13 +583,20 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(title,
+                          Text(itemTypeTitle,
                               style: AppTypography.title14XS.copyWith(
                                 color: AppColor.textPrimaryColor,
                               )),
                           4.width(),
                           InkWell(
                               onTap: () async {
+                                if (EveentTriggered.workout_player_type_info !=
+                                    null) {
+                                  EveentTriggered.workout_player_type_info!(
+                                      itemTypeTitle,
+                                      widget.workoutModel.title.toString(),
+                                      widget.workoutModel.id.toString());
+                                }
                                 await showModalBottomSheet(
                                   backgroundColor:
                                       AppColor.surfaceBackgroundColor,
@@ -539,8 +604,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                   isScrollControlled: true,
                                   context: context,
                                   builder: (context) => HeaderExerciseInfoSheet(
-                                    title: title,
-                                    infoHeader: infoHeader,
+                                    title: itemTypeTitle,
                                   ),
                                 );
                               },
@@ -569,8 +633,8 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                       height: 190,
                                       width: context.dynamicWidth.toInt(),
                                       imageUrl: value == true
-                                          ? data?.mapGif?.url ?? ''
-                                          : data?.mapImage?.url ?? ''));
+                                          ? exerciseData?.mapGif?.url ?? ''
+                                          : exerciseData?.mapImage?.url ?? ''));
                             }),
                       ),
                       Padding(
@@ -585,13 +649,23 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              data?.name ?? "",
+                              exerciseData?.name ?? "",
                               style: AppTypography.title24XL
                                   .copyWith(color: AppColor.textEmphasisColor),
                             ),
                             8.width(),
                             InkWell(
                                 onTap: () async {
+                                  if (EveentTriggered
+                                          .workout_player_exercise_info !=
+                                      null) {
+                                    EveentTriggered
+                                            .workout_player_exercise_info!(
+                                        exerciseData?.name.toString() ?? "",
+                                        exerciseData?.id.toString() ?? "",
+                                        itemTypeTitle,
+                                        widget.workoutModel.title.toString());
+                                  }
                                   await showModalBottomSheet(
                                     backgroundColor:
                                         AppColor.surfaceBackgroundColor,
@@ -601,7 +675,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                     builder: (context) =>
                                         DetailWorkoutBottomSheet(
                                             exerciseModel:
-                                                data as ExerciseModel),
+                                                exerciseData as ExerciseModel),
                                   );
                                 },
                                 child: SvgPicture.asset(
@@ -671,6 +745,20 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                   child: _width == 40
                                       ? InkWell(
                                           onTap: () {
+                                            if (EveentTriggered
+                                                    .workout_player_trainer_notes !=
+                                                null) {
+                                              EveentTriggered.workout_player_trainer_notes!(
+                                                  exerciseData?.name
+                                                          .toString() ??
+                                                      "",
+                                                  exerciseData?.id.toString() ??
+                                                      "",
+                                                  widget.workoutModel.title
+                                                      .toString(),
+                                                  widget.workoutModel.id
+                                                      .toString());
+                                            }
                                             setState(() {
                                               _width = context.dynamicWidth;
                                               padding =
@@ -693,7 +781,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  'Trainer notes',
+                                                  context.loc.trainerNotesText,
                                                   style: AppTypography.title14XS
                                                       .copyWith(
                                                           color: AppColor
@@ -880,7 +968,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                     ),
                                     borderRadius: BorderRadius.circular(4)),
                                 child: Text(
-                                  'ROUND',
+                                  context.loc.roundText,
                                   style: AppTypography.label10XXSM.copyWith(
                                       color: AppColor.textPrimaryColor),
                                 ),
@@ -902,7 +990,9 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                       ),
                                       borderRadius: BorderRadius.circular(4)),
                                   child: Text(
-                                    repsOrTimeText,
+                                    repsOrTimeText == 'TIME'
+                                        ? context.loc.timeText
+                                        : context.loc.repsText,
                                     style: AppTypography.label10XXSM.copyWith(
                                         color: AppColor.textPrimaryColor),
                                   ),
@@ -922,7 +1012,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                     ),
                                     borderRadius: BorderRadius.circular(4)),
                                 child: Text(
-                                  'EXERCISE',
+                                  context.loc.exerciseText,
                                   style: AppTypography.label10XXSM.copyWith(
                                       color: AppColor.textPrimaryColor),
                                 ),
@@ -980,7 +1070,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                               children: [
                                                 20.height(),
                                                 Text(
-                                                  'Get Ready!',
+                                                  context.loc.getReadyText,
                                                   style: AppTypography
                                                       .title40_4XL
                                                       .copyWith(
@@ -1033,7 +1123,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                                                 ),
                                                 40.height(),
                                                 Text(
-                                                  "Get ready for",
+                                                  context.loc.getReadyForText,
                                                   style: AppTypography.title14XS
                                                       .copyWith(
                                                           color: AppColor
@@ -1095,7 +1185,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                         setState(() {});
                       },
                       childPadding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Text('Prev',
+                      child: Text(context.loc.buttonText('previous'),
                           style: AppTypography.label16MD
                               .copyWith(color: AppColor.buttonSecondaryColor))),
                 ),
@@ -1166,7 +1256,9 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
                         }
                       },
                       child: Text(
-                        nextElementText == "" ? 'Done' : "Next",
+                        nextElementText == ""
+                            ? context.loc.doneText
+                            : context.loc.nextText,
                         style: AppTypography.label16MD
                             .copyWith(color: AppColor.textInvertEmphasis),
                       )),
@@ -1178,7 +1270,7 @@ class _StartWorkoutViewState extends State<StartWorkoutView> {
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Text(
-                'Up next: $nextElementText',
+                '${context.loc.upNext}: $nextElementText',
                 style: AppTypography.label12XSM
                     .copyWith(color: AppColor.textPrimaryColor),
               ),

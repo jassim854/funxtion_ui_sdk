@@ -1,32 +1,26 @@
 import 'dart:async';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:ui_tool_kit/ui_tool_kit.dart';
-
 import 'package:video_player/video_player.dart';
-// import 'package:sensors_plus/sensors_plus.dart';
 
-class CategoryPlayerView extends StatefulWidget {
-  final String videoURL, thumbNail;
-  const CategoryPlayerView({
+class VideoPlayerView extends StatefulWidget {
+  final String videoURL, thumbNail, title;
+  const VideoPlayerView({
     super.key,
     required this.videoURL,
     required this.thumbNail,
+    required this.title,
   });
 
   @override
-  State<CategoryPlayerView> createState() => _CategoryPlayerViewState();
+  State<VideoPlayerView> createState() => _VideoPlayerViewState();
 }
 
-class _CategoryPlayerViewState extends State<CategoryPlayerView>
+class _VideoPlayerViewState extends State<VideoPlayerView>
     with WidgetsBindingObserver {
   late VideoPlayerController _videoPlayerController;
-  // StreamSubscription<GyroscopeEvent>? _gyroscopeSubscription;
-
-// Don't forget to cancel subscription after use
 
   @override
   void initState() {
@@ -34,20 +28,33 @@ class _CategoryPlayerViewState extends State<CategoryPlayerView>
 
     WidgetsBinding.instance.addObserver(this);
 
-    _videoPlayerController =
-        VideoPlayerController.networkUrl(Uri.parse(widget.videoURL))
-          ..initialize().then((_) {
-            if (context.mounted) {
-              _videoPlayerController.play();
-
-              setState(() {});
+    _videoPlayerController = VideoPlayerController.networkUrl(
+        Uri.parse(widget.videoURL))
+      ..initialize().then((_) {
+        if (context.mounted) {
+          _videoPlayerController.play();
+          if (EveentTriggered.video_class_player_open != null) {
+            EveentTriggered.video_class_player_open!(
+                widget.title,
+                widget.videoURL,
+                VideoDetailController.getPosition(_videoPlayerController));
+          }
+          setState(() {});
+        }
+      })
+      ..addListener(() {
+        if (context.mounted) {
+          if (!_videoPlayerController.value.isPlaying) {
+            if (EveentTriggered.video_class_player_pause != null) {
+              EveentTriggered.video_class_player_pause!(
+                  widget.title,
+                  widget.videoURL,
+                  VideoDetailController.getPosition(_videoPlayerController));
             }
-          })
-          ..addListener(() {
-            if (context.mounted) {
-              setState(() {});
-            }
-          });
+          }
+          setState(() {});
+        }
+      });
 
     setLandScapeAutoRotation();
   }
@@ -55,13 +62,20 @@ class _CategoryPlayerViewState extends State<CategoryPlayerView>
   @override
   void dispose() {
     super.dispose();
+    if (EveentTriggered.video_class_player_close != null) {
+      EveentTriggered.video_class_player_close!(
+        widget.title,
+        widget.videoURL,
+        VideoDetailController.getPosition(_videoPlayerController),
+      );
+    }
+ 
     _videoPlayerController.dispose();
-    // _gyroscopeSubscription?.cancel();
+
     WidgetsBinding.instance.removeObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      VideoController.showControls.value = false;
+      VideoDetailController.showControls.value = false;
     });
-    log('message page dispose call');
   }
 
   @override
@@ -73,6 +87,12 @@ class _CategoryPlayerViewState extends State<CategoryPlayerView>
     } else if (state == AppLifecycleState.inactive && context.mounted) {
       if (_videoPlayerController.value.isPlaying) {
         _videoPlayerController.pause();
+        if (EveentTriggered.video_class_player_pause != null) {
+          EveentTriggered.video_class_player_pause!(
+              widget.title,
+              widget.videoURL,
+              VideoDetailController.getPosition(_videoPlayerController));
+        }
       }
     }
   }
@@ -99,7 +119,11 @@ class _CategoryPlayerViewState extends State<CategoryPlayerView>
         return Future.delayed(const Duration(seconds: 1), () => true);
       },
       child: _videoPlayerController.value.isInitialized
-          ? VideoPlayerWidget(videoPlayerController: _videoPlayerController)
+          ? VideoPlayerWidget(
+              videoPlayerController: _videoPlayerController,
+              title: widget.title,
+              videoUrl: widget.videoURL,
+            )
           : Container(
               alignment: Alignment.center,
               decoration: BoxDecoration(

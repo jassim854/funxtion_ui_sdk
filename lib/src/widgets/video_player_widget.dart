@@ -8,8 +8,13 @@ import 'package:video_player/video_player.dart';
 import '../../ui_tool_kit.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
+  final String title, videoUrl;
   final VideoPlayerController videoPlayerController;
-  const VideoPlayerWidget({super.key, required this.videoPlayerController});
+  const VideoPlayerWidget(
+      {super.key,
+      required this.videoPlayerController,
+      required this.title,
+      required this.videoUrl});
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
@@ -23,17 +28,17 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         body: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
-              VideoController.showControls.value =
+              VideoDetailController.showControls.value =
                   widget.videoPlayerController.value.isBuffering
                       ? true
-                      : !VideoController.showControls.value;
+                      : !VideoDetailController.showControls.value;
 
-              if (VideoController.showControls.value == true &&
+              if (VideoDetailController.showControls.value == true &&
                   context.mounted) {
                 Timer(const Duration(seconds: 4), () {
                   if (widget.videoPlayerController.value.isPlaying &&
                       context.mounted) {
-                    VideoController.showControls.value = false;
+                    VideoDetailController.showControls.value = false;
                   }
                 });
               }
@@ -45,11 +50,29 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     seconds:
                         widget.videoPlayerController.value.position.inSeconds +
                             10));
+                if (EveentTriggered.video_class_player_skip != null) {
+                  EveentTriggered.video_class_player_skip!(
+                      widget.title,
+                      widget.videoUrl,
+                      VideoDetailController.getPosition(
+                          widget.videoPlayerController),
+                      VideoDetailController.getDestinationPosition(10000));
+                }
+            
               } else if (details.globalPosition.dx < 220) {
                 widget.videoPlayerController.seekTo(Duration(
                     seconds:
                         widget.videoPlayerController.value.position.inSeconds -
                             10));
+                if (EveentTriggered.video_class_player_skip != null) {
+                  EveentTriggered.video_class_player_skip!(
+                      widget.title,
+                      widget.videoUrl,
+                      VideoDetailController.getPosition(
+                          widget.videoPlayerController),
+                      VideoDetailController.getDestinationPosition(10000));
+                }
+             
               }
             },
             child: buildVideo()));
@@ -57,7 +80,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   Widget buildVideo() {
     return ValueListenableBuilder<bool>(
-        valueListenable: VideoController.showControls,
+        valueListenable: VideoDetailController.showControls,
         builder: (context, value, child) {
           return Stack(
             fit: StackFit.expand,
@@ -92,6 +115,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                           ]);
                         }
                       },
+                      title: widget.title,
+                      videoUrl: widget.videoUrl,
                     ),
                   ),
                 ),

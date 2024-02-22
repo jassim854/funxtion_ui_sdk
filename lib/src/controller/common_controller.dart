@@ -131,9 +131,8 @@ class CommonController {
           List<ContentProvidersCategoryOnDemandModel> fetchData = List.from(
               value!.map(
                   (e) => ContentProvidersCategoryOnDemandModel.fromJson(e)));
-          for (var i = 0; i <= 50; i++) {
-            categoryTypeData.add(fetchData[i]);
-          }
+
+          categoryTypeData.addAll(fetchData);
         });
       } on RequestException catch (e) {
         BaseHelper.showSnackBar(context, e.message);

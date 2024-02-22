@@ -1,0 +1,120 @@
+{
+"hintSearchText":"Workouts, trainers, exercises",
+"yourTrainingPlan":"{length, plural,  =1{Your Training Plan} other{Your Training Plans}}",
+"@yourTrainingPlan": {
+  "description": "A plural message",
+  "placeholders": {
+    "length": {
+      "type": "num"
+    
+    }
+  }
+},
+"seeAll":"See all",
+"recentTitle":"{title, select, video{Recent Video Classes} training{Recent Training Plans} workout{Recent Workouts} search{Recent Searches} visit{Recently Visited} audio{Audio Classes} other{no found any}}",
+"@recent": {
+  "description": "Which type of recent title message ",
+  "placeholders": {
+    "title": {
+      "type": "String"
+    }
+  }
+},
+"recentSubtitle":"{title, select, training{Sweet sweet plans} workout{Some fresh content for you} other{not found any}}",
+"@recentSubtitle": {
+  "description": "Which type of recent subtitle message ",
+  "placeholders": {
+    "title": {
+      "type": "String"
+    }
+  }
+},
+"nextUp":"Next up",
+"whatLookingFor":"What Are You Looking For?",
+"titleText":"{title, select, video{Video Classes} training{Training Plans} workout{Workouts} audio{Audio Classes} other{not found any}}",
+"@titleText": {
+  "description": "Title",
+  "placeholders": {
+    "title": {
+      "type": "String"
+    }
+  }
+},
+"cancelText":"Cancel",
+"clearText":"Clear",
+"hintSearchText2":"Yoga, HIIT, cardio",
+"levelText":"level",
+"instructorText":"Instructor",
+"equipmentText":"Equippment",
+"buttonText":"{title, select, play{Play class} startWorkout{Start Workout} letsGo{Let's go} previous{Prev} nextWorkout{Next Workout} startFollow{Start Following} other{not found any}}",
+"@buttonText": {
+  "description": "Button Title",
+  "placeholders": {
+    "title": {
+      "type": "String"
+    }
+  }
+},
+"resetText":"Reset",
+"filterText":"Filter",
+"doneText":"Done",
+"goalText":"Goal",
+"bodyPartText":"Bodyparts",
+"alertBoxTitle":"Start workout out of sequence?",
+"alertBoxBody":"Any incomplete workouts listed before this one will be marked as complete.",
+"alertBoxButton1":"Cancel",
+"alertBoxButton2":"Start Workout",
+"alertBoxTitle2":"Quit workout?",
+"alertBoxBody2":"You will not be able to resume the workout.",
+
+"alertBox2Button2":"Quit",
+"alertBoxTitle3":"Unfollow training plan?",
+"alertBoxBody3":"If you unfollow the training plan all progress will be removed",
+"alertBox3Button2":"Unfollow",
+"phaseTitle":"{title, select, warmUp{Warmup} training{Training} coolDown{CoolDown} other{no found}}",
+"workoutText":"Workout",
+"getReadyForText":"Get ready for",
+"getReadyText":"Get Ready!",
+"durationText":"Duration",
+"typeText":"Type",
+"whatYouNeedText":"What you'll need",
+"upNext":"Up next",
+"roundText":"ROUND",
+"exerciseText":"EXERCISE",
+"overviewText":"Overview",
+"trainerNotesText":"Trainer notes",
+"repsText":"REPS",
+"timeText":"TIME",
+"trainingAll":"All",
+"trainingFollow":"Followed",
+"workoutPluraText":"{length, plural,  =1{workout} other{workouts}}",
+"@workoutPluraText": {
+  "description": "A plural message",
+  "placeholders": {
+    "length": {
+      "type": "num"
+    
+    }
+  }
+},
+"followingText":"Following",
+"nextText":"Next",
+"completeText":"You’ve completed",
+"totalDurationText":"Total Duration",
+"progressUpdateText":"Progress update",
+"completedFollowPlan":"'You have completed the training plan and it will be removed from your followed training plans. If you wish to follow it again you can click “Start again” below.",
+"startAgainText":"Start again",
+"unFollowTrainingPlanText":"Unfollow training plan",
+"scheduleText":"Schedule",
+"nothingToLoadText": "Nothing to load",
+"minText":"min",
+"workoutOverviewText":"Workout Overview",
+"workoutCompletedText":"Workouts completed",
+"popupText":"{title, select, show{Show info} here{Go here} other{no found}}",
+"@popupText": {
+  "description": "A popup buttonText"
+},
+  "itemTypeInfo":"{title, select, single{Exercises can be combined into multiple sets with different metrics connected to it.} circuit{A time-based circuit is a combination of exercises performed with a prescribed work-rest interval. Each round can have a different work-rest interval and/or different exercises.} reps{A repetition-based circuit is a combination of exercises performed with short rest periods between them for a set number of repetitions. Each round can have a different number of reps, rest interval, and/or exercises.} ss{The concept of a superset is to perform 2 exercises back to back, followed by a short rest (but not always).} rft{RFT is short for 'rounds for time'. Participants need to complete the set amount of rounds and reps as soon as possible. A round is a sequence of all exercises. The time it takes the participants to complete the set number of rounds is their score.} amrap{AMRAP is short for 'as many reps as possible'. Participants need to complete as many repetitions of the given exercise sequence in a set amount of time. The total number of repetitions completed is the participant's score.} enom{EMOM is short for 'every minute on the minute'. In this type of workout, the participant has to complete the exercises at the start of every minute for a set number of minutes. Each minute can have different exercises with different values.} other{no found} }"
+
+
+}

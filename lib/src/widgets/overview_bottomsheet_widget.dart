@@ -85,7 +85,7 @@ class _OverviewBottomSheetState extends State<OverviewBottomSheet> {
                 ),
               ),
               Text(
-                'Overview',
+                context.loc.overviewText,
                 style: AppTypography.title18LG
                     .copyWith(color: AppColor.textEmphasisColor),
               ),

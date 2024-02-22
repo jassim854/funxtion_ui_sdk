@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:funxtion/funxtion_sdk.dart';
 
 import '../../ui_tool_kit.dart';
 
-class CategoryDetailController {
+class VideoDetailController {
   static Future<OnDemandModel?> getOnDemandData(context,
       {required String id}) async {
     try {
@@ -56,5 +57,38 @@ class CategoryDetailController {
       BaseHelper.showSnackBar(context, e.message);
     }
     return null;
+  }
+
+  static ValueNotifier<bool> showControls = ValueNotifier(false);
+
+  static void onTap(videoPlayerController) {}
+
+  static String getPosition(videoPlayerController) {
+    final duration = Duration(
+        milliseconds:
+            videoPlayerController.value.position.inMilliseconds.round());
+
+    return [duration.inMinutes, duration.inSeconds]
+        .map((x) => x.remainder(60).toString().padLeft(2, '0'))
+        .join(':');
+  }
+    static String getDestinationPosition(double value) {
+    final duration = Duration(
+        milliseconds:
+          value.toInt());
+
+    return [duration.inMinutes, duration.inSeconds]
+        .map((x) => x.remainder(60).toString().padLeft(2, '0'))
+        .join(':');
+  }
+
+  static String getVideoDuration(videoPlayerController) {
+    final duration = Duration(
+        milliseconds:
+            videoPlayerController.value.duration.inMilliseconds.round());
+
+    return [duration.inMinutes, duration.inSeconds]
+        .map((seg) => seg.remainder(60).toString().padLeft(2, '0'))
+        .join(':');
   }
 }
